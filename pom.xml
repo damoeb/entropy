@@ -389,6 +389,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.30</version>
         </dependency>
         
 
@@ -427,6 +428,7 @@
             <version>${liquibase-slf4j.version}</version>
         </dependency>
     </dependencies>
+
     <build>
         <resources>
             <resource>
@@ -535,6 +537,19 @@
         </plugins>
         <pluginManagement>
             <plugins>
+
+                <plugin>
+                    <groupId>org.liquibase</groupId>
+                    <artifactId>liquibase-maven-plugin</artifactId>
+                    <version>3.0.5</version>
+                    <configuration>
+                        <propertyFile>src/main/resources/config/liquibase/liquibase.properties</propertyFile>
+                    </configuration>
+                    <goals>
+                        <goal>diff</goal>
+                    </goals>
+                </plugin>
+
                 <!--This plugin's configuration is used to store Eclipse m2e settings only. 
                 It has no influence on the Maven build itself.-->
                 <plugin>

@@ -52,6 +52,20 @@ public class User extends AbstractAuditingEntity implements Serializable {
     private String activationKey;
 
     @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "host_id")
+    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+    private User host;
+
+    @Column(name = "host_id", insertable = false, updatable = false)
+    private String hostId;
+
+    // used for hell-banning
+    @JsonIgnore
+    @Column(name = "hell_level")
+    private int hellLevel;
+
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "T_USER_AUTHORITY",
