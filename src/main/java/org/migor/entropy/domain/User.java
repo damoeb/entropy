@@ -63,7 +63,7 @@ public class User extends AbstractAuditingEntity implements Serializable {
     // used for hell-banning
     @JsonIgnore
     @Column(name = "hell_level")
-    private int hellLevel;
+    private Integer hellLevel;
 
     @JsonIgnore
     @ManyToMany
@@ -157,6 +157,18 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     public void setPersistentTokens(Set<PersistentToken> persistentTokens) {
         this.persistentTokens = persistentTokens;
+    }
+
+    public User getHost() {
+        return host;
+    }
+
+    public String getHostId() {
+        return hostId;
+    }
+
+    public Integer getHellLevel() {
+        return hellLevel;
     }
 
     @Override

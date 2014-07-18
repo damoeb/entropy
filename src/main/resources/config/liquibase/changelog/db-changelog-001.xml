@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <databaseChangeLog
-    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
     <property name="now" value="now()" dbms="mysql,h2"/>
     <property name="now" value="current_timestamp" dbms="postgresql"/>
@@ -103,7 +103,7 @@
                   file="config/liquibase/users_authorities.csv"
                   separator=";"
                   tableName="T_USER_AUTHORITY"/>
-				  
+
         <createTable tableName="T_PERSISTENT_AUDIT_EVENT">
             <column name="event_id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
@@ -143,9 +143,11 @@
                                  referencedColumnNames="event_id"
                                  referencedTableName="T_PERSISTENT_AUDIT_EVENT"/>
     </changeSet>
-    
 
-    <changeSet author="damoeb (generated)" id="1405638165768-1">
+
+    <!-- changes -->
+
+    <changeSet author="damoeb (generated)" id="1405721119963-1">
         <createTable tableName="T_THREAD">
             <column name="id" type="BIGINT(19)">
                 <constraints nullable="false"/>
@@ -161,7 +163,7 @@
             <column name="uri" type="VARCHAR(512)"/>
         </createTable>
     </changeSet>
-    <changeSet author="damoeb (generated)" id="1405638165768-2">
+    <changeSet author="damoeb (generated)" id="1405721119963-2">
         <createTable tableName="T_COMMENT">
             <column name="id" type="BIGINT(19)">
                 <constraints nullable="false"/>
@@ -180,31 +182,99 @@
             <column name="thread_id" type="BIGINT(19)"/>
         </createTable>
     </changeSet>
-    <changeSet author="damoeb (generated)" id="1405638165768-3">
+    <changeSet author="damoeb (generated)" id="1405721119963-3">
+        <addColumn tableName="T_USER">
+            <column name="host_id" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="damoeb (generated)" id="1405721119963-4">
+        <addColumn tableName="T_USER">
+            <column name="hell_level" type="INT(10)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="damoeb (generated)" id="1405721119963-5">
         <addPrimaryKey columnNames="id" constraintName="PRIMARY" tableName="T_THREAD"/>
     </changeSet>
-    <changeSet author="damoeb (generated)" id="1405638165768-4">
+    <changeSet author="damoeb (generated)" id="1405721119963-6">
         <addPrimaryKey columnNames="id" constraintName="PRIMARY" tableName="T_COMMENT"/>
     </changeSet>
-    <changeSet author="damoeb (generated)" id="1405638165768-5">
-        <addForeignKeyConstraint baseColumnNames="author_id" baseTableName="T_COMMENT" constraintName="FK_l61od2ji8u42cnd9v5br82qxq" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="login" referencedTableName="T_USER"/>
+    <changeSet author="damoeb (generated)" id="1405721119963-7">
+        <addForeignKeyConstraint baseColumnNames="author_id" baseTableName="T_COMMENT"
+                                 constraintName="FK_l61od2ji8u42cnd9v5br82qxq" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="login" referencedTableName="T_USER"/>
     </changeSet>
-    <changeSet author="damoeb (generated)" id="1405638165768-6">
-        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="T_COMMENT" constraintName="FK_aqunjthcwooq81nb5yku6xp9a" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_COMMENT"/>
+    <changeSet author="damoeb (generated)" id="1405721119963-8">
+        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="T_COMMENT"
+                                 constraintName="FK_aqunjthcwooq81nb5yku6xp9a" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="T_COMMENT"/>
     </changeSet>
-    <changeSet author="damoeb (generated)" id="1405638165768-7">
-        <addForeignKeyConstraint baseColumnNames="thread_id" baseTableName="T_COMMENT" constraintName="FK_1clsign35ddje4chcxcxymev9" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_THREAD"/>
+    <changeSet author="damoeb (generated)" id="1405721119963-9">
+        <addForeignKeyConstraint baseColumnNames="host_id" baseTableName="T_USER"
+                                 constraintName="FK_tntyvmpke3a9vwa5qs8ni8wfh" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="login" referencedTableName="T_USER"/>
     </changeSet>
-    <changeSet author="damoeb (generated)" id="1405638165768-8">
+    <changeSet author="damoeb (generated)" id="1405721119963-10">
+        <addForeignKeyConstraint baseColumnNames="thread_id" baseTableName="T_COMMENT"
+                                 constraintName="FK_1clsign35ddje4chcxcxymev9" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="T_THREAD"/>
+    </changeSet>
+    <changeSet author="damoeb (generated)" id="1405721119963-11">
         <dropIndex indexName="idx_persistent_audit_event_data" tableName="T_PERSISTENT_AUDIT_EVENT_DATA"/>
     </changeSet>
-    <changeSet author="damoeb (generated)" id="1405638165768-9">
-        <modifyDataType columnName="name" newDataType="varchar(50)" tableName="T_USER_AUTHORITY"/>
+    <changeSet author="damoeb (generated)" id="1405721119963-12">
+        <dropIndex indexName="idx_persistent_audit_event" tableName="T_PERSISTENT_AUDIT_EVENT"/>
     </changeSet>
-    <changeSet author="damoeb (generated)" id="1405638165768-10">
+    <changeSet author="damoeb (generated)" id="1405721119963-13">
         <addNotNullConstraint columnDataType="varchar(255)" columnName="token_value" tableName="T_PERSISTENT_TOKEN"/>
     </changeSet>
-    <changeSet author="damoeb (generated)" id="1405638165768-11">
+    <changeSet author="damoeb (generated)" id="1405721119963-14">
+        <modifyDataType columnName="created_by" newDataType="varchar(255)" tableName="T_USER"/>
+    </changeSet>
+    <changeSet author="damoeb (generated)" id="1405721119963-15">
+        <dropDefaultValue columnDataType="varchar(255)" columnName="created_by" tableName="T_USER"/>
+    </changeSet>
+    <changeSet author="damoeb (generated)" id="1405721119963-16">
+        <modifyDataType columnName="name" newDataType="varchar(50)" tableName="T_USER_AUTHORITY"/>
+    </changeSet>
+    <changeSet author="damoeb (generated)" id="1405721119963-17">
+        <addNotNullConstraint columnDataType="boolean" columnName="activated" tableName="T_USER"/>
+    </changeSet>
+    <changeSet author="damoeb (generated)" id="1405721119963-18">
+        <dropDefaultValue columnDataType="boolean" columnName="activated" tableName="T_USER"/>
+    </changeSet>
+    <changeSet author="damoeb (generated)" id="1405721119963-19">
+        <modifyDataType columnName="last_modified_date" newDataType="datetime(19)" tableName="T_USER"/>
+    </changeSet>
+    <changeSet author="damoeb (generated)" id="1405721119963-20">
+        <modifyDataType columnName="principal" newDataType="varchar(255)" tableName="T_PERSISTENT_AUDIT_EVENT"/>
+    </changeSet>
+    <changeSet author="damoeb (generated)" id="1405721119963-21">
+        <addNotNullConstraint columnDataType="varchar(255)" columnName="principal"
+                              tableName="T_PERSISTENT_AUDIT_EVENT"/>
+    </changeSet>
+    <changeSet author="damoeb (generated)" id="1405721119963-22">
+        <modifyDataType columnName="event_date" newDataType="datetime(19)" tableName="T_PERSISTENT_AUDIT_EVENT"/>
+    </changeSet>
+    <changeSet author="damoeb (generated)" id="1405721119963-23">
+        <modifyDataType columnName="name" newDataType="varchar(50)" tableName="T_AUTHORITY"/>
+    </changeSet>
+    <changeSet author="damoeb (generated)" id="1405721119963-24">
         <modifyDataType columnName="name" newDataType="varchar(255)" tableName="T_PERSISTENT_AUDIT_EVENT_DATA"/>
+    </changeSet>
+    <changeSet author="damoeb (generated)" id="1405721119963-25">
+        <modifyDataType columnName="last_modified_by" newDataType="varchar(255)" tableName="T_USER"/>
+    </changeSet>
+    <changeSet author="damoeb (generated)" id="1405721119963-26">
+        <modifyDataType columnName="created_date" newDataType="datetime(19)" tableName="T_USER"/>
+    </changeSet>
+    <changeSet author="damoeb (generated)" id="1405721119963-27">
+        <dropDefaultValue columnDataType="datetime(19)" columnName="created_date" tableName="T_USER"/>
+    </changeSet>
+    <changeSet author="damoeb (generated)" id="1405721119963-28">
+        <modifyDataType columnName="event_type" newDataType="varchar(255)" tableName="T_PERSISTENT_AUDIT_EVENT"/>
     </changeSet>
 </databaseChangeLog>

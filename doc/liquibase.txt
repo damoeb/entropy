@@ -1,0 +1,5 @@
+1. Update changelog
+- comment all includes in master.xml
+- edit application-dev.yml and change db url to entropy2
+- run application with ddl-auto=create
+- update change-log with mvn liquibase:dif
