@@ -1,0 +1,15 @@
+- t2l: Ein Thread hat nur eine maximale Lebensdauer
+
+- flag: Kommentare die geflagt wurden
+
+- p2p
+
+- hijack: unterstuetzte Seiten werden gehijacked und all deren Kommentare extrahiert
+
+- karma: the karma of a user represents how well behaving the user is in the communitz
+
+- blame: find out what other comments a user has made, show related users. Probably find identify PR people
+
+- fuzzy feedback aufgrund des bandwaggon effects
+
+- channels: have moderators, there are several levels of moderators

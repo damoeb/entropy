@@ -60,10 +60,9 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @Column(name = "host_id", insertable = false, updatable = false)
     private String hostId;
 
-    // used for hell-banning
     @JsonIgnore
-    @Column(name = "hell_level")
-    private Integer hellLevel;
+    @Column(name = "karma")
+    private Integer karma;
 
     @JsonIgnore
     @ManyToMany
@@ -150,7 +149,7 @@ public class User extends AbstractAuditingEntity implements Serializable {
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
     }
-    
+
     public Set<PersistentToken> getPersistentTokens() {
         return persistentTokens;
     }
@@ -167,8 +166,12 @@ public class User extends AbstractAuditingEntity implements Serializable {
         return hostId;
     }
 
+    public void setKarma(Integer karma) {
+        this.karma = karma;
+    }
+
     public Integer getHellLevel() {
-        return hellLevel;
+        return karma;
     }
 
     @Override

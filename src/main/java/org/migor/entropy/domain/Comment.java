@@ -3,18 +3,16 @@ package org.migor.entropy.domain;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
-import org.migor.entropy.domain.util.CustomLocalDateSerializer;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
-
+import org.migor.entropy.domain.util.CustomLocalDateSerializer;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Set;
 
 /**
  * A Comment.
@@ -77,6 +75,19 @@ public class Comment implements Serializable {
 
     @Column(name = "dislikes")
     private int dislikes;
+
+    @Column(name = "flags")
+    private boolean flag;
+
+    @Column(name = "cleared")
+    private boolean cleared;
+
+    /**
+     * Submissions score: likes - dislikes via reddit
+     */
+    @Column(name = "score")
+    private int score;
+
 
 //    todo 'voters'
 //    @ManyToM/*any
@@ -177,6 +188,30 @@ public class Comment implements Serializable {
 
     public void setDislikes(int dislikes) {
         this.dislikes = dislikes;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public boolean isFlag() {
+        return flag;
+    }
+
+    public void setFlag(boolean flag) {
+        this.flag = flag;
+    }
+
+    public boolean isCleared() {
+        return cleared;
+    }
+
+    public void setCleared(boolean cleared) {
+        this.cleared = cleared;
     }
 
     @Override

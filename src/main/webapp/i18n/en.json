@@ -19,6 +19,7 @@
                 "register": "Register"
             },
             "admin": "Administration",
+            "threads": "Threads",
             "language": "Language"
         },
         "language": {
@@ -45,7 +46,7 @@
                 "register": "You don't have an account yet? <a href=\"#/register\">Register a new account</a>"
             },
             "error": {
-                "dontmatch" : "The password and its confirmation do not match!"
+                "dontmatch": "The password and its confirmation do not match!"
             },
             "validate": {
                 "newpassword": {
@@ -157,7 +158,7 @@
             "button": "Save"
         },
         "messages": {
-            "error":  "<strong>An error has occured!</strong> The password could not be changed.",
+            "error": "<strong>An error has occured!</strong> The password could not be changed.",
             "success": "<strong>Password changed!</strong>"
         }
     },

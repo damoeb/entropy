@@ -1,10 +1,27 @@
 <div>
 
-    <h2>Threads</h2>
+    <div class="row">
+        <div class="col-lg-3">
 
-    <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#saveThreadModal" ng-click="clear()">
-        <span class="glyphicon glyphicon-flash"></span> Create a new Thread
-    </button>
+            <button class="btn btn-primary btn" data-toggle="modal" data-target="#saveThreadModal" ng-click="clear()">
+                <span class="glyphicon glyphicon-plus"></span> Add Thread
+            </button>
+
+        </div>
+        <div class="col-lg-9">
+
+            <div class="input-group">
+                <input type="text" class="form-control">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button">Go!</button>
+                </span>
+            </div>
+            <!-- /input-group -->
+
+        </div>
+    </div>
+
+
     <div class="modal fade" id="saveThreadModal" tabindex="-1" role="dialog" aria-labelledby="myThreadLabel"
          aria-hidden="true">
         <div class="modal-dialog">
@@ -26,15 +43,27 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Sample text attribute</label>
-                            <input type="text" class="form-control" name="test"
-                                   ng-model="thread.sampleTextAttribute" ng-minlength=1 ng-maxlength=50 required>
+                            <label>uri</label>
+                            <input type="text" class="form-control" name="uri"
+                                   ng-model="thread.uri" ng-minlength=1 ng-maxlength=512 required>
                         </div>
 
                         <div class="form-group">
-                            <label>Sample date attribute</label>
+                            <label>Title</label>
+                            <input type="text" class="form-control" name="title"
+                                   ng-model="thread.title" ng-minlength=1 ng-maxlength=128 required>
+                        </div>
+
+                        <!--<div class="form-group">-->
+                        <!--<label>Description</label>-->
+                        <!--<textarea class="form-control" name="description"-->
+                        <!--ng-model="thread.description" ng-minlength=1 ng-maxlength=512>-->
+                        <!--</div>-->
+
+                        <div class="form-group">
+                            <label>Created</label>
                             <input type="date" class="form-control" name="test"
-                                   ng-model="thread.sampleDateAttribute" required>
+                                   ng-model="thread.created" readonly>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -53,31 +82,39 @@
     <div class="table-responsive">
         <table class="table table-striped">
             <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Sample text</th>
-                    <th>Sample date</th>
-                    <th></th>
-                </tr>
+            <tr>
+                <th>Votes</th>
+                <th>Title</th>
+                <th>Date</th>
+                <!--<th></th>-->
+            </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="thread in threads">
-                    <td>{{thread.id}}</td>
-                    <td>{{thread.sampleTextAttribute}}</td>
-                    <td>{{thread.sampleDateAttribute}}</td>
-                    <td>
-                        <button type="submit"
-                                ng-click="update(thread.id)"
-                                class="btn">
-                            <span class="glyphicon glyphicon-pencil"></span> Edit
-                        </button>
-                        <button type="submit"
-                                ng-click="delete(thread.id)"
-                                class="btn btn-danger">
-                            <span class="glyphicon glyphicon-remove-circle"></span> Delete
-                        </button>
-                    </td>
-                </tr>
+            <tr ng-repeat="thread in threads">
+                <td>
+                    {{thread.likes - thread.dislikes}}
+                    <div class="btn-group-vertical">
+                        <button type="button" class="btn btn-sm" ng-click="voteUp(thread)"><span
+                                class="glyphicon glyphicon-arrow-up"></span></button>
+                        <button type="button" class="btn btn-sm" ng-click="voteDown(thread)"><span
+                                class="glyphicon glyphicon-arrow-down"></span></button>
+                    </div>
+                </td>
+                <td>{{thread.title}}</td>
+                <td>{{thread.created}}</td>
+                <!--<td>-->
+                <!--<button type="submit"-->
+                <!--ng-click="update(thread.id)"-->
+                <!--class="btn">-->
+                <!--<span class="glyphicon glyphicon-pencil"></span> Edit-->
+                <!--</button>-->
+                <!--<button type="submit"-->
+                <!--ng-click="delete(thread.id)"-->
+                <!--class="btn btn-danger">-->
+                <!--<span class="glyphicon glyphicon-remove-circle"></span> Delete-->
+                <!--</button>-->
+                <!--</td>-->
+            </tr>
             </tbody>
         </table>
     </div>

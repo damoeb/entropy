@@ -161,6 +161,12 @@
             </column>
             <column name="title" type="VARCHAR(128)"/>
             <column name="uri" type="VARCHAR(512)"/>
+            <column name="description" type="VARCHAR(512)"/>
+            <column name="likes" type="INT(10)"/>
+            <column name="dislikes" type="INT(10)"/>
+            <column name="score" type="INT(10)"/>
+            <column name="flag" type="boolean"/>
+            <column name="cleared" type="boolean"/>
         </createTable>
     </changeSet>
     <changeSet author="damoeb (generated)" id="1405721119963-2">
@@ -189,7 +195,7 @@
     </changeSet>
     <changeSet author="damoeb (generated)" id="1405721119963-4">
         <addColumn tableName="T_USER">
-            <column name="hell_level" type="INT(10)"/>
+            <column name="karma" type="INT(10)"/>
         </addColumn>
     </changeSet>
     <changeSet author="damoeb (generated)" id="1405721119963-5">

@@ -19,6 +19,14 @@ entropyApp.controller('ThreadController', ['$scope', 'resolvedThread', 'Thread',
             $('#saveThreadModal').modal('show');
         };
 
+        $scope.voteUp = function (thread) {
+            thread.likes++;
+        };
+
+        $scope.voteDown = function (thread) {
+            thread.dislikes++;
+        };
+
         $scope.delete = function (id) {
             Thread.delete({id: id},
                 function () {
@@ -27,6 +35,6 @@ entropyApp.controller('ThreadController', ['$scope', 'resolvedThread', 'Thread',
         };
 
         $scope.clear = function () {
-            $scope.thread = {id: null, sampleTextAttribute: null, sampleDateAttribute: null};
+            $scope.thread = {id: null, uri: null, title: null, description: null};
         };
     }]);
