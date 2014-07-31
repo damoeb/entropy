@@ -4,10 +4,10 @@ entropyApp
     .config(['$routeProvider', '$httpProvider', '$translateProvider', 'USER_ROLES',
         function ($routeProvider, $httpProvider, $translateProvider, USER_ROLES) {
             $routeProvider
-                .when('/thread', {
+                .when('/threads', {
                     templateUrl: 'views/threads.html',
-                    controller: 'ThreadController',
-                    resolve:{
+                    controller: 'ThreadsController',
+                    resolve: {
                         resolvedThread: ['Thread', function (Thread) {
                             return Thread.query();
                         }]

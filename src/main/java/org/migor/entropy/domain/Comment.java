@@ -1,5 +1,6 @@
 package org.migor.entropy.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
@@ -26,14 +27,14 @@ public class Comment implements Serializable {
     @GeneratedValue(strategy = GenerationType.TABLE)
     private long id;
 
-    @NotNull
     @ManyToOne
-    @JoinColumn(name = "thread_id")
+    @JoinColumn(name = "thread_id", updatable = false, insertable = false)
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private Thread thread;
 
-    @Column(name = "thread_id", updatable = false, insertable = false)
-    private long thread_id;
+    @NotNull
+    @Column(name = "thread_id")
+    private Long threadId;
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
@@ -41,7 +42,7 @@ public class Comment implements Serializable {
     private Comment parent;
 
     @Column(name = "parent_id", updatable = false, insertable = false)
-    private long parent_id;
+    private Long parentId;
 
     @NotNull
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -61,13 +62,14 @@ public class Comment implements Serializable {
     @Column(name = "text")
     private String text;
 
-    @NotNull
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "author_id", insertable = false, updatable = false)
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private User author;
 
-    @Column(name = "author_id", insertable = false, updatable = false)
+    @NotNull
+    @Column(name = "author_id")
     private String authorId;
 
     @Column(name = "likes")
@@ -76,24 +78,24 @@ public class Comment implements Serializable {
     @Column(name = "dislikes")
     private int dislikes;
 
-    @Column(name = "flags")
-    private boolean flag;
+    @Column(name = "complains")
+    private int complains;
 
-    @Column(name = "cleared")
-    private boolean cleared;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private CommentStatus status;
 
     /**
      * Submissions score: likes - dislikes via reddit
      */
-    @Column(name = "score")
-    private int score;
+//    @Column(name = "score")
+//    private int score;
 
 
 //    todo 'voters'
 //    @ManyToM/*any
 //    @JoinTable(name = "comments2voters")
 //    private */Set<User> voters;
-
     public long getId() {
         return id;
     }
@@ -110,12 +112,12 @@ public class Comment implements Serializable {
         this.thread = thread;
     }
 
-    public long getThread_id() {
-        return thread_id;
+    public Long getThreadId() {
+        return threadId;
     }
 
-    public void setThread_id(long thread_id) {
-        this.thread_id = thread_id;
+    public void setThreadId(Long threadId) {
+        this.threadId = threadId;
     }
 
     public Comment getParent() {
@@ -126,12 +128,12 @@ public class Comment implements Serializable {
         this.parent = parent;
     }
 
-    public long getParent_id() {
-        return parent_id;
+    public Long getParentId() {
+        return parentId;
     }
 
-    public void setParent_id(long parent_id) {
-        this.parent_id = parent_id;
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
     }
 
     public LocalDate getCreated() {
@@ -190,28 +192,20 @@ public class Comment implements Serializable {
         this.dislikes = dislikes;
     }
 
-    public int getScore() {
-        return score;
+    public int getComplains() {
+        return complains;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void setComplains(int complains) {
+        this.complains = complains;
     }
 
-    public boolean isFlag() {
-        return flag;
+    public CommentStatus getStatus() {
+        return status;
     }
 
-    public void setFlag(boolean flag) {
-        this.flag = flag;
-    }
-
-    public boolean isCleared() {
-        return cleared;
-    }
-
-    public void setCleared(boolean cleared) {
-        this.cleared = cleared;
+    public void setStatus(CommentStatus status) {
+        this.status = status;
     }
 
     @Override
@@ -237,12 +231,20 @@ public class Comment implements Serializable {
         return (int) (id ^ (id >>> 32));
     }
 
+    @PrePersist
+    public void prePersist() {
+        if (created == null) {
+            created = new LocalDate();
+        }
+        modified = new LocalDate();
+    }
+
     @Override
     public String toString() {
         return "Comment{" +
                 "id=" + id +
-                ", thread_id=" + thread_id +
-                ", parent_id=" + parent_id +
+                ", threadId=" + threadId +
+                ", parentId=" + parentId +
                 ", created=" + created +
                 ", modified=" + modified +
                 ", text='" + text + '\'' +

@@ -1,8 +1,8 @@
 <div>
 
-    <h2>Comments</h2>
+    <h2>{{thread.title}}</h2>
 
-    <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#saveCommentModal" ng-click="clear()">
+    <button class="btn btn-primary btn-md" data-toggle="modal" data-target="#saveCommentModal" ng-click="clear()">
         <span class="glyphicon glyphicon-flash"></span> Create a new Comment
     </button>
     <div class="modal fade" id="saveCommentModal" tabindex="-1" role="dialog" aria-labelledby="myCommentLabel"
@@ -26,15 +26,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Sample text attribute</label>
-                            <input type="text" class="form-control" name="test"
-                                   ng-model="comment.sampleTextAttribute" ng-minlength=1 ng-maxlength=50 required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Sample date attribute</label>
-                            <input type="date" class="form-control" name="test"
-                                   ng-model="comment.sampleDateAttribute" required>
+                            <label>Text</label>
+                            <textarea class="form-control" name="test"
+                                      ng-model="comment.text" ng-minlength=1 ng-maxlength=2048 required></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -50,35 +44,17 @@
         </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Sample text</th>
-                    <th>Sample date</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="comment in comments">
-                    <td>{{comment.id}}</td>
-                    <td>{{comment.sampleTextAttribute}}</td>
-                    <td>{{comment.sampleDateAttribute}}</td>
-                    <td>
-                        <button type="submit"
-                                ng-click="update(comment.id)"
-                                class="btn">
-                            <span class="glyphicon glyphicon-pencil"></span> Edit
-                        </button>
-                        <button type="submit"
-                                ng-click="delete(comment.id)"
-                                class="btn btn-danger">
-                            <span class="glyphicon glyphicon-remove-circle"></span> Delete
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div ng-repeat="comment in comments">
+
+        <div class="entry">
+            <div class="row">
+                <a href="#/user/{{comment.authorId}}">{{comment.authorId}}</a>
+                <span>{{comment.created}}</span>
+            </div>
+            <div class="row">
+                {{comment.text}}
+            </div>
+        </div>
+
     </div>
 </div>

@@ -3,6 +3,7 @@ package org.migor.entropy.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import org.migor.entropy.domain.Comment;
 import org.migor.entropy.repository.CommentRepository;
+import org.migor.entropy.security.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,7 @@ public class CommentResource {
     @Timed
     public void create(@RequestBody Comment comment) {
         log.debug("REST request to save Comment : {}", comment);
+        comment.setAuthorId(SecurityUtils.getCurrentLogin());
         commentRepository.save(comment);
     }
 

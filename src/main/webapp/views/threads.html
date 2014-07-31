@@ -86,7 +86,7 @@
                 <th>Votes</th>
                 <th>Title</th>
                 <th>Date</th>
-                <!--<th></th>-->
+                <th>Comments</th>
             </tr>
             </thead>
             <tbody>
@@ -100,20 +100,9 @@
                                 class="glyphicon glyphicon-arrow-down"></span></button>
                     </div>
                 </td>
-                <td>{{thread.title}}</td>
+                <td><a href="#/thread/{{thread.id}}">{{thread.title}}</a></td>
                 <td>{{thread.created}}</td>
-                <!--<td>-->
-                <!--<button type="submit"-->
-                <!--ng-click="update(thread.id)"-->
-                <!--class="btn">-->
-                <!--<span class="glyphicon glyphicon-pencil"></span> Edit-->
-                <!--</button>-->
-                <!--<button type="submit"-->
-                <!--ng-click="delete(thread.id)"-->
-                <!--class="btn btn-danger">-->
-                <!--<span class="glyphicon glyphicon-remove-circle"></span> Delete-->
-                <!--</button>-->
-                <!--</td>-->
+                <td>{{thread.commentCount}}</td>
             </tr>
             </tbody>
         </table>

@@ -2,6 +2,7 @@ package org.migor.entropy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.migor.entropy.domain.Thread;
+import org.migor.entropy.repository.CommentRepository;
 import org.migor.entropy.repository.ThreadRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,9 @@ public class ThreadResource {
 
     @Inject
     private ThreadRepository threadRepository;
+
+    @Inject
+    private CommentRepository commentRepository;
 
     /**
      * POST  /rest/threads -> Create a new thread.
@@ -60,6 +64,7 @@ public class ThreadResource {
     public ResponseEntity<Thread> get(@PathVariable Long id, HttpServletResponse response) {
         log.debug("REST request to get Thread : {}", id);
         Thread thread = threadRepository.findOne(id);
+        commentRepository.findByThreadId(id);
         if (thread == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

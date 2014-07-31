@@ -174,18 +174,25 @@
             <column name="id" type="BIGINT(19)">
                 <constraints nullable="false"/>
             </column>
-            <column name="author_id" type="VARCHAR(255)"/>
+            <column name="author_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
             <column name="created" type="date">
                 <constraints nullable="false"/>
             </column>
             <column name="dislikes" type="INT(10)"/>
             <column name="likes" type="INT(10)"/>
+            <column name="complains" type="INT(10)"/>
+            <column name="status" type="VARCHAR(20)"/>
+
             <column name="modified" type="date">
                 <constraints nullable="false"/>
             </column>
             <column name="parent_id" type="BIGINT(19)"/>
             <column name="text" type="VARCHAR(2048)"/>
-            <column name="thread_id" type="BIGINT(19)"/>
+            <column name="thread_id" type="BIGINT(19)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="damoeb (generated)" id="1405721119963-3">

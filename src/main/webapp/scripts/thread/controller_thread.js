@@ -1,6 +1,6 @@
 'use strict';
 
-entropyApp.controller('ThreadController', ['$scope', 'resolvedThread', 'Thread',
+entropyApp.controller('ThreadsController', ['$scope', 'resolvedThread', 'Thread',
     function ($scope, resolvedThread, Thread) {
 
         $scope.threads = resolvedThread;
@@ -19,14 +19,6 @@ entropyApp.controller('ThreadController', ['$scope', 'resolvedThread', 'Thread',
             $('#saveThreadModal').modal('show');
         };
 
-        $scope.voteUp = function (thread) {
-            thread.likes++;
-        };
-
-        $scope.voteDown = function (thread) {
-            thread.dislikes++;
-        };
-
         $scope.delete = function (id) {
             Thread.delete({id: id},
                 function () {
@@ -37,4 +29,11 @@ entropyApp.controller('ThreadController', ['$scope', 'resolvedThread', 'Thread',
         $scope.clear = function () {
             $scope.thread = {id: null, uri: null, title: null, description: null};
         };
+    }]);
+
+entropyApp.controller('ThreadController', ['$scope', '$routeParams', 'Thread',
+    function ($scope, $routeParams, Thread) {
+
+        $scope.thread = Thread.get({id: $routeParams.id});
+
     }]);
