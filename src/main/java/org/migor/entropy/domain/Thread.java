@@ -66,9 +66,15 @@ public class Thread implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<User> moderators;
 
+    /**
+     * Sum of all comment likes plus thread likes
+     */
     @Column(name = "likes")
     private int likes;
 
+    /**
+     * Sum of all comment dislikes plus thread dislikes
+     */
     @Column(name = "dislikes")
     private int dislikes;
 
@@ -76,7 +82,11 @@ public class Thread implements Serializable {
      * Submissions score: likes - dislikes via reddit
      */
     @Column(name = "score")
-    private int score;
+    private Integer score;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private ThreadStatus status;
 
     public long getId() {
         return id;
@@ -150,11 +160,11 @@ public class Thread implements Serializable {
         this.dislikes = dislikes;
     }
 
-    public int getScore() {
+    public Integer getScore() {
         return score;
     }
 
-    public void setScore(int score) {
+    public void setScore(Integer score) {
         this.score = score;
     }
 
@@ -164,6 +174,14 @@ public class Thread implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public ThreadStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ThreadStatus status) {
+        this.status = status;
     }
 
     @Override

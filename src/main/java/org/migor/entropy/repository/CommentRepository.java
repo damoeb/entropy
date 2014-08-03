@@ -1,6 +1,7 @@
 package org.migor.entropy.repository;
 
 import org.migor.entropy.domain.Comment;
+import org.migor.entropy.domain.CommentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -10,5 +11,5 @@ import java.util.List;
  */
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    List<Comment> findByThreadId(Long threadId);
+    List<Comment> findByThreadIdAndStatus(Long threadId, CommentStatus status);
 }

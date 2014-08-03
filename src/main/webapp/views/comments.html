@@ -2,59 +2,108 @@
 
     <h2>{{thread.title}}</h2>
 
-    <button class="btn btn-primary btn-md" data-toggle="modal" data-target="#saveCommentModal" ng-click="clear()">
-        <span class="glyphicon glyphicon-flash"></span> Create a new Comment
-    </button>
-    <div class="modal fade" id="saveCommentModal" tabindex="-1" role="dialog" aria-labelledby="myCommentLabel"
-         aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form name="form" role="form" novalidate
-                      class="ng-scope ng-invalid ng-invalid-required ng-dirty ng-valid-minlength"
-                      ng-submit="create()">
+    <!--<button class="btn btn-primary btn-md" data-toggle="modal" data-target="#saveCommentModal" ng-click="clear()">-->
+    <!--<span class="glyphicon glyphicon-flash"></span> Create a new Comment-->
+    <!--</button>-->
+    <!--<div class="modal fade" id="saveCommentModal" tabindex="-1" role="dialog" aria-labelledby="myCommentLabel"-->
+    <!--aria-hidden="true">-->
+    <!--<div class="modal-dialog">-->
+    <!--<div class="modal-content">-->
+    <!--<form name="form" role="form" novalidate-->
+    <!--class="ng-scope ng-invalid ng-invalid-required ng-dirty ng-valid-minlength"-->
+    <!--ng-submit="create()">-->
 
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
-                                ng-click="clear()">&times;</button>
-                        <h4 class="modal-title" id="myCommentLabel">Create or edit a Comment</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>ID</label>
-                            <input type="text" class="form-control" name="id"
-                                   ng-model="comment.id" readonly>
-                        </div>
+    <!--<div class="modal-header">-->
+    <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true"-->
+    <!--ng-click="clear()">&times;</button>-->
+    <!--<h4 class="modal-title" id="myCommentLabel">Create or edit a Comment</h4>-->
+    <!--</div>-->
+    <!--<div class="modal-body">-->
+    <!--<div class="form-group">-->
+    <!--<label>ID</label>-->
+    <!--<input type="text" class="form-control" name="id"-->
+    <!--ng-model="comment.id" readonly>-->
+    <!--</div>-->
 
-                        <div class="form-group">
-                            <label>Text</label>
-                            <textarea class="form-control" name="test"
-                                      ng-model="comment.text" ng-minlength=1 ng-maxlength=2048 required></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">
-                            <span class="glyphicon glyphicon-ban-circle"></span> Cancel
-                        </button>
-                        <button type="submit" ng-disabled="form.$invalid" class="btn btn-primary">
-                            <span class="glyphicon glyphicon-save"></span> Save
-                        </button>
-                    </div>
-                </form>
+    <!--<div class="form-group">-->
+    <!--<label>Text</label>-->
+    <!--<textarea class="form-control" name="test"-->
+    <!--ng-model="comment.text" ng-minlength=1 ng-maxlength=2048 required></textarea>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--<div class="modal-footer">-->
+    <!--<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">-->
+    <!--<span class="glyphicon glyphicon-ban-circle"></span> Cancel-->
+    <!--</button>-->
+    <!--<button type="submit" ng-disabled="form.$invalid" class="btn btn-primary">-->
+    <!--<span class="glyphicon glyphicon-save"></span> Save-->
+    <!--</button>-->
+    <!--</div>-->
+    <!--</form>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <div class="row">
+        <form name="form" role="form" novalidate ng-submit="create()">
+            <div><input class="form-control" ng-model="comment.subject" ng-minlength=1 ng-maxlength=148 required/></div>
+            <div>{{comment.parentId}}</div>
+            <div><textarea class="form-control" placeholder="Type your comment here..." ng-model="comment.text"
+                           ng-minlength=1 ng-maxlength=2048 required></textarea></div>
+
+            <div>
+                <button type="submit" ng-disabled="form.$invalid" class="btn btn-primary pull-right">
+                    Post as Anonymous
+                </button>
             </div>
-        </div>
+
+        </form>
+
     </div>
+    <div class="row">
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="active"><a href="#">Discussion</a></li>
+            <li><a href="#">Community</a></li>
+            <li><a href="#">My</a></li>
+            <li><a href="#">Pending <span class="badge">42</span></a></li>
+            <li><a href="#">Rejected</a></li>
+        </ul>
 
-    <div ng-repeat="comment in comments">
-
-        <div class="entry">
-            <div class="row">
+        <script type="text/ng-template" id="comment_renderer.html">
+            <div>
                 <a href="#/user/{{comment.authorId}}">{{comment.authorId}}</a>
                 <span>{{comment.created}}</span>
             </div>
-            <div class="row">
+            <div>
                 {{comment.text}}
             </div>
-        </div>
+            <div>
+                <button type="button" class="btn btn-default" ng-click="reply(comment)">
+                    <span class="glyphicon glyphicon-share-alt"></span>
+                    Reply
+                </button>
+                <button type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-arrow-up"></span>
+                    Parent
+                </button>
+                <button type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-flag"></span>
+                    Flag
+                </button>
+            </div>
 
+            <ul class="list-group">
+                <li class="list-group-item" ng-repeat="comment in comment.subcomments"
+                    ng-include="'comment_renderer.html'"></li>
+            </ul>
+
+        </script>
+
+        <div>
+
+            <ul class="list-group">
+                <li class="list-group-item" ng-repeat="comment in approved" ng-include="'comment_renderer.html'"></li>
+            </ul>
+
+        </div>
     </div>
 </div>

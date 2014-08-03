@@ -3,10 +3,21 @@
 entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 'Comment',
     function ($scope, $routeParams, Thread, Comment) {
 
-//        $scope.comments = resolvedComment;
-
         var threadId = $routeParams.id;
-        $scope.thread = Thread.get({id: threadId});
+
+        $scope.refresh = function () {
+
+            Thread.get({id: threadId}, function (response) {
+                $scope.thread = response.thread;
+                $scope.approved = $scope.tree(response.approved);
+                $scope.pending = response.pending;
+                $scope.rejected = response.rejected;
+            });
+        };
+
+
+        $scope.refresh();
+        $scope.comment = {};
 
         $scope.create = function () {
 
@@ -15,14 +26,48 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
             Comment.save($scope.comment,
                 function () {
 //                    $scope.comments = Comment.query();
-                    $('#saveCommentModal').modal('hide');
+//                    $('#saveCommentModal').modal('hide');
                     $scope.clear();
+
+                    $scope.refresh();
                 });
+        };
+
+        $scope.tree = function (comments) {
+
+            var map = {};
+            var roots = [];
+
+            for (var i in comments) {
+                var comment = comments[i];
+                map[comment.id] = comment;
+                comment.subcomments = [];
+            }
+
+            $.each(comments, function (index, comment) {
+                if (comment.level == 0) {
+                    roots.push(comment);
+                } else {
+                    var _parent = map[comment.parentId];
+                    _parent.subcomments.push(comment);
+                }
+            });
+
+            return roots;
+
         };
 
         $scope.update = function (id) {
             $scope.comment = Comment.get({id: id});
             $('#saveCommentModal').modal('show');
+        };
+
+        $scope.reply = function (comment) {
+            $scope.comment.parentId = comment.id;
+        };
+
+        $scope.flag = function (comment) {
+
         };
 
 //        $scope.delete = function (id) {

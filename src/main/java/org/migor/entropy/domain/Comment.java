@@ -27,6 +27,7 @@ public class Comment implements Serializable {
     @GeneratedValue(strategy = GenerationType.TABLE)
     private long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "thread_id", updatable = false, insertable = false)
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
@@ -36,13 +37,17 @@ public class Comment implements Serializable {
     @Column(name = "thread_id")
     private Long threadId;
 
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "parent_id")
+    @JoinColumn(name = "parent_id", updatable = false, insertable = false)
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private Comment parent;
 
-    @Column(name = "parent_id", updatable = false, insertable = false)
+    @Column(name = "parent_id")
     private Long parentId;
+
+    @Column(name = "level")
+    private Integer level;
 
     @NotNull
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -58,9 +63,15 @@ public class Comment implements Serializable {
     @Column(name = "modified")
     private LocalDate modified;
 
+    @NotNull
     @Size(min = 1, max = 2048)
     @Column(name = "text")
     private String text;
+
+    @NotNull
+    @Size(min = 1, max = 128)
+    @Column(name = "subject")
+    private String subject;
 
     @JsonIgnore
     @ManyToOne
@@ -81,6 +92,7 @@ public class Comment implements Serializable {
     @Column(name = "complains")
     private int complains;
 
+    @NotNull
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private CommentStatus status;
@@ -206,6 +218,22 @@ public class Comment implements Serializable {
 
     public void setStatus(CommentStatus status) {
         this.status = status;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 
     @Override

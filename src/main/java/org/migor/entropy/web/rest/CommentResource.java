@@ -2,7 +2,11 @@ package org.migor.entropy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.migor.entropy.domain.Comment;
+import org.migor.entropy.domain.CommentStatus;
+import org.migor.entropy.domain.Thread;
+import org.migor.entropy.domain.ThreadStatus;
 import org.migor.entropy.repository.CommentRepository;
+import org.migor.entropy.repository.ThreadRepository;
 import org.migor.entropy.security.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +31,9 @@ public class CommentResource {
     @Inject
     private CommentRepository commentRepository;
 
+    @Inject
+    private ThreadRepository threadRepository;
+
     /**
      * POST  /rest/comments -> Create a new comment.
      */
@@ -37,6 +44,29 @@ public class CommentResource {
     public void create(@RequestBody Comment comment) {
         log.debug("REST request to save Comment : {}", comment);
         comment.setAuthorId(SecurityUtils.getCurrentLogin());
+        comment.setStatus(CommentStatus.APPROVED);
+
+        Thread thread = threadRepository.findOne(comment.getThreadId());
+
+        if (thread == null) {
+            throw new IllegalArgumentException("Invalid threadId");
+        }
+        if (thread.getStatus() == ThreadStatus.CLOSED) {
+            throw new IllegalArgumentException("Invalid threadId");
+        }
+
+        if (comment.getParentId() == null) {
+            comment.setLevel(0);
+        } else {
+            Comment parent = commentRepository.findOne(comment.getParentId());
+
+            if (parent.getThreadId() != thread.getId()) {
+                throw new IllegalArgumentException("Invalid threadId");
+            }
+
+            comment.setLevel(parent.getLevel() + 1);
+        }
+
         commentRepository.save(comment);
     }
 

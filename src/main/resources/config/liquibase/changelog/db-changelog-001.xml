@@ -159,6 +159,7 @@
             <column name="modified" type="date">
                 <constraints nullable="false"/>
             </column>
+            <column name="status" type="VARCHAR(20)"/>
             <column name="title" type="VARCHAR(128)"/>
             <column name="uri" type="VARCHAR(512)"/>
             <column name="description" type="VARCHAR(512)"/>
@@ -180,6 +181,7 @@
             <column name="created" type="date">
                 <constraints nullable="false"/>
             </column>
+            <column name="level" type="INT(10)"/>
             <column name="dislikes" type="INT(10)"/>
             <column name="likes" type="INT(10)"/>
             <column name="complains" type="INT(10)"/>
@@ -189,7 +191,12 @@
                 <constraints nullable="false"/>
             </column>
             <column name="parent_id" type="BIGINT(19)"/>
-            <column name="text" type="VARCHAR(2048)"/>
+            <column name="text" type="VARCHAR(2048)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subject" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
             <column name="thread_id" type="BIGINT(19)">
                 <constraints nullable="false"/>
             </column>
