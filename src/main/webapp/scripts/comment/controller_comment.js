@@ -1,7 +1,7 @@
 'use strict';
 
-entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 'Comment',
-    function ($scope, $routeParams, Thread, Comment) {
+entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 'Comment', '$log',
+    function ($scope, $routeParams, Thread, Comment, $log) {
 
         var threadId = $routeParams.id;
 
@@ -57,10 +57,10 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
 
         };
 
-        $scope.update = function (id) {
-            $scope.comment = Comment.get({id: id});
-            $('#saveCommentModal').modal('show');
-        };
+//        $scope.update = function (id) {
+//            $scope.comment = Comment.get({id: id});
+//            $('#saveCommentModal').modal('show');
+//        };
 
         $scope.reply = function (comment) {
             $scope.comment.parentId = comment.id;
@@ -68,6 +68,20 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
 
         $scope.flag = function (comment) {
 
+        };
+
+        $scope.voteUp = function (comment) {
+            comment.likes++;
+            Comment.vote({id: comment.id, up: true}, function () {
+                $log.log('saved');
+            });
+        };
+
+        $scope.voteDown = function (comment) {
+            comment.dislikes++;
+            Comment.vote({id: comment.id, up: false}, function () {
+                $log.log('saved');
+            });
         };
 
 //        $scope.delete = function (id) {

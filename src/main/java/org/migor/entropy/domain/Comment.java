@@ -1,14 +1,12 @@
 package org.migor.entropy.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
-import org.migor.entropy.domain.util.CustomLocalDateSerializer;
+import org.joda.time.DateTime;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -49,19 +47,16 @@ public class Comment implements Serializable {
     @Column(name = "level")
     private Integer level;
 
+    @CreatedDate
     @NotNull
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonSerialize(using = CustomLocalDateSerializer.class)
-    @Column(name = "created")
-    private LocalDate created;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @Column(name = "created_date")
+    private DateTime createdDate = DateTime.now();
 
-    @NotNull
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonSerialize(using = CustomLocalDateSerializer.class)
-    @Column(name = "modified")
-    private LocalDate modified;
+    @LastModifiedDate
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @Column(name = "last_modified_date")
+    private DateTime lastModifiedDate = DateTime.now();
 
     @NotNull
     @Size(min = 1, max = 2048)
@@ -69,9 +64,13 @@ public class Comment implements Serializable {
     private String text;
 
     @NotNull
-    @Size(min = 1, max = 128)
+    @Size(min = 1, max = 256)
     @Column(name = "subject")
     private String subject;
+
+    @Size(min = 1, max = 128)
+    @Column(name = "display_name")
+    private String displayName;
 
     @JsonIgnore
     @ManyToOne
@@ -148,22 +147,6 @@ public class Comment implements Serializable {
         this.parentId = parentId;
     }
 
-    public LocalDate getCreated() {
-        return created;
-    }
-
-    public void setCreated(LocalDate created) {
-        this.created = created;
-    }
-
-    public LocalDate getModified() {
-        return modified;
-    }
-
-    public void setModified(LocalDate modified) {
-        this.modified = modified;
-    }
-
     public String getText() {
         return text;
     }
@@ -228,12 +211,36 @@ public class Comment implements Serializable {
         this.subject = subject;
     }
 
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
     public Integer getLevel() {
         return level;
     }
 
     public void setLevel(Integer level) {
         this.level = level;
+    }
+
+    public DateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(DateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public DateTime getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(DateTime lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
     @Override
@@ -259,22 +266,14 @@ public class Comment implements Serializable {
         return (int) (id ^ (id >>> 32));
     }
 
-    @PrePersist
-    public void prePersist() {
-        if (created == null) {
-            created = new LocalDate();
-        }
-        modified = new LocalDate();
-    }
-
     @Override
     public String toString() {
         return "Comment{" +
                 "id=" + id +
                 ", threadId=" + threadId +
                 ", parentId=" + parentId +
-                ", created=" + created +
-                ", modified=" + modified +
+                ", createdDate=" + createdDate +
+                ", lastModifiedDate=" + lastModifiedDate +
                 ", text='" + text + '\'' +
                 ", authorId='" + authorId + '\'' +
                 '}';

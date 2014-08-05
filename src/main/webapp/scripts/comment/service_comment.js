@@ -2,8 +2,9 @@
 
 entropyApp.factory('Comment', ['$resource',
     function ($resource) {
-        return $resource('app/rest/comments/:id', {}, {
+        return $resource('app/rest/comments/:id/:action', {}, {
             'query': { method: 'GET', isArray: true},
-            'get': { method: 'GET'}
+            'get': { method: 'GET'},
+            'vote': { method: 'GET', params: {action: 'vote'}}
         });
     }]);

@@ -1,14 +1,12 @@
 package org.migor.entropy.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
-import org.migor.entropy.domain.util.CustomLocalDateSerializer;
+import org.joda.time.DateTime;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -40,19 +38,16 @@ public class Thread implements Serializable {
     @Column(name = "description")
     private String description;
 
+    @CreatedDate
     @NotNull
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonSerialize(using = CustomLocalDateSerializer.class)
-    @Column(name = "created")
-    private LocalDate created;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @Column(name = "created_date")
+    private DateTime createdDate = DateTime.now();
 
-    @NotNull
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonSerialize(using = CustomLocalDateSerializer.class)
-    @Column(name = "modified")
-    private LocalDate modified;
+    @LastModifiedDate
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @Column(name = "last_modified_date")
+    private DateTime lastModifiedDate = DateTime.now();
 
     @Column(name = "comment_count")
     private int commentCount;
@@ -81,8 +76,8 @@ public class Thread implements Serializable {
     /**
      * Submissions score: likes - dislikes via reddit
      */
-    @Column(name = "score")
-    private Integer score;
+//    @Column(name = "score")
+//    private Integer score;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
@@ -110,22 +105,6 @@ public class Thread implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public LocalDate getCreated() {
-        return created;
-    }
-
-    public void setCreated(LocalDate created) {
-        this.created = created;
-    }
-
-    public LocalDate getModified() {
-        return modified;
-    }
-
-    public void setModified(LocalDate modified) {
-        this.modified = modified;
     }
 
     public int getCommentCount() {
@@ -158,14 +137,6 @@ public class Thread implements Serializable {
 
     public void setDislikes(int dislikes) {
         this.dislikes = dislikes;
-    }
-
-    public Integer getScore() {
-        return score;
-    }
-
-    public void setScore(Integer score) {
-        this.score = score;
     }
 
     public String getDescription() {
@@ -207,22 +178,14 @@ public class Thread implements Serializable {
         return (int) (id ^ (id >>> 32));
     }
 
-    @PrePersist
-    public void prePersist() {
-        if (created == null) {
-            created = new LocalDate();
-        }
-        modified = new LocalDate();
-    }
-
     @Override
     public String toString() {
         return "Thread{" +
                 "id=" + id +
                 ", uri='" + uri + '\'' +
                 ", title='" + title + '\'' +
-                ", created=" + created +
-                ", modified=" + modified +
+                ", createdDate=" + createdDate +
+                ", lastModifiedDate=" + lastModifiedDate +
                 ", commentCount=" + commentCount +
                 '}';
     }

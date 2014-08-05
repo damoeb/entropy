@@ -153,23 +153,28 @@
                 <constraints nullable="false"/>
             </column>
             <column name="comment_count" type="INT(10)"/>
-            <column name="created" type="date">
-                <constraints nullable="false"/>
+            <column name="created_date" type="timestamp" defaultValue="${now}">
+            <constraints nullable="false"/>
             </column>
-            <column name="modified" type="date">
-                <constraints nullable="false"/>
-            </column>
+            <column name="last_modified_date" type="timestamp"/>
             <column name="status" type="VARCHAR(20)"/>
             <column name="title" type="VARCHAR(128)"/>
             <column name="uri" type="VARCHAR(512)"/>
             <column name="description" type="VARCHAR(512)"/>
             <column name="likes" type="INT(10)"/>
             <column name="dislikes" type="INT(10)"/>
-            <column name="score" type="INT(10)"/>
             <column name="flag" type="boolean"/>
             <column name="cleared" type="boolean"/>
         </createTable>
+
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/threads.csv"
+                  separator=";"
+                  tableName="T_THREAD">
+        </loadData>
+
     </changeSet>
+
     <changeSet author="damoeb (generated)" id="1405721119963-2">
         <createTable tableName="T_COMMENT">
             <column name="id" type="BIGINT(19)">
@@ -178,30 +183,39 @@
             <column name="author_id" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="created" type="date">
-                <constraints nullable="false"/>
+            <column name="created_date" type="timestamp" defaultValue="${now}">
+            <constraints nullable="false"/>
             </column>
+            <column name="last_modified_date" type="timestamp"/>
+
             <column name="level" type="INT(10)"/>
             <column name="dislikes" type="INT(10)"/>
             <column name="likes" type="INT(10)"/>
             <column name="complains" type="INT(10)"/>
-            <column name="status" type="VARCHAR(20)"/>
-
-            <column name="modified" type="date">
+            <column name="status" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
             <column name="parent_id" type="BIGINT(19)"/>
             <column name="text" type="VARCHAR(2048)">
                 <constraints nullable="false"/>
             </column>
-            <column name="subject" type="VARCHAR(128)">
-                <constraints nullable="false"/>
+            <column name="subject" type="VARCHAR(256)">
+            <constraints nullable="false"/>
             </column>
+            <column name="display_name" type="VARCHAR(128)"/>
             <column name="thread_id" type="BIGINT(19)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/comments.csv"
+                  separator=";"
+                  tableName="T_COMMENT">
+        </loadData>
+
     </changeSet>
+
     <changeSet author="damoeb (generated)" id="1405721119963-3">
         <addColumn tableName="T_USER">
             <column name="host_id" type="VARCHAR(255)"/>

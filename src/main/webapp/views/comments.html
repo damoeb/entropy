@@ -69,6 +69,7 @@
         </ul>
 
         <script type="text/ng-template" id="comment_renderer.html">
+            <a name="comment-{{comment.id}}"></a>
             <div>
                 <a href="#/user/{{comment.authorId}}">{{comment.authorId}}</a>
                 <span>{{comment.created}}</span>
@@ -77,22 +78,26 @@
                 {{comment.text}}
             </div>
             <div>
-                <button type="button" class="btn btn-default" ng-click="reply(comment)">
-                    <span class="glyphicon glyphicon-share-alt"></span>
+                <button type="button" class="btn btn-sm" ng-click="reply(comment)">
+                <span class="glyphicon glyphicon-share-alt"></span>
                     Reply
                 </button>
-                <button type="button" class="btn btn-default">
-                    <span class="glyphicon glyphicon-arrow-up"></span>
-                    Parent
+                <button type="button" class="btn btn-sm" ng-click="voteUp(comment)">
+                <span class="glyphicon glyphicon-arrow-up"></span>
                 </button>
-                <button type="button" class="btn btn-default">
-                    <span class="glyphicon glyphicon-flag"></span>
-                    Flag
+                <button type="button" class="btn btn-sm" ng-click="voteDown(comment)">
+                    <span class="glyphicon glyphicon-arrow-down"></span>
+                </button>
+                <a class="btn btn-sm" href="#comment-{{comment.id}}">
+                    Parent
+                </a>
+                <button type="button" class="btn btn-sm" ng-click="flag(comment)">
+                <span class="glyphicon glyphicon-flag"></span>
                 </button>
             </div>
 
-            <ul class="list-group">
-                <li class="list-group-item" ng-repeat="comment in comment.subcomments"
+            <ul class="list-group" ng-hide="comment.subcomments.length == 0">
+            <li class="list-group-item" ng-repeat="comment in comment.subcomments"
                     ng-include="'comment_renderer.html'"></li>
             </ul>
 
