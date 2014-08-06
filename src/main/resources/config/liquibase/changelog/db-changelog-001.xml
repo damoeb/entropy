@@ -154,7 +154,7 @@
             </column>
             <column name="comment_count" type="INT(10)"/>
             <column name="created_date" type="timestamp" defaultValue="${now}">
-            <constraints nullable="false"/>
+                <constraints nullable="false"/>
             </column>
             <column name="last_modified_date" type="timestamp"/>
             <column name="status" type="VARCHAR(20)"/>
@@ -184,13 +184,14 @@
                 <constraints nullable="false"/>
             </column>
             <column name="created_date" type="timestamp" defaultValue="${now}">
-            <constraints nullable="false"/>
+                <constraints nullable="false"/>
             </column>
             <column name="last_modified_date" type="timestamp"/>
 
             <column name="level" type="INT(10)"/>
             <column name="dislikes" type="INT(10)"/>
             <column name="likes" type="INT(10)"/>
+            <column name="score" type="INT(10)"/>
             <column name="complains" type="INT(10)"/>
             <column name="status" type="VARCHAR(20)">
                 <constraints nullable="false"/>
@@ -200,7 +201,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="subject" type="VARCHAR(256)">
-            <constraints nullable="false"/>
+                <constraints nullable="false"/>
             </column>
             <column name="display_name" type="VARCHAR(128)"/>
             <column name="thread_id" type="BIGINT(19)">

@@ -139,3 +139,7 @@ ul#strength {
 .post:hover a {
     color: #428bca;
 }
+
+.post-slim {
+    padding: 10px;
+}

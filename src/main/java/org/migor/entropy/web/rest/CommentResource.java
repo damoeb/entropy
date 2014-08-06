@@ -112,7 +112,7 @@ public class CommentResource {
     }
 
     /**
-     * GET  /rest/comments/:id -> get the "id" comment.
+     * GET  /rest/comments/:id/flag -> flag the "id" comment.
      */
     @RequestMapping(value = "/rest/comments/{id}/flag",
             method = RequestMethod.GET,
@@ -125,4 +125,46 @@ public class CommentResource {
     }
 
 
+    /**
+     * GET  /rest/comments/:id/like -> like the "id" comment.
+     */
+    @RequestMapping(value = "/rest/comments/{id}/like",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Comment> like(@PathVariable Long id, HttpServletResponse response) {
+        log.debug("REST request to like Comment : {}", id);
+//        todo implement
+        Comment comment = commentRepository.findOne(id);
+        if (comment == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        comment.setLikes(comment.getLikes() + 1);
+        comment.setScore(comment.getLikes() - comment.getDislikes());
+        commentRepository.save(comment);
+
+        return new ResponseEntity<>(comment, HttpStatus.OK);
+    }
+
+
+    /**
+     * GET  /rest/comments/:id/dislike -> dislike the "id" comment.
+     */
+    @RequestMapping(value = "/rest/comments/{id}/dislike",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Comment> dislike(@PathVariable Long id, HttpServletResponse response) {
+        log.debug("REST request to dislike Comment : {}", id);
+
+        Comment comment = commentRepository.findOne(id);
+        if (comment == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        comment.setDislikes(comment.getDislikes() + 1);
+        comment.setScore(comment.getLikes() - comment.getDislikes());
+        commentRepository.save(comment);
+
+        return new ResponseEntity<>(comment, HttpStatus.OK);
+    }
 }

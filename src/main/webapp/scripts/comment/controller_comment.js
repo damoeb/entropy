@@ -72,17 +72,22 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
             });
         };
 
-        $scope.voteUp = function (comment) {
+        $scope.like = function (comment) {
             comment.likes++;
-            Comment.vote({id: comment.id, up: true}, function () {
-                $log.log('saved');
+            Comment.like({id: comment.id}, function (updated) {
+                $log.log(updated);
+                comment.like = updated.like;
             });
         };
 
-        $scope.voteDown = function (comment) {
-            comment.dislikes++;
-            Comment.vote({id: comment.id, up: false}, function () {
-                $log.log('saved');
+        $scope.fullComment = function (comment) {
+            return comment.score >= 0;
+        };
+
+        $scope.dislike = function (comment) {
+            Comment.dislike({id: comment.id, up: false}, function (updated) {
+                $log.log(updated);
+                comment.dislikes = updated.dislikes;
             });
         };
 

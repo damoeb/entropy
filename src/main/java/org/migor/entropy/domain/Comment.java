@@ -88,6 +88,7 @@ public class Comment implements Serializable {
     @Column(name = "dislikes")
     private int dislikes;
 
+    @JsonIgnore
     @Column(name = "complains")
     private int complains;
 
@@ -99,11 +100,10 @@ public class Comment implements Serializable {
     /**
      * Submissions score: likes - dislikes via reddit
      */
-//    @Column(name = "score")
-//    private int score;
+    @Column(name = "score")
+    private int score;
 
-
-//    todo 'voters'
+    //    todo 'voters'
 //    @ManyToM/*any
 //    @JoinTable(name = "comments2voters")
 //    private */Set<User> voters;
@@ -241,6 +241,14 @@ public class Comment implements Serializable {
 
     public void setLastModifiedDate(DateTime lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 
     @Override
