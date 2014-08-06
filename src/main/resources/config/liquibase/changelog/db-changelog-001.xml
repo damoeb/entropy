@@ -208,11 +208,11 @@
             </column>
         </createTable>
 
-        <loadData encoding="UTF-8"
-                  file="config/liquibase/comments.csv"
-                  separator=";"
-                  tableName="T_COMMENT">
-        </loadData>
+        <!--<loadData encoding="UTF-8"-->
+        <!--file="config/liquibase/comments.csv"-->
+        <!--separator=";"-->
+        <!--tableName="T_COMMENT">-->
+        <!--</loadData>-->
 
     </changeSet>
 

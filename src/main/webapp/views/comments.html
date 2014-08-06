@@ -2,47 +2,6 @@
 
     <h2>{{thread.title}}</h2>
 
-    <!--<button class="btn btn-primary btn-md" data-toggle="modal" data-target="#saveCommentModal" ng-click="clear()">-->
-    <!--<span class="glyphicon glyphicon-flash"></span> Create a new Comment-->
-    <!--</button>-->
-    <!--<div class="modal fade" id="saveCommentModal" tabindex="-1" role="dialog" aria-labelledby="myCommentLabel"-->
-    <!--aria-hidden="true">-->
-    <!--<div class="modal-dialog">-->
-    <!--<div class="modal-content">-->
-    <!--<form name="form" role="form" novalidate-->
-    <!--class="ng-scope ng-invalid ng-invalid-required ng-dirty ng-valid-minlength"-->
-    <!--ng-submit="create()">-->
-
-    <!--<div class="modal-header">-->
-    <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true"-->
-    <!--ng-click="clear()">&times;</button>-->
-    <!--<h4 class="modal-title" id="myCommentLabel">Create or edit a Comment</h4>-->
-    <!--</div>-->
-    <!--<div class="modal-body">-->
-    <!--<div class="form-group">-->
-    <!--<label>ID</label>-->
-    <!--<input type="text" class="form-control" name="id"-->
-    <!--ng-model="comment.id" readonly>-->
-    <!--</div>-->
-
-    <!--<div class="form-group">-->
-    <!--<label>Text</label>-->
-    <!--<textarea class="form-control" name="test"-->
-    <!--ng-model="comment.text" ng-minlength=1 ng-maxlength=2048 required></textarea>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div class="modal-footer">-->
-    <!--<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">-->
-    <!--<span class="glyphicon glyphicon-ban-circle"></span> Cancel-->
-    <!--</button>-->
-    <!--<button type="submit" ng-disabled="form.$invalid" class="btn btn-primary">-->
-    <!--<span class="glyphicon glyphicon-save"></span> Save-->
-    <!--</button>-->
-    <!--</div>-->
-    <!--</form>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--</div>-->
     <div class="row">
         <form name="form" role="form" novalidate ng-submit="create()">
             <div><input class="form-control" ng-model="comment.subject" ng-minlength=1 ng-maxlength=148 required/></div>
@@ -69,45 +28,52 @@
         </ul>
 
         <script type="text/ng-template" id="comment_renderer.html">
-            <a name="comment-{{comment.id}}"></a>
-            <div>
-                <a href="#/user/{{comment.authorId}}">{{comment.authorId}}</a>
-                <span>{{comment.created}}</span>
-            </div>
-            <div>
-                {{comment.text}}
-            </div>
-            <div>
-                <button type="button" class="btn btn-sm" ng-click="reply(comment)">
-                <span class="glyphicon glyphicon-share-alt"></span>
-                    Reply
-                </button>
-                <button type="button" class="btn btn-sm" ng-click="voteUp(comment)">
-                <span class="glyphicon glyphicon-arrow-up"></span>
-                </button>
-                <button type="button" class="btn btn-sm" ng-click="voteDown(comment)">
-                    <span class="glyphicon glyphicon-arrow-down"></span>
-                </button>
-                <a class="btn btn-sm" href="#comment-{{comment.id}}">
-                    Parent
-                </a>
-                <button type="button" class="btn btn-sm" ng-click="flag(comment)">
-                <span class="glyphicon glyphicon-flag"></span>
-                </button>
+
+            <div class="post">
+                <div><strong>{{comment.subject}}</strong></div>
+                <span style="white-space: pre-line">{{comment.text}}</span> -- <a href="/"> {{comment.displayName}} </a>
+                <span style="color: grey" title="{{comment.createdDate | dateString }}">{{comment.createdDate | fromNow }}</span>
+
+                <div style="height:4px" ng-show="comment.dislikes > 0 || comment.likes > 0">
+                    <div style="color: green; width: {{comment.dislikes}}px"
+                         title="{{comment.dislikes}} dislikes"></div>
+                    <div style="color: red; width: {{comment.likes}}px" title="{{comment.likes}} likes"></div>
+                </div>
+
+                <div class="menu">
+                    <a class="voteUp" href="javascript:void(0)" ng-click="voteUp(comment)">
+                        <span class="glyphicon glyphicon-thumbs-up"></span>
+                    </a>
+                    <a class="voteDown" href="javascript:void(0)" ng-click="voteDown(comment)">
+                        <span class="glyphicon glyphicon-thumbs-down"></span>
+                    </a>
+                    <a href="javascript:void(0)" ng-click="reply(comment)">
+                        Reply
+                    </a>
+                    <a href="javascript:void(0)">
+                        Parent
+                    </a>
+                    <a href="#/thread/{{comment.threadId}}/{{comment.id}}" title="Permalink">
+                        <span class="glyphicon glyphicon-link"></span>
+                    </a>
+                    <a class="flag" href="javascript:void(0)" ng-click="flag(comment)" title="Report">
+                        <span class="glyphicon glyphicon-flag"></span>
+                    </a>
+                </div>
+
             </div>
 
-            <ul class="list-group" ng-hide="comment.subcomments.length == 0">
-            <li class="list-group-item" ng-repeat="comment in comment.subcomments"
+            <dl ng-hide="comment.subcomments.length == 0" style="margin-left: 10px; border-left: 1px solid #dedede">
+                <dd ng-repeat="comment in comment.subcomments"
                     ng-include="'comment_renderer.html'"></li>
-            </ul>
+            </dl>
 
         </script>
 
-        <div>
-
-            <ul class="list-group">
-                <li class="list-group-item" ng-repeat="comment in approved" ng-include="'comment_renderer.html'"></li>
-            </ul>
+        <div style="margin-top: 15px">
+            <dl>
+                <dd ng-repeat="comment in approved" ng-include="'comment_renderer.html'"></dd>
+            </dl>
 
         </div>
     </div>

@@ -5,6 +5,17 @@
 var entropyApp = angular.module('entropyApp', ['http-auth-interceptor', 'tmh.dynamicLocale',
     'ngResource', 'ngRoute', 'ngCookies', 'entropyAppUtils', 'pascalprecht.translate', 'truncate']);
 
+
+angular.module('entropyApp').filter('fromNow',function () {
+    return function (dateString) {
+        return moment(dateString).fromNow()
+    };
+}).filter('dateString', function () {
+        return function (dateString) {
+            return new Date(dateString)
+        };
+    });
+
 entropyApp
     .config(['$routeProvider', '$httpProvider', '$translateProvider',  'tmhDynamicLocaleProvider', 'USER_ROLES',
         function ($routeProvider, $httpProvider, $translateProvider, tmhDynamicLocaleProvider, USER_ROLES) {

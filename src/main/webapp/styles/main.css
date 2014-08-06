@@ -100,3 +100,42 @@ ul#strength {
     width:20px;
 }
 /* end Password strength bar style */
+
+.post {
+    padding: 10px;
+}
+
+.post .menu {
+    margin-top: 5px;
+    border-top: 1px solid #efefef;
+    padding-top: 5px;
+    color: #efefef;
+}
+
+.post .menu a {
+    margin-right: 5px;
+    color: #ccc;
+}
+
+.post:hover {
+    background: none repeat scroll 0 0 #ffffff;
+    -moz-box-shadow: 1px 1px 2px 1px #ccc;
+    -webkit-box-shadow: 1px 1px 2px 1px #ccc;
+    box-shadow: 1px 1px 2px 1px #ccc;
+}
+
+.post:hover .flag {
+    color: black;
+}
+
+.post:hover .voteUp {
+    color: green;
+}
+
+.post:hover .voteDown {
+    color: red;
+}
+
+.post:hover a {
+    color: #428bca;
+}

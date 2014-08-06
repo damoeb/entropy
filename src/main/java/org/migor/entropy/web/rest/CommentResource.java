@@ -44,6 +44,7 @@ public class CommentResource {
     public void create(@RequestBody Comment comment) {
         log.debug("REST request to save Comment : {}", comment);
         comment.setAuthorId(SecurityUtils.getCurrentLogin());
+        comment.setDisplayName("Anonymous");
         comment.setStatus(CommentStatus.APPROVED);
 
         Thread thread = threadRepository.findOne(comment.getThreadId());
