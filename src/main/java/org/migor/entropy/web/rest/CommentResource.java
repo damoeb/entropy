@@ -110,4 +110,19 @@ public class CommentResource {
         log.debug("REST request to delete Comment : {}", id);
         commentRepository.delete(id);
     }
+
+    /**
+     * GET  /rest/comments/:id -> get the "id" comment.
+     */
+    @RequestMapping(value = "/rest/comments/{id}/flag",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Comment> flag(@PathVariable Long id, HttpServletResponse response) {
+        log.debug("REST request to flag Comment : {}", id);
+//        todo implement
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
 }

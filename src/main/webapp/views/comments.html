@@ -30,10 +30,13 @@
         <script type="text/ng-template" id="comment_renderer.html">
 
             <div class="post">
-                <div><strong>{{comment.subject}}</strong></div>
-                <span style="white-space: pre-line">{{comment.text}}</span> -- <a href="/"> {{comment.displayName}} </a>
-                <span style="color: grey" title="{{comment.createdDate | dateString }}">{{comment.createdDate | fromNow }}</span>
-
+                <div><strong><a href="javascript:void(0)" ng-show="{{comment.parentId != null}}">Re:</a>
+                    {{comment.subject}}</strong></div>
+                <div>
+                    <span style="white-space: pre-line">{{comment.text}}</span> -- <a href="/">
+                    {{comment.displayName}} </a>
+                    <span style="color: grey" title="{{comment.createdDate | dateString }}">{{comment.createdDate | fromNow }}</span>
+                </div>
                 <div style="height:4px" ng-show="comment.dislikes > 0 || comment.likes > 0">
                     <div style="color: green; width: {{comment.dislikes}}px"
                          title="{{comment.dislikes}} dislikes"></div>
@@ -56,16 +59,15 @@
                     <a href="#/thread/{{comment.threadId}}/{{comment.id}}" title="Permalink">
                         <span class="glyphicon glyphicon-link"></span>
                     </a>
-                    <a class="flag" href="javascript:void(0)" ng-click="flag(comment)" title="Report">
-                        <span class="glyphicon glyphicon-flag"></span>
+                    <a class="flag pull-right" href="javascript:void(0)" ng-click="flag(comment)" title="Report">
+                    <span class="glyphicon glyphicon-flag"></span>
                     </a>
                 </div>
 
             </div>
 
             <dl ng-hide="comment.subcomments.length == 0" style="margin-left: 10px; border-left: 1px solid #dedede">
-                <dd ng-repeat="comment in comment.subcomments"
-                    ng-include="'comment_renderer.html'"></li>
+                <dd ng-repeat="comment in comment.subcomments" ng-include="'comment_renderer.html'"></dd>
             </dl>
 
         </script>

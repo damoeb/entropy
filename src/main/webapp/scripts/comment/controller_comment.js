@@ -67,7 +67,9 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
         };
 
         $scope.flag = function (comment) {
-
+            Comment.flag({id: comment.id}, function () {
+                $log.log('reported');
+            });
         };
 
         $scope.voteUp = function (comment) {
