@@ -13,3 +13,25 @@
 - fuzzy feedback aufgrund des bandwaggon effects
 
 - channels: have moderators, there are several levels of moderators
+
+
+LOCK Table: one post per minute
+VOTES Table: one vote per comment
+REPORT Table: report of a comment X by user Y on reason Z
+BAN Table: temporary bans of IPs, Emails, Email Provider
+with Length (Dauer) and Reason
+
+
+Jeder User führt den Gesamtstatus aller likes/dislikes auf dessen Kommentare. Dasselbe für flags
+
+Punish Reposts and Spam
+
+Bump: Thread will be bumped to top of page
+
+Premium Users may bypass ISP/IP range bans
+
+iff score < 5: display 1 hidden without subject
+
+Sock puppetry: only one login per ip
+
+Use Browser Signature to identify Browser
