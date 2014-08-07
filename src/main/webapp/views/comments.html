@@ -20,21 +20,21 @@
     </div>
     <div class="row">
         <ul class="nav nav-tabs" role="tablist">
-            <li class="active"><a href="#">Discussion</a></li>
-            <li><a href="#">Community</a></li>
-            <li><a href="#">My</a></li>
-            <li><a href="#">Pending <span class="badge">42</span></a></li>
-            <li><a href="#">Rejected</a></li>
+            <li class="active"><a href="javascript:void(0)">Discussion</a></li>
+            <li><a href="javascript:void(0)">Community</a></li>
+            <li><a href="javascript:void(0)">My</a></li>
+            <li><a href="javascript:void(0)">Pending <span class="badge">42</span></a></li>
+            <li><a href="javascript:void(0)">Rejected</a></li>
         </ul>
 
         <script type="text/ng-template" id="likes_renderer.html">
             <div ng-show="comment.dislikes > 0 || comment.likes > 0">
                 <div ng-show="comment.dislikes > 0" style="color: red; display: inline-block">
                     {{comment.dislikes}}
-                    <div style="height:5px; background-color: red; width: {{3 * comment.dislikes}}px; display: inline-block; margin: 2px 0 2px 0"></div>
+                    <div style="height:5px; background-color: red; width: {{3 * comment.dislikes}}px; max-width: 120px; display: inline-block; margin: 2px 0 2px 0"></div>
                 </div>
                 <div ng-show="comment.likes > 0" style="color: green; display: inline-block">
-                    <div style="height:5px; background-color: green; width: {{3 * comment.likes}}px; display: inline-block; margin: 2px 0 2px 0"></div>
+                    <div style="height:5px; background-color: green; width: {{3 * comment.likes}}px; max-width: 120px; display: inline-block; margin: 2px 0 2px 0"></div>
                     {{comment.likes}}
                 </div>
             </div>
@@ -60,6 +60,8 @@
         <script type="text/ng-template" id="comment_renderer.html">
 
             <div class="post">
+                <a name="{{comment.id }}"></a>
+
                 <div><strong><a href="javascript:void(0)" ng-show="{{comment.parentId != null}}">Re:</a>
                     {{comment.subject}}</strong></div>
                 <div>
@@ -100,6 +102,7 @@
         <script type="text/ng-template" id="comment_slim_renderer.html">
 
             <div class="post-slim">
+                <a name="{{comment.id }}"></a>
                 <a href="javascript:void(0)" ng-show="{{comment.parentId != null}}">Re:</a>
                 {{comment.subject}} -- <a href="/">
                 {{comment.displayName}} </a>
