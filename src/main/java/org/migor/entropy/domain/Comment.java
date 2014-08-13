@@ -89,8 +89,8 @@ public class Comment implements Serializable {
     private int dislikes;
 
     @JsonIgnore
-    @Column(name = "complains")
-    private int complains;
+    @Column(name = "report_level")
+    private int reportLevel;
 
     @NotNull
     @Column(name = "status")
@@ -187,12 +187,12 @@ public class Comment implements Serializable {
         this.dislikes = dislikes;
     }
 
-    public int getComplains() {
-        return complains;
+    public int getReportLevel() {
+        return reportLevel;
     }
 
-    public void setComplains(int complains) {
-        this.complains = complains;
+    public void setReportLevel(int reportLevel) {
+        this.reportLevel = reportLevel;
     }
 
     public CommentStatus getStatus() {

@@ -40,5 +40,25 @@
     <cache name="org.migor.entropy.domain.PersistentAuditEvent"
            timeToLiveSeconds="3600">
     </cache>
+
+    <cache name="org.migor.entropy.domain.Thread"
+           timeToLiveSeconds="3600">
+    </cache>
+    <cache name="org.migor.entropy.domain.Ban"
+           timeToLiveSeconds="3600">
+    </cache>
+    <cache name="org.migor.entropy.domain.Report"
+           timeToLiveSeconds="3600">
+    </cache>
+    <cache name="org.migor.entropy.domain.Vote"
+           timeToLiveSeconds="3600">
+    </cache>
+    <cache name="org.migor.entropy.domain.Comment"
+           timeToLiveSeconds="3600">
+    </cache>
+    <cache name="org.migor.entropy.domain.Lock"
+           maxElementsInMemory="3000"
+           timeToLiveSeconds="3600">
+    </cache>
 </ehcache>
 

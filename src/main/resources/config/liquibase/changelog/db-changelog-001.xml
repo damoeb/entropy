@@ -192,7 +192,7 @@
             <column name="dislikes" type="INT(10)"/>
             <column name="likes" type="INT(10)"/>
             <column name="score" type="INT(10)"/>
-            <column name="complains" type="INT(10)"/>
+            <column name="report_level" type="INT(10)"/>
             <column name="status" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
@@ -312,4 +312,82 @@
     <changeSet author="damoeb (generated)" id="1405721119963-28">
         <modifyDataType columnName="event_type" newDataType="varchar(255)" tableName="T_PERSISTENT_AUDIT_EVENT"/>
     </changeSet>
+
+    <changeSet author="damoeb (generated)" id="1405721119963-29">
+        <createTable tableName="T_REPORT">
+            <column name="id" type="BIGINT(19)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="client_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reason" type="VARCHAR(512)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="comment_id" type="BIGINT(19)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp" defaultValue="${now}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="damoeb (generated)" id="1405721119963-30">
+        <createTable tableName="T_VOTE">
+            <column name="id" type="BIGINT(19)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="client_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="comment_id" type="BIGINT(19)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp" defaultValue="${now}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="damoeb (generated)" id="1405721119963-31">
+        <createTable tableName="T_LOCK">
+            <column name="id" type="BIGINT(19)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="client_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="action" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="comment_id" type="BIGINT(19)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expiration" type="timestamp" defaultValue="${now}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="damoeb (generated)" id="1405721119963-32">
+        <createTable tableName="T_BAN">
+            <column name="id" type="BIGINT(19)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expression" type="VARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expiration" type="timestamp" defaultValue="${now}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>

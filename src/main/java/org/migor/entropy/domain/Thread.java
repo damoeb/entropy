@@ -12,7 +12,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Set;
 
 /**
  * A Thread.
@@ -53,13 +52,13 @@ public class Thread implements Serializable {
     private int commentCount;
 
     @JsonIgnore
-    @ManyToMany
-    @JoinTable(
-            name = "T_THREAD_MODERATOR",
-            joinColumns = {@JoinColumn(name = "thread_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "login", referencedColumnName = "login")})
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<User> moderators;
+    @ManyToOne
+    @JoinColumn(name = "creator_id", insertable = false, updatable = false)
+    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+    private User creator;
+
+    @Column(name = "creator_id")
+    private String creatorId;
 
     /**
      * Sum of all comment likes plus thread likes
@@ -115,12 +114,36 @@ public class Thread implements Serializable {
         this.commentCount = commentCount;
     }
 
-    public Set<User> getModerators() {
-        return moderators;
+    public String getCreatorId() {
+        return creatorId;
     }
 
-    public void setModerators(Set<User> moderators) {
-        this.moderators = moderators;
+    public void setCreatorId(String creatorId) {
+        this.creatorId = creatorId;
+    }
+
+    public User getCreator() {
+        return creator;
+    }
+
+    public void setCreator(User creator) {
+        this.creator = creator;
+    }
+
+    public DateTime getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(DateTime lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public DateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(DateTime createdDate) {
+        this.createdDate = createdDate;
     }
 
     public int getLikes() {
