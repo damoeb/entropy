@@ -158,14 +158,19 @@
             </column>
             <column name="last_modified_date" type="timestamp"/>
             <column name="status" type="VARCHAR(20)"/>
+            <column name="creator_id" type="VARCHAR(128)"/>
             <column name="title" type="VARCHAR(128)"/>
             <column name="uri" type="VARCHAR(512)"/>
             <column name="description" type="VARCHAR(512)"/>
             <column name="likes" type="INT(10)"/>
             <column name="dislikes" type="INT(10)"/>
-            <column name="flag" type="boolean"/>
-            <column name="cleared" type="boolean"/>
         </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="creator_id"
+                                 baseTableName="T_THREAD"
+                                 constraintName="fk_creator_id"
+                                 referencedColumnNames="login"
+                                 referencedTableName="T_USER"/>
 
         <loadData encoding="UTF-8"
                   file="config/liquibase/threads.csv"

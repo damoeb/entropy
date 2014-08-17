@@ -28,7 +28,7 @@
     <cache name="org.migor.entropy.domain.User.authorities"
            timeToLiveSeconds="3600">
     </cache>
-   
+
     <cache name="org.migor.entropy.domain.PersistentToken"
            timeToLiveSeconds="3600">
     </cache>
@@ -57,7 +57,6 @@
            timeToLiveSeconds="3600">
     </cache>
     <cache name="org.migor.entropy.domain.Lock"
-           maxElementsInMemory="3000"
            timeToLiveSeconds="3600">
     </cache>
 </ehcache>

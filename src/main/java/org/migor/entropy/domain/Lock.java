@@ -24,9 +24,8 @@ public class Lock extends AbstractAuditingEntity implements Serializable {
     private long id;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "action")
-    private LockableAction action;
+    @Column(name = "group_id")
+    private String groupId;
 
     /**
      * browser signature or login
@@ -49,12 +48,12 @@ public class Lock extends AbstractAuditingEntity implements Serializable {
         this.id = id;
     }
 
-    public LockableAction getAction() {
-        return action;
+    public String getGroupId() {
+        return groupId;
     }
 
-    public void setAction(LockableAction action) {
-        this.action = action;
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
     public String getClientId() {
@@ -100,7 +99,6 @@ public class Lock extends AbstractAuditingEntity implements Serializable {
     public String toString() {
         return "Lock{" +
                 "id=" + id +
-                ", action=" + action +
                 ", clientId='" + clientId + '\'' +
                 ", expiration=" + expiration +
                 '}';

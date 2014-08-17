@@ -70,8 +70,8 @@
         }
     },
     "main": {
-        "title": "Welcome, Java Hipster!",
-        "subtitle": "This is your homepage",
+        "title": "Welcome to entropy!",
+        "subtitle": "Honeypot edition",
         "logged": {
             "message": "You are logged in as user \"{{username}}\"."
         },

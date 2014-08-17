@@ -17,13 +17,13 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
 
 
         $scope.refresh();
-        $scope.comment = {};
+        $scope.draft = {};
 
         $scope.create = function () {
 
-            $scope.comment.threadId = threadId;
+            $scope.draft.threadId = threadId;
 
-            Comment.save($scope.comment,
+            Comment.save($scope.draft,
                 function () {
 //                    $scope.comments = Comment.query();
 //                    $('#saveCommentModal').modal('hide');
@@ -63,7 +63,7 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
 //        };
 
         $scope.reply = function (comment) {
-            $scope.comment.parentId = comment.id;
+            $scope.draft.parentId = comment.id;
         };
 
         $scope.flag = function (comment) {
@@ -84,6 +84,10 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
             return comment.score >= 0;
         };
 
+        $scope.cancelRelyTo = function () {
+            $scope.draft.parentId = null;
+        };
+
         $scope.dislike = function (comment) {
             Comment.dislike({id: comment.id, up: false}, function (updated) {
                 $log.log(updated);
@@ -99,6 +103,6 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
 //        };
 
         $scope.clear = function () {
-            $scope.comment = {id: null, text: null};
+            $scope.draft = {id: null, text: null};
         };
     }]);

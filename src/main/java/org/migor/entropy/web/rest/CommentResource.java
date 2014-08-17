@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * REST controller for managing Comment.
@@ -41,11 +42,12 @@ public class CommentResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @Once(group = "post", every = 3, timeUnit = TimeUnit.SECONDS)
     public void create(@RequestBody Comment comment) {
         log.debug("REST request to save Comment : {}", comment);
         comment.setAuthorId(SecurityUtils.getCurrentLogin());
         comment.setDisplayName("Anonymous");
-        comment.setStatus(CommentStatus.APPROVED);
+        comment.setStatus(CommentStatus.APPROVED); // todo default status depending on user trust
 
         Thread thread = threadRepository.findOne(comment.getThreadId());
 
@@ -132,8 +134,10 @@ public class CommentResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @Once(group = "vote", every = 3, timeUnit = TimeUnit.SECONDS)
     public ResponseEntity<Comment> like(@PathVariable Long id, HttpServletResponse response) {
         log.debug("REST request to like Comment : {}", id);
+
 //        todo implement
         Comment comment = commentRepository.findOne(id);
         if (comment == null) {
@@ -154,6 +158,7 @@ public class CommentResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @Once(group = "vote", every = 3, timeUnit = TimeUnit.SECONDS)
     public ResponseEntity<Comment> dislike(@PathVariable Long id, HttpServletResponse response) {
         log.debug("REST request to dislike Comment : {}", id);
 
