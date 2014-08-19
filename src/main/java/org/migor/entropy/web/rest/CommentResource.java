@@ -45,7 +45,7 @@ public class CommentResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    @Once(group = "post", every = 3, timeUnit = TimeUnit.SECONDS)
+    @Once(group = "post", every = 30, timeUnit = TimeUnit.SECONDS)
     public void create(@RequestBody Comment comment) {
         log.debug("REST request to save Comment : {}", comment);
         comment.setAuthorId(SecurityUtils.getCurrentLogin());
@@ -123,6 +123,7 @@ public class CommentResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @Once(group = "report", every = 30, timeUnit = TimeUnit.SECONDS)
     public ResponseEntity<Comment> flag(@PathVariable Long id, @RequestBody Report report) {
         log.debug("REST request to flag Comment : {}", id);
 
@@ -151,7 +152,7 @@ public class CommentResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    @Once(group = "vote", every = 3, timeUnit = TimeUnit.SECONDS)
+    @Once(group = "vote", every = 30, timeUnit = TimeUnit.SECONDS)
     public ResponseEntity<Comment> like(@PathVariable Long id, HttpServletResponse response) {
         log.debug("REST request to like Comment : {}", id);
 
@@ -175,7 +176,7 @@ public class CommentResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    @Once(group = "vote", every = 3, timeUnit = TimeUnit.SECONDS)
+    @Once(group = "vote", every = 30, timeUnit = TimeUnit.SECONDS)
     public ResponseEntity<Comment> dislike(@PathVariable Long id, HttpServletResponse response) {
         log.debug("REST request to dislike Comment : {}", id);
 

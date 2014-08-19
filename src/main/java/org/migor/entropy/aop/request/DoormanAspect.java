@@ -1,16 +1,18 @@
 package org.migor.entropy.aop.request;
 
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.migor.entropy.service.DoormanService;
+import org.migor.entropy.web.rest.Once;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
 import javax.inject.Inject;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
@@ -36,21 +38,21 @@ public class DoormanAspect {
 
         try {
 
-            Signature signature = joinPoint.getSignature();
+            MethodSignature signature = (MethodSignature) joinPoint.getSignature();
 
             Class[] paramTypes = new Class[joinPoint.getArgs().length];
             for (int i = 0; i < joinPoint.getArgs().length; i++) {
                 paramTypes[i] = joinPoint.getArgs()[i].getClass();
             }
 
-//            Method method = signature.getDeclaringType().getDeclaredMethod(signature.getName(), paramTypes);
-//            Once once = method.getAnnotation(Once.class);
-//
-//            if(!doormanService.knock(once)) {
-//                throw new IllegalAccessException("Request blocked temporarily");
-//            }
-//
-//            doormanService.enter(once);
+            Method method = signature.getMethod();
+            Once once = method.getAnnotation(Once.class);
+
+            if (!doormanService.knock(once)) {
+                throw new IllegalAccessException("Request blocked temporarily");
+            }
+
+            doormanService.enter(once);
 
             Object result = joinPoint.proceed();
 

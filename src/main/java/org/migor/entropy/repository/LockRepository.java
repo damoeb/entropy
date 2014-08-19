@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Spring Data JPA repository for the Lock entity.
  */
 public interface LockRepository extends JpaRepository<Lock, Long> {
-
+    Lock findByGroupIdAndClientId(String groupId, String clientId);
 }

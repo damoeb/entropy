@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Table(name = "T_LOCK")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 // todo unique constraints
-public class Lock extends AbstractAuditingEntity implements Serializable {
+public class Lock implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
