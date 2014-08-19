@@ -5,8 +5,8 @@ entropyApp.factory('Comment', ['$resource',
         return $resource('app/rest/comments/:id/:action', {}, {
             'query': { method: 'GET', isArray: true},
             'get': { method: 'GET'},
-            'like': { method: 'GET', params: {action: 'like'}},
-            'dislike': { method: 'GET', params: {action: 'dislike'}},
-            'flag': { method: 'GET', params: {action: 'flag'}}
+            'like': { method: 'POST', params: {action: 'like'}},
+            'dislike': { method: 'POST', params: {action: 'dislike'}},
+            'flag': { method: 'POST', params: {id: '@id', action: 'flag'}}
         });
     }]);

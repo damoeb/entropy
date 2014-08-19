@@ -1,11 +1,11 @@
 package org.migor.entropy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import org.migor.entropy.domain.Comment;
-import org.migor.entropy.domain.CommentStatus;
+import org.apache.commons.lang.StringUtils;
+import org.migor.entropy.domain.*;
 import org.migor.entropy.domain.Thread;
-import org.migor.entropy.domain.ThreadStatus;
 import org.migor.entropy.repository.CommentRepository;
+import org.migor.entropy.repository.ReportRepository;
 import org.migor.entropy.repository.ThreadRepository;
 import org.migor.entropy.security.SecurityUtils;
 import org.slf4j.Logger;
@@ -34,6 +34,9 @@ public class CommentResource {
 
     @Inject
     private ThreadRepository threadRepository;
+
+    @Inject
+    private ReportRepository reportRepository;
 
     /**
      * POST  /rest/comments -> Create a new comment.
@@ -114,24 +117,38 @@ public class CommentResource {
     }
 
     /**
-     * GET  /rest/comments/:id/flag -> flag the "id" comment.
+     * POST  /rest/comments/:id/flag -> flag the "id" comment.
      */
     @RequestMapping(value = "/rest/comments/{id}/flag",
-            method = RequestMethod.GET,
+            method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Comment> flag(@PathVariable Long id, HttpServletResponse response) {
+    public ResponseEntity<Comment> flag(@PathVariable Long id, @RequestBody Report report) {
         log.debug("REST request to flag Comment : {}", id);
-//        todo implement
+
+        if (report == null) {
+            throw new IllegalArgumentException("Report is null");
+        }
+
+        if (StringUtils.isBlank(report.getReason())) {
+            throw new IllegalArgumentException("Reason is null");
+        }
+
+        report.setClientId(SecurityUtils.getCurrentLogin());
+        report.setCommentId(id);
+        report.setStatus(ReportStatus.PENDING);
+
+        reportRepository.save(report);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
     /**
-     * GET  /rest/comments/:id/like -> like the "id" comment.
+     * POST  /rest/comments/:id/like -> like the "id" comment.
      */
     @RequestMapping(value = "/rest/comments/{id}/like",
-            method = RequestMethod.GET,
+            method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @Once(group = "vote", every = 3, timeUnit = TimeUnit.SECONDS)
@@ -152,10 +169,10 @@ public class CommentResource {
 
 
     /**
-     * GET  /rest/comments/:id/dislike -> dislike the "id" comment.
+     * POST  /rest/comments/:id/dislike -> dislike the "id" comment.
      */
     @RequestMapping(value = "/rest/comments/{id}/dislike",
-            method = RequestMethod.GET,
+            method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @Once(group = "vote", every = 3, timeUnit = TimeUnit.SECONDS)

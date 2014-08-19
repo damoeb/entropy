@@ -63,11 +63,13 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
 //        };
 
         $scope.reply = function (comment) {
+            $scope.draft.subject = comment.subject;
             $scope.draft.parentId = comment.id;
         };
 
         $scope.flag = function (comment) {
-            Comment.flag({id: comment.id}, function () {
+            // todo ask for reason
+            Comment.flag({id: comment.id, reason: 'the real reason'}, function () {
                 $log.log('reported');
             });
         };
