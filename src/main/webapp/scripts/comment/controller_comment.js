@@ -1,7 +1,7 @@
 'use strict';
 
-entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 'Comment', '$log',
-    function ($scope, $routeParams, Thread, Comment, $log) {
+entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 'Comment', '$log', '$location', '$anchorScroll',
+    function ($scope, $routeParams, Thread, Comment, $log, $location, $anchorScroll) {
 
         var threadId = $routeParams.id;
 
@@ -10,15 +10,16 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
             Thread.get({id: threadId}, function (response) {
                 $scope.thread = response.thread;
                 $scope.approved = $scope.tree(response.approved);
-                $scope.pending = response.pending;
-                $scope.rejected = response.rejected;
+                $scope.pendingCount = response.pendingCount;
+                $scope.reportCount = response.reportCount;
             });
         };
 
 
         $scope.refresh();
         $scope.draft = {};
-        $scope.reportReason = 'ff';
+        $scope.pendingCount = 0;
+        $scope.reportCount = 0;
 
         $scope.create = function () {
 
@@ -26,8 +27,6 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
 
             Comment.save($scope.draft,
                 function () {
-//                    $scope.comments = Comment.query();
-//                    $('#saveCommentModal').modal('hide');
                     $scope.clear();
 
                     $scope.refresh();
@@ -44,6 +43,7 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
                 map[comment.id] = comment;
                 comment.subcomments = [];
                 comment.report = false;
+                comment.maximized = true;
             }
 
             $.each(comments, function (index, comment) {
@@ -58,11 +58,6 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
             return roots;
 
         };
-
-//        $scope.update = function (id) {
-//            $scope.comment = Comment.get({id: id});
-//            $('#saveCommentModal').modal('show');
-//        };
 
         $scope.reply = function (comment) {
             $scope.draft.subject = comment.subject;
@@ -82,10 +77,6 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
                 $log.log(updated);
                 comment.like = updated.like;
             });
-        };
-
-        $scope.fullComment = function (comment) {
-            return comment.score >= 0;
         };
 
         $scope.cancelRelyTo = function () {
@@ -109,4 +100,13 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
         $scope.clear = function () {
             $scope.draft = {id: null, text: null};
         };
+
+        $scope.scrollTo = function (id) {
+            var old = $location.hash();
+            $location.hash(id);
+            $anchorScroll();
+            //reset to old to keep any additional routing logic from kicking in
+            $location.hash(old);
+        };
+
     }]);

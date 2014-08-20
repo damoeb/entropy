@@ -2,9 +2,11 @@ package org.migor.entropy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.migor.entropy.domain.CommentStatus;
+import org.migor.entropy.domain.ReportStatus;
 import org.migor.entropy.domain.Thread;
 import org.migor.entropy.domain.ThreadStatus;
 import org.migor.entropy.repository.CommentRepository;
+import org.migor.entropy.repository.ReportRepository;
 import org.migor.entropy.repository.ThreadRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +35,9 @@ public class ThreadResource {
 
     @Inject
     private CommentRepository commentRepository;
+
+    @Inject
+    private ReportRepository reportRepository;
 
     /**
      * POST  /rest/threads -> Create a new thread.
@@ -69,7 +74,6 @@ public class ThreadResource {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<Map<String, Object>> get(@PathVariable Long id, HttpServletResponse response) {
-//    public ResponseEntity<Thread> get(@PathVariable Long id, HttpServletResponse response) {
         log.debug("REST request to get Thread : {}", id);
 
         Map<String, Object> responseObj = new HashMap<>();
@@ -80,8 +84,9 @@ public class ThreadResource {
         }
         responseObj.put("thread", thread);
         responseObj.put("approved", commentRepository.findByThreadIdAndStatus(id, CommentStatus.APPROVED));
-        responseObj.put("pending", commentRepository.findByThreadIdAndStatus(id, CommentStatus.PENDING));
-        responseObj.put("rejected", commentRepository.findByThreadIdAndStatus(id, CommentStatus.REJECTED));
+        responseObj.put("pendingCount", commentRepository.findByThreadIdAndStatus(id, CommentStatus.PENDING).size());
+//        responseObj.put("rejectedCount", commentRepository.findByThreadIdAndStatus(id, CommentStatus.REJECTED).size());
+        responseObj.put("reportCount", reportRepository.findByThreadIdAndStatus(id, ReportStatus.PENDING).size());
 //        responseObj.put("spam", commentRepository.findByThreadIdAndStatus(id, CommentStatus.SPAM));
         return new ResponseEntity<>(responseObj, HttpStatus.OK);
 //        return new ResponseEntity<>(thread, HttpStatus.OK);

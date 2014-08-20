@@ -7,11 +7,6 @@ entropyApp
                 .when('/comment', {
                     templateUrl: 'views/comments.html',
                     controller: 'CommentController',
-//                    resolve:{
-//                        resolvedComment: ['Comment', function (Comment) {
-//                            return Comment.query();
-//                        }]
-//                    },
                     access: {
                         authorizedRoles: [USER_ROLES.all]
                     }
@@ -19,11 +14,6 @@ entropyApp
                 .when('/thread/:id', {
                     templateUrl: 'views/comments.html',
                     controller: 'CommentController',
-//                    resolve:{
-//                        resolvedComment: ['Comment', function (Comment) {
-//                            return Comment.query();
-//                        }]
-//                    },
                     access: {
                         authorizedRoles: [USER_ROLES.all]
                     }

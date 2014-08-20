@@ -335,6 +335,13 @@
             <column name="comment_id" type="BIGINT(19)">
                 <constraints nullable="false"/>
             </column>
+            <column name="thread_id" type="BIGINT(19)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="level" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+
             <column name="created_date" type="timestamp" defaultValue="${now}">
                 <constraints nullable="false"/>
             </column>
@@ -366,10 +373,7 @@
             <column name="client_id" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="action" type="VARCHAR(100)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="comment_id" type="BIGINT(19)">
+            <column name="group_id" type="VARCHAR(100)">
                 <constraints nullable="false"/>
             </column>
             <column name="expiration" type="timestamp" defaultValue="${now}">

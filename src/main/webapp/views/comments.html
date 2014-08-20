@@ -7,10 +7,12 @@
     <div class="row">
         <ul class="nav nav-tabs" role="tablist">
             <li class="active"><a href="javascript:void(0)">Discussion</a></li>
-            <li><a href="javascript:void(0)">Community</a></li>
-            <li><a href="javascript:void(0)">My</a></li>
-            <li><a href="javascript:void(0)">Pending <span class="badge">42</span></a></li>
-            <li><a href="javascript:void(0)">Rejected</a></li>
+            <li><a href="#/thread/{{thread.id}}/community">Community</a></li>
+            <li><a href="#/thread/{{thread.id}}/pending">Pending <span class="badge" ng-show="pendingCount > 0">{{pendingCount}}</span></a>
+            </li>
+            <li><a href="#/thread/{{thread.id}}/reports">Reports <span class="badge" ng-show="reportCount > 0">{{reportCount}}</span></a>
+            </li>
+            <li><a href="#/thread/{{thread.id}}/my">My</a></li>
         </ul>
 
         <script type="text/ng-template" id="likes_renderer.html">
@@ -74,40 +76,72 @@
         <script type="text/ng-template" id="comment_renderer.html">
 
             <div class="post">
-                <a name="{{comment.id }}"></a>
+                <a id="{{comment.id}}"></a>
 
-                <div><strong><a href="javascript:void(0)" ng-show="{{comment.parentId != null}}">Re:</a>
-                    {{comment.subject}}</strong></div>
+                <div ng-switch on="comment.maximized">
 
-                <div>
-                    <span style="white-space: pre-line">{{comment.text}}</span> -- <a href="/">
-                    {{comment.displayName}} </a>
-                    <span style="color: grey" title="{{comment.createdDate | dateString }}">{{comment.createdDate | fromNow }}</span>
-                </div>
+                    <!-- Maximized view -->
+                    <div ng-switch-default>
 
-                <div ng-include="'likes_renderer.html'"></div>
+                        <div>
+                            <strong><a href="javascript:void(0)" ng-click="scrollTo(comment.parentId)"
+                                       ng-show="{{comment.parentId != null}}">Re:</a>
+                                {{comment.subject}}</strong>
+                            <a class="flag pull-right" href="javascript:void(0)"
+                               ng-click="comment.maximized = !comment.maximized"><span
+                                    class="glyphicon glyphicon-minus"></span></a>
+                        </div>
 
-                <div class="menu">
-                    <a class="voteUp" href="javascript:void(0)" ng-click="like(comment)">
-                    <span class="glyphicon glyphicon-thumbs-up"></span>
-                    </a>
-                    <a class="voteDown" href="javascript:void(0)" ng-click="dislike(comment)">
-                    <span class="glyphicon glyphicon-thumbs-down"></span>
-                    </a>
-                    <a href="javascript:void(0)" ng-click="reply(comment)">
-                        Reply
-                    </a>
-                    <a href="javascript:void(0)">
-                        Parent
-                    </a>
-                    <a href="#/thread/{{comment.threadId}}/{{comment.id}}" title="Permalink">
-                        <span class="glyphicon glyphicon-link"></span>
-                    </a>
+                        <div>
+                            <span style="white-space: pre-line">{{comment.text}}</span> -- <a href="/">
+                            {{comment.displayName}} </a>
+                            <span style="color: grey" title="{{comment.createdDate | dateString }}">{{comment.createdDate | fromNow }}</span>
+                        </div>
 
-                    <a class="flag pull-right" href="javascript:void(0)" ng-click="comment.report = !comment.report"
-                       title="Report">
-                    <span class="glyphicon glyphicon-flag"></span>
-                    </a>
+                        <div ng-include="'likes_renderer.html'"></div>
+
+                        <div class="menu">
+                            <a class="voteUp" href="javascript:void(0)" ng-click="like(comment)">
+                                <span class="glyphicon glyphicon-thumbs-up"></span>
+                            </a>
+                            <a class="voteDown" href="javascript:void(0)" ng-click="dislike(comment)">
+                                <span class="glyphicon glyphicon-thumbs-down"></span>
+                            </a>
+                            <a href="javascript:void(0)" ng-click="reply(comment)">
+                                Reply
+                            </a>
+                            <a href="javascript:void(0)">
+                                Parent
+                            </a>
+                            <a href="#/thread/{{comment.threadId}}/{{comment.id}}" title="Permalink">
+                                <span class="glyphicon glyphicon-link"></span>
+                            </a>
+
+                            <a class="flag pull-right" href="javascript:void(0)"
+                               ng-click="comment.report = !comment.report"
+                               title="Report">
+                                <span class="glyphicon glyphicon-flag"></span>
+                            </a>
+                        </div>
+
+
+                    </div>
+
+                    <!-- Minimized view -->
+
+                    <div ng-switch-when="false">
+
+                        <div class="minimized">
+                            <strong><a href="javascript:void(0)" ng-click="scrollTo(comment.parentId)"
+                                       ng-show="{{comment.parentId != null}}">Re:</a></strong>
+                            <span style="white-space: nowrap;">{{comment.text}}</span>
+                            <a class="flag pull-right" href="javascript:void(0)"
+                               ng-click="comment.maximized = !comment.maximized"><span
+                                    class="glyphicon glyphicon-eye-open"></span></a>
+                        </div>
+
+                    </div>
+
                 </div>
 
             </div>

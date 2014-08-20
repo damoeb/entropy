@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "T_REPORT")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-// todo unique constraint commentId, clientId
+// todo unique constraint commentId, clientId, threadId
 // todo extends AbstractAuditingEntity
 public class Report implements Serializable {
 
@@ -48,6 +48,14 @@ public class Report implements Serializable {
     @NotNull
     @Column(name = "comment_id")
     private Long commentId;
+
+    @NotNull
+    @Column(name = "thread_id")
+    private Long threadId;
+
+    @NotNull
+    @Column(name = "level")
+    private Integer level;
 
     @CreatedDate
     @NotNull
@@ -101,6 +109,22 @@ public class Report implements Serializable {
 
     public void setCreatedDate(DateTime createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public Long getThreadId() {
+        return threadId;
+    }
+
+    public void setThreadId(Long threadId) {
+        this.threadId = threadId;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 
     @Override

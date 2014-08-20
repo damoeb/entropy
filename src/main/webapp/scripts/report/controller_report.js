@@ -1,9 +1,9 @@
 'use strict';
 
-entropyApp.controller('ReportController', ['$scope', 'resolvedReport', 'Report',
-    function ($scope, resolvedReport, Report) {
+entropyApp.controller('ReportController', ['$scope', 'Report',
+    function ($scope, Report) {
 
-        $scope.reports = resolvedReport;
+//        $scope.reports = resolvedReport;
 
         $scope.create = function () {
             Report.save($scope.report,

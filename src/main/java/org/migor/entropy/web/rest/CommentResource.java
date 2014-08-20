@@ -45,7 +45,7 @@ public class CommentResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    @Once(group = "post", every = 30, timeUnit = TimeUnit.SECONDS)
+    @Once(group = "post", every = 5, timeUnit = TimeUnit.SECONDS)
     public void create(@RequestBody Comment comment) {
         log.debug("REST request to save Comment : {}", comment);
         comment.setAuthorId(SecurityUtils.getCurrentLogin());
@@ -123,7 +123,7 @@ public class CommentResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    @Once(group = "report", every = 30, timeUnit = TimeUnit.SECONDS)
+    @Once(group = "report", every = 5, timeUnit = TimeUnit.SECONDS)
     public ResponseEntity<Comment> report(@PathVariable Long id, @RequestBody Report report) {
         log.debug("REST request to flag Comment : {}", id);
 
@@ -135,9 +135,17 @@ public class CommentResource {
             throw new IllegalArgumentException("Reason is null");
         }
 
+        Comment comment = commentRepository.findOne(id);
+
+        if (comment == null) {
+            throw new IllegalArgumentException("Comment does not exist");
+        }
+
         report.setClientId(SecurityUtils.getCurrentLogin());
         report.setCommentId(id);
         report.setStatus(ReportStatus.PENDING);
+        report.setThreadId(comment.getThreadId());
+        report.setLevel(comment.getReportLevel());
 
         reportRepository.save(report);
 
@@ -152,7 +160,7 @@ public class CommentResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    @Once(group = "vote", every = 30, timeUnit = TimeUnit.SECONDS)
+    @Once(group = "vote", every = 5, timeUnit = TimeUnit.SECONDS)
     public ResponseEntity<Comment> like(@PathVariable Long id, HttpServletResponse response) {
         log.debug("REST request to like Comment : {}", id);
 
@@ -176,7 +184,7 @@ public class CommentResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    @Once(group = "vote", every = 30, timeUnit = TimeUnit.SECONDS)
+    @Once(group = "vote", every = 5, timeUnit = TimeUnit.SECONDS)
     public ResponseEntity<Comment> dislike(@PathVariable Long id, HttpServletResponse response) {
         log.debug("REST request to dislike Comment : {}", id);
 
