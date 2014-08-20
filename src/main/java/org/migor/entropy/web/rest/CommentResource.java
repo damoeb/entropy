@@ -119,12 +119,12 @@ public class CommentResource {
     /**
      * POST  /rest/comments/:id/flag -> flag the "id" comment.
      */
-    @RequestMapping(value = "/rest/comments/{id}/flag",
+    @RequestMapping(value = "/rest/comments/{id}/report",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @Once(group = "report", every = 30, timeUnit = TimeUnit.SECONDS)
-    public ResponseEntity<Comment> flag(@PathVariable Long id, @RequestBody Report report) {
+    public ResponseEntity<Comment> report(@PathVariable Long id, @RequestBody Report report) {
         log.debug("REST request to flag Comment : {}", id);
 
         if (report == null) {

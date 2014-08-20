@@ -18,6 +18,7 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
 
         $scope.refresh();
         $scope.draft = {};
+        $scope.reportReason = 'ff';
 
         $scope.create = function () {
 
@@ -42,6 +43,7 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
                 var comment = comments[i];
                 map[comment.id] = comment;
                 comment.subcomments = [];
+                comment.report = false;
             }
 
             $.each(comments, function (index, comment) {
@@ -67,9 +69,9 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
             $scope.draft.parentId = comment.id;
         };
 
-        $scope.flag = function (comment) {
-            // todo ask for reason
-            Comment.flag({id: comment.id, reason: 'the real reason'}, function () {
+        $scope.report = function (comment, reason) {
+            comment.report = false;
+            Comment.report({id: comment.id, reason: reason}, function () {
                 $log.log('reported');
             });
         };
