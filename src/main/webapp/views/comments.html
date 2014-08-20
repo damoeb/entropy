@@ -132,12 +132,17 @@
                     <div ng-switch-when="false">
 
                         <div class="minimized">
+
                             <strong><a href="javascript:void(0)" ng-click="scrollTo(comment.parentId)"
                                        ng-show="{{comment.parentId != null}}">Re:</a></strong>
-                            <span style="white-space: nowrap;">{{comment.text}}</span>
-                            <a class="flag pull-right" href="javascript:void(0)"
-                               ng-click="comment.maximized = !comment.maximized"><span
-                                    class="glyphicon glyphicon-eye-open"></span></a>
+
+                            <div style="overflow: hidden; height:1.6em"
+                                 ng-click="comment.maximized = !comment.maximized">
+                                <div style="white-space: nowrap; cursor: pointer; color: grey; display: inline">
+                                    <span>{{comment.text}}</span>
+                                </div>
+                            </div>
+
                         </div>
 
                     </div>
