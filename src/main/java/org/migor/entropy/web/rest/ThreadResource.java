@@ -89,7 +89,29 @@ public class ThreadResource {
         responseObj.put("reportCount", reportRepository.findByThreadIdAndStatus(id, ReportStatus.PENDING).size());
 //        responseObj.put("spam", commentRepository.findByThreadIdAndStatus(id, CommentStatus.SPAM));
         return new ResponseEntity<>(responseObj, HttpStatus.OK);
-//        return new ResponseEntity<>(thread, HttpStatus.OK);
+    }
+
+    /**
+     * GET  /rest/threads/:id/reports -> get the reports for thread "id".
+     */
+    @RequestMapping(value = "/rest/threads/{id}/reports",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Map<String, Object>> reports(@PathVariable Long id, HttpServletResponse response) {
+        log.debug("REST request to get reports of Thread : {}", id);
+
+        Map<String, Object> responseObj = new HashMap<>();
+
+        Thread thread = threadRepository.findOne(id);
+        if (thread == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        responseObj.put("thread", thread);
+        responseObj.put("reports", reportRepository.findByThreadIdAndStatus(id, ReportStatus.PENDING));
+        responseObj.put("comments", commentRepository.findByThreadIdAndReportStatus(id, ReportStatus.PENDING));
+
+        return new ResponseEntity<>(responseObj, HttpStatus.OK);
     }
 
     /**

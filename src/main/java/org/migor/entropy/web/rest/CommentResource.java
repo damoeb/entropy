@@ -2,6 +2,7 @@ package org.migor.entropy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 import org.migor.entropy.domain.*;
 import org.migor.entropy.domain.Thread;
 import org.migor.entropy.repository.CommentRepository;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -48,17 +48,17 @@ public class CommentResource {
     @Once(group = "post", every = 5, timeUnit = TimeUnit.SECONDS)
     public void create(@RequestBody Comment comment) {
         log.debug("REST request to save Comment : {}", comment);
+
         comment.setAuthorId(SecurityUtils.getCurrentLogin());
         comment.setDisplayName("Anonymous");
         comment.setStatus(CommentStatus.APPROVED); // todo default status depending on user trust
 
         Thread thread = threadRepository.findOne(comment.getThreadId());
-
         if (thread == null) {
             throw new IllegalArgumentException("Invalid threadId");
         }
-        if (thread.getStatus() == ThreadStatus.CLOSED) {
-            throw new IllegalArgumentException("Invalid threadId");
+        if (ThreadStatus.CLOSED == thread.getStatus()) {
+            throw new IllegalArgumentException("Already closed");
         }
 
         if (comment.getParentId() == null) {
@@ -73,19 +73,11 @@ public class CommentResource {
             comment.setLevel(parent.getLevel() + 1);
         }
 
-        commentRepository.save(comment);
-    }
+        thread.setCommentCount(thread.getCommentCount() + 1);
+        thread.setLastModifiedDate(DateTime.now());
+        threadRepository.save(thread);
 
-    /**
-     * GET  /rest/comments -> get all the comments.
-     */
-    @RequestMapping(value = "/rest/comments",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    public List<Comment> getAll() {
-        log.debug("REST request to get all Comments");
-        return commentRepository.findAll();
+        commentRepository.save(comment);
     }
 
     /**
@@ -101,6 +93,7 @@ public class CommentResource {
         if (comment == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
         return new ResponseEntity<>(comment, HttpStatus.OK);
     }
 
@@ -113,6 +106,7 @@ public class CommentResource {
     @Timed
     public void delete(@PathVariable Long id) {
         log.debug("REST request to delete Comment : {}", id);
+        // todo check permissions
         commentRepository.delete(id);
     }
 
@@ -164,14 +158,23 @@ public class CommentResource {
     public ResponseEntity<Comment> like(@PathVariable Long id, HttpServletResponse response) {
         log.debug("REST request to like Comment : {}", id);
 
-//        todo implement
         Comment comment = commentRepository.findOne(id);
         if (comment == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
+        Thread thread = threadRepository.findOne(comment.getThreadId());
+        if (ThreadStatus.CLOSED == thread.getStatus()) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
         comment.setLikes(comment.getLikes() + 1);
         comment.setScore(comment.getLikes() - comment.getDislikes());
         commentRepository.save(comment);
+
+        thread.setLikes(thread.getLikes() + 1);
+        thread.setLastModifiedDate(DateTime.now());
+        threadRepository.save(thread);
 
         return new ResponseEntity<>(comment, HttpStatus.OK);
     }
@@ -192,9 +195,19 @@ public class CommentResource {
         if (comment == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
+        Thread thread = threadRepository.findOne(comment.getThreadId());
+        if (ThreadStatus.CLOSED == thread.getStatus()) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
         comment.setDislikes(comment.getDislikes() + 1);
         comment.setScore(comment.getLikes() - comment.getDislikes());
         commentRepository.save(comment);
+
+        thread.setDislikes(thread.getDislikes() + 1);
+        thread.setLastModifiedDate(DateTime.now());
+        threadRepository.save(thread);
 
         return new ResponseEntity<>(comment, HttpStatus.OK);
     }

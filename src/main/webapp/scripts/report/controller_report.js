@@ -1,32 +1,26 @@
 'use strict';
 
-entropyApp.controller('ReportController', ['$scope', 'Report',
-    function ($scope, Report) {
+entropyApp.controller('ReportController', ['$scope', '$routeParams', 'Report', 'Thread',
+    function ($scope, $routeParams, Report, Thread) {
 
-//        $scope.reports = resolvedReport;
+        var threadId = $routeParams.id;
 
-        $scope.create = function () {
-            Report.save($scope.report,
-                function () {
-                    $scope.reports = Report.query();
-                    $('#saveReportModal').modal('hide');
-                    $scope.clear();
-                });
+        $scope.refresh = function () {
+
+            Thread.reports({id: threadId}, function (response) {
+                $scope.thread = response.thread;
+
+                // todo group reports by comment
+                $scope.reports = response.reports;
+                $scope.comments = response.comments;
+            });
         };
+
+        $scope.refresh();
 
         $scope.update = function (id) {
             $scope.report = Report.get({id: id});
             $('#saveReportModal').modal('show');
         };
 
-        $scope.delete = function (id) {
-            Report.delete({id: id},
-                function () {
-                    $scope.reports = Report.query();
-                });
-        };
-
-        $scope.clear = function () {
-            $scope.report = {id: null, sampleTextAttribute: null, sampleDateAttribute: null};
-        };
     }]);
