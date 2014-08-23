@@ -7,7 +7,6 @@
     <div class="row">
         <ul class="nav nav-tabs" role="tablist">
             <li class="active"><a href="javascript:void(0)">Discussion</a></li>
-            <li><a href="#/thread/{{thread.id}}/community">Community</a></li>
             <li><a href="#/thread/{{thread.id}}/pending">Pending <span class="badge" ng-show="pendingCount > 0">{{pendingCount}}</span></a>
             </li>
             <li><a href="#/thread/{{thread.id}}/reports">Reports <span class="badge" ng-show="reportCount > 0">{{reportCount}}</span></a>
@@ -16,8 +15,13 @@
         </ul>
 
         <div style="margin-top: 15px">
-            <dl>
-                <dd ng-repeat="comment in approved | orderBy:createdDate" ng-include="'comment_renderer.html'">
+            <div>
+                <h4>{{approved.length}} comments</h4>
+            </div>
+
+
+            <dl style="margin:0;">
+            <dd ng-repeat="comment in approved | orderBy:createdDate" ng-include="'comment_renderer.html'">
 
                 </dd>
             </dl>
@@ -95,21 +99,28 @@
             <div ng-switch-default>
 
                 <div>
-                    <strong><a href="javascript:void(0)" ng-click="scrollTo(comment.parentId)"
-                               ng-show="{{comment.parentId != null}}">Re:</a>
-                        {{comment.subject}}</strong>
-                    <a class="flag pull-right" href="javascript:void(0)"
-                       ng-click="comment.maximized = !comment.maximized"><span
-                            class="glyphicon glyphicon-minus"></span></a>
+                    <strong>
+                        <a ng-show="comment.parentId != null" href="javascript:void(0)"
+                           ng-click="scrollTo(comment.parentId)">Re:</a>
+                        <span ng-show="comment.parentId == null" class="glyphicon glyphicon-leaf"
+                              style="color: #666"></span>
+                        {{comment.subject}}
+                    </strong>
+
+                    <div class="pull-right menu">
+                        <a href="javascript:void(0)"
+                           ng-click="comment.maximized = !comment.maximized"><span
+                                class="glyphicon glyphicon-minus"></span></a>
+                    </div>
                 </div>
+
+                <div ng-include="'likes_renderer.html'"></div>
 
                 <div>
                     <span style="white-space: pre-line">{{comment.text}}</span> -- <a href="/">
                     {{comment.displayName}} </a>
                     <span style="color: grey" title="{{comment.createdDate | dateString }}">{{comment.createdDate | fromNow }}</span>
                 </div>
-
-                <div ng-include="'likes_renderer.html'"></div>
 
                 <div class="menu">
                     <a class="voteUp" href="javascript:void(0)" ng-click="like(comment)">
@@ -179,9 +190,9 @@
     </div>
 
     <!-- sub comments -->
-    <div ng-hide="comment.subcomments.length == 0" style="margin-left: 10px; border-left: 1px solid #dedede">
-        <dl>
-            <dd ng-repeat="comment in comment.subcomments | orderBy:createdDate"
+    <div ng-hide="comment.subcomments.length == 0" style="margin-left: 25px; border-left: 1px solid #dedede">
+        <dl style="margin:0;">
+        <dd ng-repeat="comment in comment.subcomments | orderBy:createdDate"
                 ng-include="'comment_renderer.html'"></dd>
         </dl>
 

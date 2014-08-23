@@ -102,7 +102,7 @@ ul#strength {
 /* end Password strength bar style */
 
 .post {
-    padding: 10px;
+    padding: 10px 10px 5px 10px;
 }
 
 .post .menu {
