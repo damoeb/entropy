@@ -197,7 +197,7 @@
             <column name="dislikes" type="INT(10)"/>
             <column name="likes" type="INT(10)"/>
             <column name="score" type="INT(10)"/>
-            <column name="report_level" type="INT(10)"/>
+            <column name="report_stage" type="INT(10)"/>
             <column name="status" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
@@ -338,7 +338,7 @@
             <column name="thread_id" type="BIGINT(19)">
                 <constraints nullable="false"/>
             </column>
-            <column name="level" type="INT(10)">
+            <column name="stage" type="INT(10)">
                 <constraints nullable="false"/>
             </column>
 

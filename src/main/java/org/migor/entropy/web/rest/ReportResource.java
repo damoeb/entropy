@@ -56,24 +56,92 @@ public class ReportResource {
         report.setClientId(SecurityUtils.getCurrentLogin());
         report.setStatus(ReportStatus.PENDING);
         report.setThreadId(comment.getThreadId());
-        report.setLevel(comment.getReportLevel());
+        report.setStage(comment.getReportStage());
 
         reportRepository.save(report);
     }
 
     /**
-     * GET  /rest/reports/:id -> get the "id" report.
+     * POST  /rest/reports/{id}/approve -> Create a new report.
      */
-    @RequestMapping(value = "/rest/reports/{id}",
-            method = RequestMethod.GET,
+    @RequestMapping(value = "/rest/reports/{id}/approve",
+            method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Report> get(@PathVariable Long id, HttpServletResponse response) {
-        log.debug("REST request to get Report : {}", id);
+    public ResponseEntity<Report> approve(@PathVariable Long id, HttpServletResponse response) {
+        log.debug("REST request to approve Report : {}", id);
+
         Report report = reportRepository.findOne(id);
         if (report == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            // does not exist
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
         }
+
+        if (report.getStatus() != ReportStatus.PENDING) {
+            // Invalid status
+            return new ResponseEntity<>(report, HttpStatus.EXPECTATION_FAILED);
+        }
+
+        Comment comment = commentRepository.findOne(report.getCommentId());
+
+        if (comment == null) {
+            return new ResponseEntity<>(report, HttpStatus.EXPECTATION_FAILED);
+        }
+
+        if (comment.getReportStage().equals(report.getStage())) {
+            // todo punish comment author
+            // todo delete comment
+//            comment.setStatus(CommentStatus.DELETED);
+        }
+
+        comment.setReportStage(report.getStage() + 1);
+
+        report.setStatus(ReportStatus.APPROVED);
+
+        commentRepository.save(comment);
+        reportRepository.save(report);
+
+        return new ResponseEntity<>(report, HttpStatus.OK);
+    }
+
+    /**
+     * POST  /rest/reports/{id}/reject -> Create a new report.
+     */
+    @RequestMapping(value = "/rest/reports/{id}/reject",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Report> reject(@PathVariable Long id, HttpServletResponse response) {
+        log.debug("REST request to reject Report : {}", id);
+
+        Report report = reportRepository.findOne(id);
+        if (report == null) {
+            // does not exist
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+
+        if (report.getStatus() != ReportStatus.PENDING) {
+            // Invalid status
+            return new ResponseEntity<>(report, HttpStatus.EXPECTATION_FAILED);
+        }
+
+        Comment comment = commentRepository.findOne(report.getCommentId());
+
+        if (comment == null) {
+            return new ResponseEntity<>(report, HttpStatus.EXPECTATION_FAILED);
+        }
+
+        if (comment.getReportStage().equals(report.getStage())) {
+            // todo punish reporter for abuse
+        }
+
+        comment.setReportStage(report.getStage() + 1);
+
+        report.setStatus(ReportStatus.REJECTED);
+
+        commentRepository.save(comment);
+        reportRepository.save(report);
+
         return new ResponseEntity<>(report, HttpStatus.OK);
     }
 

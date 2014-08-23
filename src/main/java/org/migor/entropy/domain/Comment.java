@@ -85,14 +85,14 @@ public class Comment implements Serializable {
     private String authorId;
 
     @Column(name = "likes")
-    private int likes;
+    private Integer likes = 0;
 
     @Column(name = "dislikes")
-    private int dislikes;
+    private Integer dislikes = 0;
 
     @JsonIgnore
-    @Column(name = "report_level")
-    private int reportLevel;
+    @Column(name = "report_stage")
+    private Integer reportStage = 0;
 
     @NotNull
     @Column(name = "status")
@@ -173,28 +173,28 @@ public class Comment implements Serializable {
         this.authorId = authorId;
     }
 
-    public int getLikes() {
+    public Integer getLikes() {
         return likes;
     }
 
-    public void setLikes(int likes) {
+    public void setLikes(Integer likes) {
         this.likes = likes;
     }
 
-    public int getDislikes() {
+    public Integer getDislikes() {
         return dislikes;
     }
 
-    public void setDislikes(int dislikes) {
+    public void setDislikes(Integer dislikes) {
         this.dislikes = dislikes;
     }
 
-    public int getReportLevel() {
-        return reportLevel;
+    public Integer getReportStage() {
+        return reportStage;
     }
 
-    public void setReportLevel(int reportLevel) {
-        this.reportLevel = reportLevel;
+    public void setReportStage(Integer reportStage) {
+        this.reportStage = reportStage;
     }
 
     public CommentStatus getStatus() {

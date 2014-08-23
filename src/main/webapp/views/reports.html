@@ -17,7 +17,7 @@
         <div style="margin-top: 15px">
 
             <dl>
-                <dd ng-repeat="comment in comments">
+                <dd ng-repeat="comment in comments | filter:{ pending: true }:true">
 
                     <h3>#{{comment.id}}</h3>
 
@@ -30,8 +30,12 @@
 
                     <div style="margin-top: 10px; margin-bottom: 20px;">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-default">Reject</button>
-                            <button type="button" class="btn btn-default">Approve</button>
+                            <button type="button" class="btn btn-default" ng-click="rejectClaimsOnComment(comment)">
+                                Reject
+                            </button>
+                            <button type="button" class="btn btn-default" ng-click="approveClaimsOnComment(comment)">
+                                Approve
+                            </button>
                         </div>
                     </div>
                 </dd>

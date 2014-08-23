@@ -54,8 +54,8 @@ public class Report implements Serializable {
     private Long threadId;
 
     @NotNull
-    @Column(name = "level")
-    private Integer level;
+    @Column(name = "stage")
+    private Integer stage;
 
     @CreatedDate
     @NotNull
@@ -119,12 +119,12 @@ public class Report implements Serializable {
         this.threadId = threadId;
     }
 
-    public Integer getLevel() {
-        return level;
+    public Integer getStage() {
+        return stage;
     }
 
-    public void setLevel(Integer level) {
-        this.level = level;
+    public void setStage(Integer stage) {
+        this.stage = stage;
     }
 
     @Override
