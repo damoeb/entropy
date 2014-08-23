@@ -51,9 +51,6 @@
                 <strong><a href="javascript:void(0)"
                            ng-show="{{comment.parentId != null}}">Re:</a>
                     {{comment.subject}}</strong>
-                <a class="flag pull-right" href="javascript:void(0)"
-                   ng-click="comment.maximized = !comment.maximized"><span
-                        class="glyphicon glyphicon-minus"></span></a>
             </div>
 
             <div>
@@ -88,8 +85,8 @@
 <script type="text/ng-template" id="report_renderer.html">
     <div class="report">
         <div>
-            {{report.commentId}}<span style="white-space: pre-line">{{report.reason}}</span> -- <a href="/">
-            {{report.clientId}} </a>
+            <span style="white-space: pre-line">{{report.reason}}</span> -- <a href="/">
+        {{report.clientId}} </a>
             <span style="color: grey"
                   title="{{report.createdDate | dateString }}">{{report.createdDate | fromNow }}</span>
         </div>

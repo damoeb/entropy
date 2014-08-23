@@ -1,9 +1,10 @@
 'use strict';
 
-entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 'Comment', '$log', '$location', '$anchorScroll',
-    function ($scope, $routeParams, Thread, Comment, $log, $location, $anchorScroll) {
+entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 'Comment', 'Report', '$log', '$location', '$anchorScroll',
+    function ($scope, $routeParams, Thread, Comment, Report, $log, $location, $anchorScroll) {
 
         $scope.draft = {};
+        $scope.report = {};
         $scope.pendingCount = 0;
         $scope.commentCount = 0;
         $scope.reportCount = 0;
@@ -66,11 +67,15 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
             $scope.draft.parentId = comment.id;
         };
 
-        $scope.report = function (comment, reason) {
+        $scope.reportComment = function (comment) {
             comment.report = false;
-            Comment.report({id: comment.id, reason: reason}, function () {
-                $log.log('reported');
-            });
+
+            $scope.report.commentId = comment.id;
+
+            Report.save($scope.report,
+                function () {
+                    $scope.report.reason = '';
+                });
         };
 
         $scope.like = function (comment) {

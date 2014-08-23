@@ -67,10 +67,14 @@
 
 <script type="text/ng-template" id="replyto_comment_renderer.html">
 
-    <div class="container">
+    <div class="container"
+         style="padding: 10px; background-color: #cbdaef; border-bottom-left-radius: 4px; border-bottom-right-radius: 4px">
 
         <form name="form" role="form" novalidate ng-submit="create()">
-            <div><input class="form-control" ng-model="draft.subject" ng-minlength=1 ng-maxlength=148/></div>
+            <h4>Reply</h4>
+            <input class="form-control" ng-model="draft.subject" ng-minlength=1 ng-maxlength=148
+                   placeholder="Subject..."/>
+
             <div><textarea class="form-control" placeholder="Type your comment here..." ng-model="draft.text"
                            ng-minlength=1 ng-maxlength=2048 required></textarea></div>
 
@@ -91,62 +95,97 @@
 
 <script type="text/ng-template" id="comment_renderer.html">
 
-    <div class="post">
-        <a id="{{comment.id}}"></a>
+    <div>
 
         <div ng-switch on="comment.maximized">
 
             <!-- Maximized view -->
             <div ng-switch-default>
 
-                <div>
-                    <strong>
-                        <a ng-show="comment.parentId != null" href="javascript:void(0)"
-                           ng-click="scrollTo(comment.parentId)">Re:</a>
+                <div class="post">
+                    <a id="{{comment.id}}"></a>
+
+                    <div>
+                        <div class="menu" style="display: inline">
+                            <a href="javascript:void(0)"
+                               ng-click="comment.maximized = !comment.maximized" title="Click to minimize">
+                                <span class="glyphicon glyphicon-resize-small"></span>
+                            </a>
+                        </div>
+
                         <span ng-show="comment.parentId == null" class="glyphicon glyphicon-leaf"
                               style="color: #666"></span>
-                        {{comment.subject}}
-                    </strong>
 
-                    <div class="pull-right menu">
-                        <a href="javascript:void(0)"
-                           ng-click="comment.maximized = !comment.maximized"><span
-                                class="glyphicon glyphicon-minus"></span></a>
+                        <strong>
+                            <!--<a ng-show="comment.parentId != null" href="javascript:void(0)"-->
+                            <!--ng-click="scrollTo(comment.parentId)">Re:</a>-->
+
+                            {{comment.subject}}
+                        </strong>
+                    </div>
+
+                    <div ng-include="'likes_renderer.html'"></div>
+
+                    <div>
+                        <span style="white-space: pre-line">{{comment.text}}</span> -- <a href="/">
+                        {{comment.displayName}} </a>
+                        <span style="color: grey" title="{{comment.createdDate | dateString }}">{{comment.createdDate | fromNow }}</span>
+                    </div>
+
+                    <div class="menu" style="border-top: 1px solid #efefef;">
+                        <a class="voteUp" href="javascript:void(0)" ng-click="like(comment)">
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                        </a>
+                        <a class="voteDown" href="javascript:void(0)" ng-click="dislike(comment)">
+                            <span class="glyphicon glyphicon-thumbs-down"></span>
+                        </a>
+                        <a href="javascript:void(0)" ng-click="reply(comment)">
+                            Reply
+                        </a>
+                        <a ng-show="comment.parentId != null" href="javascript:void(0)"
+                           ng-click="scrollTo(comment.parentId)">
+                            Parent
+                        </a>
+                        <a href="#/thread/{{comment.threadId}}/{{comment.id}}" title="Permalink">
+                            <span class="glyphicon glyphicon-link"></span>
+                        </a>
+
+                        <a class="flag pull-right" href="javascript:void(0)"
+                           ng-click="comment.report = !comment.report"
+                           title="Report">
+                            <span class="glyphicon glyphicon-flag"></span>
+                        </a>
                     </div>
                 </div>
 
-                <div ng-include="'likes_renderer.html'"></div>
+                <div class="input-group container"
+                     style="margin-bottom: 20px; padding: 10px; background-color: #cbdaef; border-bottom-left-radius: 4px; border-bottom-right-radius: 4px"
+                     ng-show="comment.report">
+                    <input type="text" ng-maxlength=148 ng-minlength=1 ng-model="report.reason"
+                           placeholder="Tell us, what is wrong with this comment"
+                           class="form-control ng-valid ng-valid-maxlength ng-valid-minlength">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" ng-click="comment.report = false"><span
+                            class="glyphicon glyphicon-remove"></span></button>
+                    <button class="btn btn-primary" type="button" ng-click="reportComment(comment)">Report
+                    </button>
+                </span>
+                </div>
+                <!-- /input-group -->
 
-                <div>
-                    <span style="white-space: pre-line">{{comment.text}}</span> -- <a href="/">
-                    {{comment.displayName}} </a>
-                    <span style="color: grey" title="{{comment.createdDate | dateString }}">{{comment.createdDate | fromNow }}</span>
+                <div ng-show="comment.id == draft.parentId">
+                    <div ng-include="'replyto_comment_renderer.html'"></div>
                 </div>
 
-                <div class="menu">
-                    <a class="voteUp" href="javascript:void(0)" ng-click="like(comment)">
-                        <span class="glyphicon glyphicon-thumbs-up"></span>
-                    </a>
-                    <a class="voteDown" href="javascript:void(0)" ng-click="dislike(comment)">
-                        <span class="glyphicon glyphicon-thumbs-down"></span>
-                    </a>
-                    <a href="javascript:void(0)" ng-click="reply(comment)">
-                        Reply
-                    </a>
-                    <a href="javascript:void(0)">
-                        Parent
-                    </a>
-                    <a href="#/thread/{{comment.threadId}}/{{comment.id}}" title="Permalink">
-                        <span class="glyphicon glyphicon-link"></span>
-                    </a>
+                <!-- sub comments -->
+                <div ng-hide="comment.subcomments.length == 0"
+                     style="margin-left: 25px; border-left: 1px solid #dedede">
+                    <dl style="margin:0;">
+                        <dd ng-repeat="comment in comment.subcomments | orderBy:createdDate"
+                            ng-include="'comment_renderer.html'"></dd>
+                    </dl>
 
-                    <a class="flag pull-right" href="javascript:void(0)"
-                       ng-click="comment.report = !comment.report"
-                       title="Report">
-                        <span class="glyphicon glyphicon-flag"></span>
-                    </a>
                 </div>
-
 
             </div>
 
@@ -154,16 +193,29 @@
 
             <div ng-switch-when="false">
 
-                <div class="minimized">
+                <div class="minimized post" style="cursor: pointer;" title="Click to maximize">
 
-                    <strong><a href="javascript:void(0)" ng-click="scrollTo(comment.parentId)"
-                               ng-show="{{comment.parentId != null}}">Re:</a></strong>
+                    <!--<strong><a href="javascript:void(0)" ng-click="scrollTo(comment.parentId)"-->
+                    <!--ng-show="{{comment.parentId != null}}">Re:</a></strong>-->
 
-                    <div style="overflow: hidden; height:1.6em"
+                    <div style="overflow: hidden; max-height:3em; min-height:1.8em;"
                          ng-click="comment.maximized = !comment.maximized">
+
+                        <div style="display: inline">
+                            <a href="javascript:void(0)">
+                                <span class="glyphicon glyphicon-resize-full"></span>
+                            </a>
+                            <span ng-show="comment.parentId == null" class="glyphicon glyphicon-leaf"
+                                  style="color: #666"></span>
+
+                            <strong>{{comment.subject}}</strong>
+                            <span style="color: grey">({{comment.subcomments.length}} children)</span>
+                        </div>
+
                         <div style="white-space: nowrap; cursor: pointer; color: grey; display: inline">
                             <span>{{comment.text}}</span>
                         </div>
+
                     </div>
 
                 </div>
@@ -171,31 +223,6 @@
             </div>
 
         </div>
-
-    </div>
-
-    <div class="input-group container" style="margin-bottom: 20px; margin-top: 10px;" ng-show="comment.report">
-        <input type="text" ng-maxlength=148 ng-minlength=1 ng-model="reportReason"
-               placeholder="Tell us, what is wrong with this comment"
-               class="form-control ng-valid ng-valid-maxlength ng-valid-minlength">
-                <span class="input-group-btn">
-                    <button class="btn btn-default" type="button" ng-click="comment.report = false"><span
-                            class="glyphicon glyphicon-remove"></span></button>
-                    <button class="btn btn-primary" type="button" ng-click="report(comment, reportReason)">Report
-                    </button>
-                </span>
-    </div><!-- /input-group -->
-
-    <div ng-show="comment.id == draft.parentId">
-        <div ng-include="'replyto_comment_renderer.html'"></div>
-    </div>
-
-    <!-- sub comments -->
-    <div ng-hide="comment.subcomments.length == 0" style="margin-left: 25px; border-left: 1px solid #dedede">
-        <dl style="margin:0;">
-        <dd ng-repeat="comment in comment.subcomments | orderBy:createdDate"
-                ng-include="'comment_renderer.html'"></dd>
-        </dl>
 
     </div>
 

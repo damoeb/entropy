@@ -1,8 +1,12 @@
 package org.migor.entropy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import org.migor.entropy.domain.Comment;
 import org.migor.entropy.domain.Report;
+import org.migor.entropy.domain.ReportStatus;
+import org.migor.entropy.repository.CommentRepository;
 import org.migor.entropy.repository.ReportRepository;
+import org.migor.entropy.security.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -12,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * REST controller for managing Report.
@@ -26,6 +29,9 @@ public class ReportResource {
     @Inject
     private ReportRepository reportRepository;
 
+    @Inject
+    private CommentRepository commentRepository;
+
     /**
      * POST  /rest/reports -> Create a new report.
      */
@@ -35,19 +41,24 @@ public class ReportResource {
     @Timed
     public void create(@RequestBody Report report) {
         log.debug("REST request to save Report : {}", report);
-        reportRepository.save(report);
-    }
+        Report existing = reportRepository.findByCommentIdAndClientId(report.getCommentId(), SecurityUtils.getCurrentLogin());
+        if (existing != null) {
+            // multiple reports of user for same comment
+            return;
+        }
 
-    /**
-     * GET  /rest/reports -> get all the reports.
-     */
-    @RequestMapping(value = "/rest/reports",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    public List<Report> getAll() {
-        log.debug("REST request to get all Reports");
-        return reportRepository.findAll();
+        Comment comment = commentRepository.findOne(report.getCommentId());
+
+        if (comment == null) {
+            throw new IllegalArgumentException("Comment does not exist");
+        }
+
+        report.setClientId(SecurityUtils.getCurrentLogin());
+        report.setStatus(ReportStatus.PENDING);
+        report.setThreadId(comment.getThreadId());
+        report.setLevel(comment.getReportLevel());
+
+        reportRepository.save(report);
     }
 
     /**
@@ -66,15 +77,4 @@ public class ReportResource {
         return new ResponseEntity<>(report, HttpStatus.OK);
     }
 
-    /**
-     * DELETE  /rest/reports/:id -> delete the "id" report.
-     */
-    @RequestMapping(value = "/rest/reports/{id}",
-            method = RequestMethod.DELETE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    public void delete(@PathVariable Long id) {
-        log.debug("REST request to delete Report : {}", id);
-        reportRepository.delete(id);
-    }
 }

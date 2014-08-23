@@ -1,7 +1,6 @@
 package org.migor.entropy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.migor.entropy.domain.*;
 import org.migor.entropy.domain.Thread;
@@ -113,43 +112,6 @@ public class CommentResource {
         // todo check permissions
         commentRepository.delete(id);
     }
-
-    /**
-     * POST  /rest/comments/:id/flag -> flag the "id" comment.
-     */
-    @RequestMapping(value = "/rest/comments/{id}/report",
-            method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    @Once(group = "report", every = 5, timeUnit = TimeUnit.SECONDS)
-    public ResponseEntity<Comment> report(@PathVariable Long id, @RequestBody Report report) {
-        log.debug("REST request to flag Comment : {}", id);
-
-        if (report == null) {
-            throw new IllegalArgumentException("Report is null");
-        }
-
-        if (StringUtils.isBlank(report.getReason())) {
-            throw new IllegalArgumentException("Reason is null");
-        }
-
-        Comment comment = commentRepository.findOne(id);
-
-        if (comment == null) {
-            throw new IllegalArgumentException("Comment does not exist");
-        }
-
-        report.setClientId(SecurityUtils.getCurrentLogin());
-        report.setCommentId(id);
-        report.setStatus(ReportStatus.PENDING);
-        report.setThreadId(comment.getThreadId());
-        report.setLevel(comment.getReportLevel());
-
-        reportRepository.save(report);
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
 
     /**
      * POST  /rest/comments/:id/like -> like the "id" comment.

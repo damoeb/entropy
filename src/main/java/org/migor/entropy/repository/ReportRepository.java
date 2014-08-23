@@ -12,4 +12,6 @@ import java.util.List;
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
     List<Report> findByThreadIdAndStatus(Long threadId, ReportStatus status);
+
+    Report findByCommentIdAndClientId(Long commentId, String clientId);
 }
