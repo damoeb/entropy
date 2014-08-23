@@ -8,6 +8,7 @@ import org.migor.entropy.domain.Thread;
 import org.migor.entropy.repository.CommentRepository;
 import org.migor.entropy.repository.ReportRepository;
 import org.migor.entropy.repository.ThreadRepository;
+import org.migor.entropy.repository.VoteRepository;
 import org.migor.entropy.security.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,9 @@ public class CommentResource {
 
     @Inject
     private ThreadRepository threadRepository;
+
+    @Inject
+    private VoteRepository voteRepository;
 
     @Inject
     private ReportRepository reportRepository;
@@ -155,8 +159,13 @@ public class CommentResource {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @Once(group = "vote", every = 5, timeUnit = TimeUnit.SECONDS)
-    public ResponseEntity<Comment> like(@PathVariable Long id, HttpServletResponse response) {
+    public ResponseEntity<Comment> like(@PathVariable Long id) {
         log.debug("REST request to like Comment : {}", id);
+
+        Vote vote = voteRepository.findByCommentIdAndClientId(id, SecurityUtils.getCurrentLogin());
+        if (vote != null) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
 
         Comment comment = commentRepository.findOne(id);
         if (comment == null) {
@@ -175,6 +184,13 @@ public class CommentResource {
         thread.setLikes(thread.getLikes() + 1);
         thread.setLastModifiedDate(DateTime.now());
         threadRepository.save(thread);
+
+        vote = new Vote();
+        vote.setClientId(SecurityUtils.getCurrentLogin());
+        vote.setCommentId(comment.getId());
+        vote.setCreatedDate(DateTime.now());
+
+        voteRepository.save(vote);
 
         return new ResponseEntity<>(comment, HttpStatus.OK);
     }
