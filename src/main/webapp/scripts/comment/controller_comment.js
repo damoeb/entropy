@@ -4,7 +4,7 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
     function ($scope, $routeParams, Thread, Comment, Report, $log, $location, $anchorScroll) {
 
         $scope.draft = {};
-        $scope.report = {};
+        $scope.reportModel = {};
         $scope.pendingCount = 0;
         $scope.commentCount = 0;
         $scope.reportCount = 0;
@@ -62,19 +62,26 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
 
         };
 
-        $scope.reply = function (comment) {
+        $scope.toggleReplyForm = function (comment) {
+
             $scope.draft.subject = comment.subject;
-            $scope.draft.parentId = comment.id;
+            comment.reply = !comment.reply;
+            comment.report = false;
         };
 
-        $scope.reportComment = function (comment) {
+        $scope.toggleReportForm = function (comment) {
+            comment.reply = false;
+            comment.report = !comment.report;
+        };
+
+        $scope.report = function (comment) {
             comment.report = false;
 
-            $scope.report.commentId = comment.id;
+            $scope.reportModel.commentId = comment.id;
 
-            Report.save($scope.report,
+            Report.save($scope.reportModel,
                 function () {
-                    $scope.report.reason = '';
+                    $scope.report.reason = null;
                 });
         };
 
