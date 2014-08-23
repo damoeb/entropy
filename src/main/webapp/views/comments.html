@@ -16,7 +16,7 @@
 
         <div style="margin-top: 15px">
             <div>
-                <h4>{{approved.length}} comments</h4>
+                <h4>{{commentCount}} comments</h4>
             </div>
 
 
@@ -48,7 +48,8 @@
     <div class="row">
 
         <form name="form" role="form" novalidate ng-submit="create()">
-            <div><input class="form-control" ng-model="draft.subject" ng-minlength=1 ng-maxlength=148></div>
+            <div><input class="form-control" ng-model="draft.subject" ng-minlength=1 ng-maxlength=148
+                        placeholder="Title"></div>
             <div><textarea class="form-control" placeholder="Type your comment here..." ng-model="draft.text"
                            ng-minlength=1 ng-maxlength=2048 required></textarea></div>
 

@@ -5,6 +5,7 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
 
         $scope.draft = {};
         $scope.pendingCount = 0;
+        $scope.commentCount = 0;
         $scope.reportCount = 0;
 
         var threadId = $routeParams.id;
@@ -13,6 +14,7 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
 
             Thread.get({id: threadId}, function (response) {
                 $scope.thread = response.thread;
+                $scope.commentCount = response.approved.length;
                 $scope.approved = $scope.tree(response.approved);
                 $scope.pendingCount = response.pendingCount;
                 $scope.reportCount = response.reportCount;
