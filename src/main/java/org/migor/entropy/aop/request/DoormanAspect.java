@@ -34,16 +34,11 @@ public class DoormanAspect {
     }
 
     @Around("enterPoincut()")
-    public Object controlOnce(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object guardOnce(ProceedingJoinPoint joinPoint) throws Throwable {
 
         try {
 
             MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-
-            Class[] paramTypes = new Class[joinPoint.getArgs().length];
-            for (int i = 0; i < joinPoint.getArgs().length; i++) {
-                paramTypes[i] = joinPoint.getArgs()[i].getClass();
-            }
 
             Method method = signature.getMethod();
             Once once = method.getAnnotation(Once.class);
@@ -54,9 +49,7 @@ public class DoormanAspect {
 
             doormanService.enter(once);
 
-            Object result = joinPoint.proceed();
-
-            return result;
+            return joinPoint.proceed();
 
         } catch (IllegalArgumentException e) {
             log.error("Illegal argument: {} in {}.{}()", Arrays.toString(joinPoint.getArgs()),

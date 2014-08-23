@@ -1,8 +1,99 @@
 <div>
 
-    <h2>Reports</h2>
+    <h2>{{thread.title}}</h2>
 
-    <div>
+    <div class="row">
+        <ul class="nav nav-tabs" role="tablist">
+            <li><a href="#/thread/{{thread.id}}">Discussion</a></li>
+            <li><a href="#/thread/{{thread.id}}/community">Community</a></li>
+            <li><a href="#/thread/{{thread.id}}/pending">Pending</a>
+            </li>
+            <li class="active"><a href="#/thread/{{thread.id}}/reports">Reports <span class="badge"
+                                                                                      ng-show="comments.length > 0">{{comments.length}}</span></a>
+            </li>
+            <li><a href="#/thread/{{thread.id}}/my">My</a></li>
+        </ul>
 
+
+        <div style="margin-top: 15px">
+
+            <dl>
+                <dd ng-repeat="comment in comments">
+
+                    <h3>#{{comment.id}}</h3>
+
+                    <div ng-include="'comment_renderer.html'"></div>
+                    <!--// list reports of comment-->
+
+                    <div ng-repeat="report in reports | filter:{ commentId: comment.id }">
+                        <div ng-include="'report_renderer.html'"></div>
+                        <!--<div>{{report.id}}</div>-->
+                    </div>
+
+                    <div style="margin-top: 10px; margin-bottom: 20px;">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default">Reject</button>
+                            <button type="button" class="btn btn-default">Approve</button>
+                        </div>
+                    </div>
+                </dd>
+            </dl>
+
+        </div>
     </div>
 </div>
+
+<script type="text/ng-template" id="comment_renderer.html">
+
+    <div class="post">
+
+        <div>
+
+            <div>
+                <strong><a href="javascript:void(0)"
+                           ng-show="{{comment.parentId != null}}">Re:</a>
+                    {{comment.subject}}</strong>
+                <a class="flag pull-right" href="javascript:void(0)"
+                   ng-click="comment.maximized = !comment.maximized"><span
+                        class="glyphicon glyphicon-minus"></span></a>
+            </div>
+
+            <div>
+                <span style="white-space: pre-line">{{comment.text}}</span> -- <a href="/">
+                {{comment.displayName}} </a>
+                <span style="color: grey" title="{{comment.createdDate | dateString }}">{{comment.createdDate | fromNow }}</span>
+            </div>
+
+            <div ng-include="'likes_renderer.html'"></div>
+
+        </div>
+
+
+    </div>
+
+</script>
+
+<script type="text/ng-template" id="likes_renderer.html">
+    <div ng-show="comment.dislikes > 0 || comment.likes > 0">
+        <div ng-show="comment.dislikes > 0" style="color: red; display: inline-block">
+            {{comment.dislikes}}
+            <div style="height:5px; background-color: red; width: {{3 * comment.dislikes}}px; max-width: 120px; display: inline-block; margin: 2px 0 2px 0"></div>
+        </div>
+        <div ng-show="comment.likes > 0" style="color: green; display: inline-block">
+            <div style="height:5px; background-color: green; width: {{3 * comment.likes}}px; max-width: 120px; display: inline-block; margin: 2px 0 2px 0"></div>
+            {{comment.likes}}
+        </div>
+    </div>
+</script>
+
+
+<script type="text/ng-template" id="report_renderer.html">
+    <div class="report">
+        <div>
+            <span style="white-space: pre-line">{{report.reason}}</span> -- <a href="/">
+            {{report.clientId}} </a>
+            <span style="color: grey"
+                  title="{{report.createdDate | dateString }}">{{report.createdDate | fromNow }}</span>
+        </div>
+    </div>
+</script>

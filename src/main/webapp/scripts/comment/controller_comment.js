@@ -3,6 +3,10 @@
 entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 'Comment', '$log', '$location', '$anchorScroll',
     function ($scope, $routeParams, Thread, Comment, $log, $location, $anchorScroll) {
 
+        $scope.draft = {};
+        $scope.pendingCount = 0;
+        $scope.reportCount = 0;
+
         var threadId = $routeParams.id;
 
         $scope.refresh = function () {
@@ -15,11 +19,7 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
             });
         };
 
-
         $scope.refresh();
-        $scope.draft = {};
-        $scope.pendingCount = 0;
-        $scope.reportCount = 0;
 
         $scope.create = function () {
 

@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * REST controller for managing Thread.
@@ -46,6 +47,7 @@ public class ThreadResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @Once(group = "thread", every = 10, timeUnit = TimeUnit.MINUTES)
     public void create(@RequestBody Thread thread) {
         log.debug("REST request to save Thread : {}", thread);
 
@@ -84,10 +86,8 @@ public class ThreadResource {
         }
         responseObj.put("thread", thread);
         responseObj.put("approved", commentRepository.findByThreadIdAndStatus(id, CommentStatus.APPROVED));
-        responseObj.put("pendingCount", commentRepository.findByThreadIdAndStatus(id, CommentStatus.PENDING).size());
-//        responseObj.put("rejectedCount", commentRepository.findByThreadIdAndStatus(id, CommentStatus.REJECTED).size());
-        responseObj.put("reportCount", reportRepository.findByThreadIdAndStatus(id, ReportStatus.PENDING).size());
-//        responseObj.put("spam", commentRepository.findByThreadIdAndStatus(id, CommentStatus.SPAM));
+        responseObj.put("pendingCount", commentRepository.getCountForThreadIdAndStatus(id, CommentStatus.PENDING));
+        responseObj.put("reportCount", commentRepository.getReportCountForThreadIdAndReportStatus(id, ReportStatus.PENDING));
         return new ResponseEntity<>(responseObj, HttpStatus.OK);
     }
 
@@ -123,6 +123,7 @@ public class ThreadResource {
     @Timed
     public void delete(@PathVariable Long id) {
         log.debug("REST request to delete Thread : {}", id);
+        // todo check permissions
         threadRepository.delete(id);
     }
 }

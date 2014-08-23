@@ -1,7 +1,7 @@
 'use strict';
 
-entropyApp.controller('ReportController', ['$scope', '$routeParams', 'Report', 'Thread',
-    function ($scope, $routeParams, Report, Thread) {
+entropyApp.controller('ReportController', ['$scope', '$routeParams', '$log', 'Report', 'Thread',
+    function ($scope, $routeParams, $log, Report, Thread) {
 
         var threadId = $routeParams.id;
 

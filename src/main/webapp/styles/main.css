@@ -143,3 +143,11 @@ ul#strength {
 .post-slim {
     padding: 10px;
 }
+
+.report {
+    /*border-radius: 4px;*/
+    padding: 15px;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+    color: #31708f;
+}

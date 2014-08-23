@@ -17,4 +17,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query("select c from Comment c where c.threadId = ?1 and exists (select r from Report r where c.id = r.commentId and r.status = ?2)")
     List<Comment> findByThreadIdAndReportStatus(Long id, ReportStatus status);
+
+    @Query("select count(c) from Comment c where c.threadId = ?1 and c.status = ?2")
+    Integer getCountForThreadIdAndStatus(Long id, CommentStatus status);
+
+    @Query("select count(c) from Comment c where c.threadId = ?1 and exists (select r from Report r where c.id = r.commentId and r.status = ?2)")
+    Integer getReportCountForThreadIdAndReportStatus(Long id, ReportStatus status);
 }
