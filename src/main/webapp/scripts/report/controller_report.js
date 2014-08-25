@@ -43,7 +43,8 @@ entropyApp.controller('ReportController', ['$scope', '$routeParams', '$log', 'Re
                 return report.commentId == comment.id;
             });
             _.each(reports, function (report) {
-                Report.reject({id: report.id});
+                $log.log(report);
+//                Report.reject({id: report.id});
             });
         };
 

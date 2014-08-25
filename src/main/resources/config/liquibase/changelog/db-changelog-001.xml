@@ -341,6 +341,7 @@
             <column name="stage" type="INT(10)">
                 <constraints nullable="false"/>
             </column>
+            <column name="abused" type="boolean" defaultValueBoolean="false" valueBoolean="false"/>
 
             <column name="created_date" type="timestamp" defaultValue="${now}">
                 <constraints nullable="false"/>

@@ -108,13 +108,11 @@
                         <div class="menu" style="display: inline">
                             <a href="javascript:void(0)"
                                ng-click="comment.maximized = !comment.maximized" title="Click to minimize">
-                                <span class="glyphicon glyphicon-resize-small"></span>
-                            </a>
+                                <span class="glyphicon glyphicon-resize-small"></span></a>
                         </div>
 
                         <span ng-show="comment.parentId == null" class="glyphicon glyphicon-leaf"
                               style="color: #666"></span>
-
                         <strong>
                             <!--<a ng-show="comment.parentId != null" href="javascript:void(0)"-->
                             <!--ng-click="scrollTo(comment.parentId)">Re:</a>-->
@@ -149,11 +147,13 @@
                             <span class="glyphicon glyphicon-link"></span>
                         </a>
 
-                        <a class="flag pull-right" href="javascript:void(0)"
-                           ng-click="toggleReportForm(comment)"
-                           title="Report this comment">
-                        <span class="glyphicon glyphicon-flag"></span>
-                        </a>
+                        <div class="flag pull-right">
+                            <a href="javascript:void(0)"
+                               ng-click="toggleReportForm(comment)"
+                               title="Report this comment">
+                                <span class="glyphicon glyphicon-flag"></span>
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -202,8 +202,8 @@
 
                         <div style="display: inline">
                             <a href="javascript:void(0)">
-                                <span class="glyphicon glyphicon-resize-full"></span>
-                            </a>
+                                <span class="glyphicon glyphicon-resize-full"></span></a>
+
                             <span ng-show="comment.parentId == null" class="glyphicon glyphicon-leaf"
                                   style="color: #666"></span>
 

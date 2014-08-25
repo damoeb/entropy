@@ -43,11 +43,12 @@ public class Report implements Serializable {
     @Column(name = "status")
     private ReportStatus status;
 
-    // todo add constraint
-
     @NotNull
     @Column(name = "comment_id")
     private Long commentId;
+
+    @Column(name = "abused")
+    private boolean abused;
 
     @NotNull
     @Column(name = "thread_id")
@@ -125,6 +126,14 @@ public class Report implements Serializable {
 
     public void setStage(Integer stage) {
         this.stage = stage;
+    }
+
+    public boolean isAbused() {
+        return abused;
+    }
+
+    public void setAbused(boolean abused) {
+        this.abused = abused;
     }
 
     @Override

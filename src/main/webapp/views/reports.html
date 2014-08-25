@@ -87,12 +87,17 @@
 
 
 <script type="text/ng-template" id="report_renderer.html">
-    <div class="report">
+    <div ng-class="{true:'abused-report', false:'report'}[report.abused]">
         <div>
             <span style="white-space: pre-line">{{report.reason}}</span> -- <a href="/">
         {{report.clientId}} </a>
             <span style="color: grey"
                   title="{{report.createdDate | dateString }}">{{report.createdDate | fromNow }}</span>
+
+            <div class="pull-right">
+                <label><input type="checkbox" ng-model="report.abused" ng-true-value="true" ng-false-value="false">
+                    Abused</label>
+            </div>
         </div>
     </div>
 </script>

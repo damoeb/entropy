@@ -32,6 +32,9 @@ public class ReportResource {
     @Inject
     private CommentRepository commentRepository;
 
+    @Inject
+    private CommentResource commentResource;
+
     /**
      * POST  /rest/reports -> Create a new report.
      */
@@ -131,7 +134,7 @@ public class ReportResource {
             return new ResponseEntity<>(report, HttpStatus.EXPECTATION_FAILED);
         }
 
-        if (comment.getReportStage().equals(report.getStage())) {
+        if (comment.getReportStage().equals(report.getStage()) && report.isAbused()) {
             // todo punish reporter for abuse
         }
 
