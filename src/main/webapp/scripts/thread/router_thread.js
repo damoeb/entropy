@@ -16,4 +16,16 @@ entropyApp
                         authorizedRoles: [USER_ROLES.all]
                     }
                 })
+                .when('/threads/create', {
+                    templateUrl: 'views/create_thread.html',
+                    controller: 'ThreadsController',
+                    resolve: {
+                        resolvedThread: ['Thread', function (Thread) {
+                            return Thread.query();
+                        }]
+                    },
+                    access: {
+                        authorizedRoles: [USER_ROLES.all]
+                    }
+                })
         }]);
