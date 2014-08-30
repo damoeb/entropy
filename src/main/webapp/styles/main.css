@@ -133,13 +133,12 @@ ul#strength {
 /* end Password strength bar style */
 
 .post {
-    padding: 10px 10px 5px 10px;
+    padding: 5px 5px 5px 10px;
 }
 
 .post .menu {
-    margin-top: 5px;
-    padding-top: 5px;
     color: #efefef;
+    padding-top: 5px;
 }
 
 .post .menu a {
@@ -154,8 +153,13 @@ ul#strength {
     box-shadow: 1px 1px 2px 1px #ccc;
 }
 
-.post:hover .flag {
+.post .flag a {
+    visibility: hidden;
+}
+
+.post:hover .flag a {
     color: black;
+    visibility: visible;
 }
 
 .post:hover .voteUp {

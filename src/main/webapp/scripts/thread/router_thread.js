@@ -17,13 +17,8 @@ entropyApp
                     }
                 })
                 .when('/threads/create', {
-                    templateUrl: 'views/create_thread.html',
+                    templateUrl: 'views/create-thread.html',
                     controller: 'ThreadsController',
-                    resolve: {
-                        resolvedThread: ['Thread', function (Thread) {
-                            return Thread.query();
-                        }]
-                    },
                     access: {
                         authorizedRoles: [USER_ROLES.all]
                     }

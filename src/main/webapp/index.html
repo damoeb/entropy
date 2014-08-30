@@ -40,42 +40,19 @@
         <div class="collapse navbar-collapse" id="navbar-collapse" ng-switch="authenticated">
             <ul class="nav navbar-nav nav-pills navbar-right">
                 <li>
-                    <a href="#">
-                        <span class="glyphicon glyphicon-home"></span>
+                    <a href="#/threads">
                         <span translate="global.menu.home">Home</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#/threads">
-                        <span translate="global.menu.threads">Threads</span>
+                    <a href="#/threads/create">
+                        <span>Start a new Thread</span>
                     </a>
                 </li>
-                <li class="dropdown pointer">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:;">
-                                <span>
-                                    <span class="glyphicon glyphicon-user"></span>
-                                    <span class="hidden-tablet" translate="global.menu.account.main">
-                                        Account
-                                    </span>
-                                    <b class="caret"></b>
-                                </span>
-                    </a>
-                    <ul class="dropdown-menu" ng-controller="MenuController">
-                        <li ng-switch-when="true"><a href="#/settings"><span class="glyphicon glyphicon-wrench"></span>
-                            &#xA0;<span translate="global.menu.account.settings">Settings</span></a></li>
-                        <li ng-switch-when="true"><a href="#/password"><span class="glyphicon glyphicon-lock"></span>
-                            &#xA0;<span translate="global.menu.account.password">Password</span></a></li>
-                        <li ng-switch-when="true"><a href="#/sessions"><span class="glyphicon glyphicon-cloud"></span>
-                            &#xA0;<span translate="global.menu.account.sessions">Sessions</span></a></li>
-                        <li ng-switch-when="true"><a href="#/logout"><span class="glyphicon glyphicon-log-out"></span>
-                            &#xA0;<span translate="global.menu.account.logout">Log out</span></a></li>
-                        <li ng-switch-when="false"><a href="#/login"><span class="glyphicon glyphicon-log-in"></span>
-                            &#xA0;<span translate="global.menu.account.login">Authenticate</span></a></li>
-
-                        <li ng-switch-when="false"><a href="#/register"><span
-                                class="glyphicon glyphicon-plus-sign"></span>
-                            &#xA0;<span translate="global.menu.account.register">Register</span></a></li>
-                    </ul>
+                <li>
+                    <form>
+                        <input type="text" class="form-control" placeholder="Search here...">
+                    </form>
                 </li>
                 <li ng-switch-when="true" ng-show="isAuthorized(userRoles.admin)" class="dropdown pointer"
                     ng-controller="AdminController">
@@ -99,52 +76,76 @@
                             &#xA0;<span translate="global.menu.account.apidocs">API Docs</span></a></li>
                     </ul>
                 </li>
-                <li class="dropdown pointer" ng-controller="LanguageController">
+                <!--<li class="dropdown pointer" ng-controller="LanguageController">-->
+                <!--<a class="dropdown-toggle" data-toggle="dropdown" href="javascript:;">-->
+                <!--<span>-->
+                <!--<span class="glyphicon glyphicon-flag"></span>-->
+                <!--<span class="hidden-tablet" translate="global.menu.language">Language</span>-->
+                <!--<b class="caret"></b>-->
+                <!--</span>-->
+                <!--</a>-->
+                <!--<ul class="dropdown-menu">-->
+                <!--<li active-menu="da">-->
+                <!--<a href="#" ng-click="changeLanguage(&#x27;da&#x27;)"><span-->
+                <!--class="famfamfam-flag-dk"></span>-->
+                <!--&#xA0;<span translate="global.language.da">Danish</span></a>-->
+                <!--</li>-->
+                <!--<li active-menu="en">-->
+                <!--<a href="#" ng-click="changeLanguage(&#x27;en&#x27;)"><span-->
+                <!--class="famfamfam-flag-gb"></span>-->
+                <!--&#xA0;<span translate="global.language.en">English</span></a>-->
+                <!--</li>-->
+                <!--<li active-menu="fr">-->
+                <!--<a href="#" ng-click="changeLanguage(&#x27;fr&#x27;)"><span-->
+                <!--class="famfamfam-flag-fr"></span>-->
+                <!--&#xA0;<span translate="global.language.fr">French</span></a>-->
+                <!--</li>-->
+                <!--<li active-menu="de">-->
+                <!--<a href="#" ng-click="changeLanguage(&#x27;de&#x27;)"><span-->
+                <!--class="famfamfam-flag-de"></span>-->
+                <!--&#xA0;<span translate="global.language.de">German</span></a>-->
+                <!--</li>-->
+                <!--<li active-menu="pl">-->
+                <!--<a href="#" ng-click="changeLanguage(&#x27;pl&#x27;)"><span-->
+                <!--class="famfamfam-flag-pl"></span>-->
+                <!--&#xA0;<span translate="global.language.pl">Polish</span></a>-->
+                <!--</li>-->
+                <!--<li active-menu="ru">-->
+                <!--<a href="#" ng-click="changeLanguage(&#x27;ru&#x27;)"><span-->
+                <!--class="famfamfam-flag-ru"></span>-->
+                <!--&#xA0;<span translate="global.language.ru">Russian</span></a>-->
+                <!--</li>-->
+                <!--</ul>-->
+                <!--</li>-->
+                <li class="dropdown pointer">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:;">
-                                <span>
-                                    <span class="glyphicon glyphicon-flag"></span>
-                                    <span class="hidden-tablet" translate="global.menu.language">Language</span>
-                                    <b class="caret"></b>
-                                </span>
+                        <span>
+                            <span class="glyphicon glyphicon-cog"></span>
+                            <b class="caret"></b>
+                        </span>
                     </a>
-                    <ul class="dropdown-menu">
-                        <li active-menu="da">
-                            <a href="#" ng-click="changeLanguage(&#x27;da&#x27;)"><span
-                                    class="famfamfam-flag-dk"></span>
-                                &#xA0;<span translate="global.language.da">Danish</span></a>
-                        </li>
-                        <li active-menu="en">
-                            <a href="#" ng-click="changeLanguage(&#x27;en&#x27;)"><span
-                                    class="famfamfam-flag-gb"></span>
-                                &#xA0;<span translate="global.language.en">English</span></a>
-                        </li>
-                        <li active-menu="fr">
-                            <a href="#" ng-click="changeLanguage(&#x27;fr&#x27;)"><span
-                                    class="famfamfam-flag-fr"></span>
-                                &#xA0;<span translate="global.language.fr">French</span></a>
-                        </li>
-                        <li active-menu="de">
-                            <a href="#" ng-click="changeLanguage(&#x27;de&#x27;)"><span
-                                    class="famfamfam-flag-de"></span>
-                                &#xA0;<span translate="global.language.de">German</span></a>
-                        </li>
-                        <li active-menu="pl">
-                            <a href="#" ng-click="changeLanguage(&#x27;pl&#x27;)"><span
-                                    class="famfamfam-flag-pl"></span>
-                                &#xA0;<span translate="global.language.pl">Polish</span></a>
-                        </li>
-                        <li active-menu="ru">
-                            <a href="#" ng-click="changeLanguage(&#x27;ru&#x27;)"><span
-                                    class="famfamfam-flag-ru"></span>
-                                &#xA0;<span translate="global.language.ru">Russian</span></a>
-                        </li>
+                    <ul class="dropdown-menu" ng-controller="MenuController">
+                        <li ng-switch-when="true"><a href="#/settings"><span class="glyphicon glyphicon-wrench"></span>
+                            &#xA0;<span translate="global.menu.account.settings">Settings</span></a></li>
+                        <li ng-switch-when="true"><a href="#/password"><span class="glyphicon glyphicon-lock"></span>
+                            &#xA0;<span translate="global.menu.account.password">Password</span></a></li>
+                        <li ng-switch-when="true"><a href="#/sessions"><span class="glyphicon glyphicon-cloud"></span>
+                            &#xA0;<span translate="global.menu.account.sessions">Sessions</span></a></li>
+                        <li ng-switch-when="true"><a href="#/logout"><span class="glyphicon glyphicon-log-out"></span>
+                            &#xA0;<span translate="global.menu.account.logout">Log out</span></a></li>
+                        <li ng-switch-when="false"><a href="#/login"><span class="glyphicon glyphicon-log-in"></span>
+                            &#xA0;<span translate="global.menu.account.login">Authenticate</span></a></li>
+
+                        <li ng-switch-when="false"><a href="#/register"><span
+                                class="glyphicon glyphicon-plus-sign"></span>
+                            &#xA0;<span translate="global.menu.account.register">Register</span></a></li>
                     </ul>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
-<div class="container">
+<div class="container" style="width: 600px;">
     <div ng-view=""></div>
 
     <div class="footer">

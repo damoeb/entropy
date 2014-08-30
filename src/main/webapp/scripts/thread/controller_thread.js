@@ -1,9 +1,15 @@
 'use strict';
 
-entropyApp.controller('ThreadsController', ['$scope', 'resolvedThread', 'Thread',
-    function ($scope, resolvedThread, Thread) {
+entropyApp.controller('ThreadsController', ['$scope', 'Thread',
+    function ($scope, Thread) {
 
-        $scope.threads = resolvedThread;
+        $scope.refresh = function () {
+            Thread.query({}, function (threads) {
+                $scope.threads = threads;
+            });
+        };
+
+        $scope.refresh();
 
         $scope.create = function () {
             Thread.save($scope.thread,

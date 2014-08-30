@@ -33,8 +33,7 @@ public class Thread implements Serializable {
     @Column(name = "title")
     private String title;
 
-    @Size(min = 1, max = 512)
-    @Column(name = "description")
+    @Transient
     private String description;
 
     @CreatedDate
@@ -49,7 +48,7 @@ public class Thread implements Serializable {
     private DateTime lastModifiedDate = DateTime.now();
 
     @Column(name = "comment_count")
-    private int commentCount;
+    private Integer commentCount = 0;
 
     @JsonIgnore
     @ManyToOne
@@ -64,13 +63,13 @@ public class Thread implements Serializable {
      * Sum of all comment likes plus thread likes
      */
     @Column(name = "likes")
-    private int likes;
+    private Integer likes = 0;
 
     /**
      * Sum of all comment dislikes plus thread dislikes
      */
     @Column(name = "dislikes")
-    private int dislikes;
+    private Integer dislikes = 0;
 
     /**
      * Submissions score: likes - dislikes via reddit
@@ -106,11 +105,11 @@ public class Thread implements Serializable {
         this.title = title;
     }
 
-    public int getCommentCount() {
+    public Integer getCommentCount() {
         return commentCount;
     }
 
-    public void setCommentCount(int commentCount) {
+    public void setCommentCount(Integer commentCount) {
         this.commentCount = commentCount;
     }
 
@@ -146,15 +145,15 @@ public class Thread implements Serializable {
         this.createdDate = createdDate;
     }
 
-    public int getLikes() {
+    public Integer getLikes() {
         return likes;
     }
 
-    public void setLikes(int likes) {
+    public void setLikes(Integer likes) {
         this.likes = likes;
     }
 
-    public int getDislikes() {
+    public Integer getDislikes() {
         return dislikes;
     }
 

@@ -1,14 +1,10 @@
 package org.migor.entropy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import org.joda.time.DateTime;
-import org.migor.entropy.domain.*;
-import org.migor.entropy.domain.Thread;
-import org.migor.entropy.repository.CommentRepository;
-import org.migor.entropy.repository.ReportRepository;
-import org.migor.entropy.repository.ThreadRepository;
-import org.migor.entropy.repository.VoteRepository;
+import org.migor.entropy.domain.Comment;
+import org.migor.entropy.domain.CommentStatus;
 import org.migor.entropy.security.SecurityUtils;
+import org.migor.entropy.service.CommentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -30,16 +26,7 @@ public class CommentResource {
     private final Logger log = LoggerFactory.getLogger(CommentResource.class);
 
     @Inject
-    private CommentRepository commentRepository;
-
-    @Inject
-    private ThreadRepository threadRepository;
-
-    @Inject
-    private VoteRepository voteRepository;
-
-    @Inject
-    private ReportRepository reportRepository;
+    private CommentService commentService;
 
     /**
      * POST  /rest/comments -> Create a new comment.
@@ -52,35 +39,13 @@ public class CommentResource {
     public void create(@RequestBody Comment comment) {
         log.debug("REST request to save Comment : {}", comment);
 
-        comment.setAuthorId(SecurityUtils.getCurrentLogin());
-        comment.setDisplayName("Anonymous");
-        comment.setStatus(CommentStatus.APPROVED); // todo default status depending on user trust
+        if (comment != null) {
+            comment.setAuthorId(SecurityUtils.getCurrentLogin());
+            comment.setDisplayName("Anonymous");
+            comment.setStatus(CommentStatus.APPROVED); // todo default status depending on user trust
 
-        Thread thread = threadRepository.findOne(comment.getThreadId());
-        if (thread == null) {
-            throw new IllegalArgumentException("Invalid threadId");
+            commentService.create(comment);
         }
-        if (ThreadStatus.CLOSED == thread.getStatus()) {
-            throw new IllegalArgumentException("Already closed");
-        }
-
-        if (comment.getParentId() == null) {
-            comment.setLevel(0);
-        } else {
-            Comment parent = commentRepository.findOne(comment.getParentId());
-
-            if (parent.getThreadId() != thread.getId()) {
-                throw new IllegalArgumentException("Invalid threadId");
-            }
-
-            comment.setLevel(parent.getLevel() + 1);
-        }
-
-        thread.setCommentCount(thread.getCommentCount() + 1);
-        thread.setLastModifiedDate(DateTime.now());
-        threadRepository.save(thread);
-
-        commentRepository.save(comment);
     }
 
     /**
@@ -92,7 +57,7 @@ public class CommentResource {
     @Timed
     public ResponseEntity<Comment> get(@PathVariable Long id, HttpServletResponse response) {
         log.debug("REST request to get Comment : {}", id);
-        Comment comment = commentRepository.findOne(id);
+        Comment comment = commentService.get(id);
         if (comment == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -109,8 +74,7 @@ public class CommentResource {
     @Timed
     public void delete(@PathVariable Long id) {
         log.debug("REST request to delete Comment : {}", id);
-        // todo check permissions
-        commentRepository.delete(id);
+        commentService.delete(id);
     }
 
     /**
@@ -124,37 +88,12 @@ public class CommentResource {
     public ResponseEntity<Comment> like(@PathVariable Long id) {
         log.debug("REST request to like Comment : {}", id);
 
-        Vote vote = voteRepository.findByCommentIdAndClientId(id, SecurityUtils.getCurrentLogin());
-        if (vote != null) {
+        try {
+            return new ResponseEntity<>(commentService.like(id), HttpStatus.OK);
+
+        } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
-
-        Comment comment = commentRepository.findOne(id);
-        if (comment == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        Thread thread = threadRepository.findOne(comment.getThreadId());
-        if (ThreadStatus.CLOSED == thread.getStatus()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-
-        comment.setLikes(comment.getLikes() + 1);
-        comment.setScore(comment.getLikes() - comment.getDislikes());
-        commentRepository.save(comment);
-
-        thread.setLikes(thread.getLikes() + 1);
-        thread.setLastModifiedDate(DateTime.now());
-        threadRepository.save(thread);
-
-        vote = new Vote();
-        vote.setClientId(SecurityUtils.getCurrentLogin());
-        vote.setCommentId(comment.getId());
-        vote.setCreatedDate(DateTime.now());
-
-        voteRepository.save(vote);
-
-        return new ResponseEntity<>(comment, HttpStatus.OK);
     }
 
 
@@ -169,24 +108,11 @@ public class CommentResource {
     public ResponseEntity<Comment> dislike(@PathVariable Long id, HttpServletResponse response) {
         log.debug("REST request to dislike Comment : {}", id);
 
-        Comment comment = commentRepository.findOne(id);
-        if (comment == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        try {
+            return new ResponseEntity<>(commentService.dislike(id), HttpStatus.OK);
+
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
-
-        Thread thread = threadRepository.findOne(comment.getThreadId());
-        if (ThreadStatus.CLOSED == thread.getStatus()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-
-        comment.setDislikes(comment.getDislikes() + 1);
-        comment.setScore(comment.getLikes() - comment.getDislikes());
-        commentRepository.save(comment);
-
-        thread.setDislikes(thread.getDislikes() + 1);
-        thread.setLastModifiedDate(DateTime.now());
-        threadRepository.save(thread);
-
-        return new ResponseEntity<>(comment, HttpStatus.OK);
     }
 }

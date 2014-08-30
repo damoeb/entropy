@@ -161,7 +161,6 @@
             <column name="creator_id" type="VARCHAR(128)"/>
             <column name="title" type="VARCHAR(128)"/>
             <column name="uri" type="VARCHAR(512)"/>
-            <column name="description" type="VARCHAR(512)"/>
             <column name="likes" type="INT(10)"/>
             <column name="dislikes" type="INT(10)"/>
         </createTable>
@@ -193,11 +192,11 @@
             </column>
             <column name="last_modified_date" type="timestamp"/>
 
-            <column name="level" type="INT(10)"/>
+            <column name="level" type="INT(10)" defaultValue="0"/>
             <column name="dislikes" type="INT(10)"/>
             <column name="likes" type="INT(10)"/>
-            <column name="score" type="INT(10)"/>
-            <column name="report_stage" type="INT(10)"/>
+            <column name="score" type="INT(10)" defaultValue="0"/>
+            <column name="report_stage" type="INT(10)" defaultValue="0"/>
             <column name="status" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
@@ -213,12 +212,6 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-
-        <!--<loadData encoding="UTF-8"-->
-        <!--file="config/liquibase/comments.csv"-->
-        <!--separator=";"-->
-        <!--tableName="T_COMMENT">-->
-        <!--</loadData>-->
 
     </changeSet>
 
@@ -261,6 +254,13 @@
                                  constraintName="FK_1clsign35ddje4chcxcxymev9" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="T_THREAD"/>
+
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/comments.csv"
+                  separator=";"
+                  tableName="T_COMMENT">
+        </loadData>
+
     </changeSet>
     <changeSet author="damoeb (generated)" id="1405721119963-11">
         <dropIndex indexName="idx_persistent_audit_event_data" tableName="T_PERSISTENT_AUDIT_EVENT_DATA"/>

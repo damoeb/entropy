@@ -1,0 +1,31 @@
+<div>
+    <form name="form" role="form" novalidate ng-submit="create()">
+        <h4>Start a new Thread</h4>
+        <table class="table">
+            <tr>
+                <td>Title</td>
+                <td><input class="form-control" ng-model="thread.title"
+                           placeholder="Title"></td>
+            </tr>
+            <tr>
+                <td>Url</td>
+                <td><input class="form-control" ng-model="thread.uri"
+                           placeholder="Url"></td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td><textarea class="form-control" placeholder="Type your comment here..." ng-model="thread.description"
+                              ng-minlength=1 ng-maxlength=2048 required></textarea></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <button type="submit" ng-disabled="form.$invalid" class="btn btn-primary">
+                        Create Thread
+                    </button>
+                </td>
+            </tr>
+        </table>
+
+    </form>
+</div>
