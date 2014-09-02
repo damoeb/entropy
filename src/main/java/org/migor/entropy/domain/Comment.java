@@ -67,8 +67,8 @@ public class Comment implements Serializable {
 
     @NotNull
     @Size(min = 1, max = 256)
-    @Column(name = "subject")
-    private String subject;
+    @Column(name = "title")
+    private String title;
 
     @Size(min = 1, max = 128)
     @Column(name = "display_name")
@@ -206,11 +206,11 @@ public class Comment implements Serializable {
     }
 
     public String getSubject() {
-        return subject;
+        return title;
     }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDisplayName() {

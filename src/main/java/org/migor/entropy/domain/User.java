@@ -52,17 +52,8 @@ public class User extends AbstractAuditingEntity implements Serializable {
     private String activationKey;
 
     @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "host_id")
-    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-    private User host;
-
-    @Column(name = "host_id", insertable = false, updatable = false)
-    private String hostId;
-
-    @JsonIgnore
-    @Column(name = "karma")
-    private Integer karma;
+    @Column(name = "reputation")
+    private Integer reputation;
 
     @JsonIgnore
     @ManyToMany
@@ -158,20 +149,12 @@ public class User extends AbstractAuditingEntity implements Serializable {
         this.persistentTokens = persistentTokens;
     }
 
-    public User getHost() {
-        return host;
+    public Integer getReputation() {
+        return reputation;
     }
 
-    public String getHostId() {
-        return hostId;
-    }
-
-    public void setKarma(Integer karma) {
-        this.karma = karma;
-    }
-
-    public Integer getHellLevel() {
-        return karma;
+    public void setReputation(Integer reputation) {
+        this.reputation = reputation;
     }
 
     @Override

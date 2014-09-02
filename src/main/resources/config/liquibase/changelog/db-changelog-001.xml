@@ -28,6 +28,7 @@
             </column>
             <column name="last_modified_by" type="varchar(50)"/>
             <column name="last_modified_date" type="timestamp"/>
+            <column name="reputation" type="INT(10)"/>
         </createTable>
 
         <createTable tableName="T_AUTHORITY">
@@ -159,7 +160,9 @@
             <column name="last_modified_date" type="timestamp"/>
             <column name="status" type="VARCHAR(20)"/>
             <column name="creator_id" type="VARCHAR(128)"/>
-            <column name="title" type="VARCHAR(128)"/>
+            <column name="title" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
             <column name="uri" type="VARCHAR(512)"/>
             <column name="likes" type="INT(10)"/>
             <column name="dislikes" type="INT(10)"/>
@@ -171,11 +174,11 @@
                                  referencedColumnNames="login"
                                  referencedTableName="T_USER"/>
 
-        <loadData encoding="UTF-8"
-                  file="config/liquibase/threads.csv"
-                  separator=";"
-                  tableName="T_THREAD">
-        </loadData>
+        <!--<loadData encoding="UTF-8"-->
+        <!--file="config/liquibase/threads.csv"-->
+        <!--separator=";"-->
+        <!--tableName="T_THREAD">-->
+        <!--</loadData>-->
 
     </changeSet>
 
@@ -204,9 +207,7 @@
             <column name="text" type="VARCHAR(2048)">
                 <constraints nullable="false"/>
             </column>
-            <column name="subject" type="VARCHAR(256)">
-                <constraints nullable="false"/>
-            </column>
+            <column name="title" type="VARCHAR(256)"/>
             <column name="display_name" type="VARCHAR(128)"/>
             <column name="thread_id" type="BIGINT(19)">
                 <constraints nullable="false"/>
@@ -215,16 +216,6 @@
 
     </changeSet>
 
-    <changeSet author="damoeb (generated)" id="1405721119963-3">
-        <addColumn tableName="T_USER">
-            <column name="host_id" type="VARCHAR(255)"/>
-        </addColumn>
-    </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-4">
-        <addColumn tableName="T_USER">
-            <column name="karma" type="INT(10)"/>
-        </addColumn>
-    </changeSet>
     <changeSet author="damoeb (generated)" id="1405721119963-5">
         <addPrimaryKey columnNames="id" constraintName="PRIMARY" tableName="T_THREAD"/>
     </changeSet>
@@ -243,23 +234,17 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="T_COMMENT"/>
     </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-9">
-        <addForeignKeyConstraint baseColumnNames="host_id" baseTableName="T_USER"
-                                 constraintName="FK_tntyvmpke3a9vwa5qs8ni8wfh" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="login" referencedTableName="T_USER"/>
-    </changeSet>
     <changeSet author="damoeb (generated)" id="1405721119963-10">
         <addForeignKeyConstraint baseColumnNames="thread_id" baseTableName="T_COMMENT"
                                  constraintName="FK_1clsign35ddje4chcxcxymev9" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="T_THREAD"/>
 
-        <loadData encoding="UTF-8"
-                  file="config/liquibase/comments.csv"
-                  separator=";"
-                  tableName="T_COMMENT">
-        </loadData>
+        <!--<loadData encoding="UTF-8"-->
+        <!--file="config/liquibase/comments.csv"-->
+        <!--separator=";"-->
+        <!--tableName="T_COMMENT">-->
+        <!--</loadData>-->
 
     </changeSet>
     <changeSet author="damoeb (generated)" id="1405721119963-11">
@@ -347,6 +332,11 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <addUniqueConstraint columnNames="comment_id, client_id"
+                             constraintName="unique_report"
+                             tableName="T_REPORT"/>
+
     </changeSet>
 
     <changeSet author="damoeb (generated)" id="1405721119963-30">
@@ -364,6 +354,11 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <addUniqueConstraint columnNames="comment_id, client_id"
+                             constraintName="unique_vote"
+                             tableName="T_VOTE"/>
+
     </changeSet>
 
     <changeSet author="damoeb (generated)" id="1405721119963-31">
@@ -381,6 +376,11 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <addUniqueConstraint columnNames="group_id, client_id"
+                             constraintName="unique_lock"
+                             tableName="T_LOCK"/>
+
     </changeSet>
 
     <changeSet author="damoeb (generated)" id="1405721119963-32">
@@ -398,6 +398,11 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <addUniqueConstraint columnNames="type, expression"
+                             constraintName="unique_ban"
+                             tableName="T_BAN"/>
+
     </changeSet>
 
 </databaseChangeLog>

@@ -54,7 +54,7 @@
             <div>
                 <strong><a href="javascript:void(0)"
                            ng-show="{{comment.parentId != null}}">Re:</a>
-                    {{comment.subject}}</strong>
+                    {{comment.title}}</strong>
             </div>
 
             <div>
@@ -90,7 +90,7 @@
     <div ng-class="{true:'abused-report', false:'report'}[report.abused]">
         <div>
             <span style="white-space: pre-line">{{report.reason}}</span> -- <a href="/">
-        {{report.clientId}} </a>
+            {{report.clientId}} </a>
             <span style="color: grey"
                   title="{{report.createdDate | dateString }}">{{report.createdDate | fromNow }}</span>
 

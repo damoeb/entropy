@@ -1,7 +1,7 @@
 'use strict';
 
-entropyApp.controller('ThreadsController', ['$scope', 'Thread',
-    function ($scope, Thread) {
+entropyApp.controller('ThreadsController', ['$scope', '$routeParams', 'Thread',
+    function ($scope, $routeParams, Thread) {
 
         $scope.refresh = function () {
             Thread.query({}, function (threads) {
@@ -10,20 +10,6 @@ entropyApp.controller('ThreadsController', ['$scope', 'Thread',
         };
 
         $scope.refresh();
-
-        $scope.create = function () {
-            Thread.save($scope.thread,
-                function () {
-                    $scope.threads = Thread.query();
-                    $('#saveThreadModal').modal('hide');
-                    $scope.clear();
-                });
-        };
-
-        $scope.update = function (id) {
-            $scope.thread = Thread.get({id: id});
-            $('#saveThreadModal').modal('show');
-        };
 
         $scope.delete = function (id) {
             Thread.delete({id: id},
@@ -35,11 +21,4 @@ entropyApp.controller('ThreadsController', ['$scope', 'Thread',
         $scope.clear = function () {
             $scope.thread = {id: null, uri: null, title: null, description: null};
         };
-    }]);
-
-entropyApp.controller('ThreadController', ['$scope', '$routeParams', 'Thread',
-    function ($scope, $routeParams, Thread) {
-
-        $scope.thread = Thread.get({id: $routeParams.id});
-
     }]);

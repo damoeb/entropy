@@ -167,12 +167,16 @@
         <pluginRepository>
             <id>spring-snapshots</id>
             <url>http://repo.spring.io/libs-snapshot</url>
-            <snapshots><enabled>true</enabled></snapshots>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </pluginRepository>
         <pluginRepository>
             <id>spring-milestones</id>
             <url>http://repo.spring.io/milestone</url>
-            <snapshots><enabled>true</enabled></snapshots>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </pluginRepository>
     </pluginRepositories>
 
@@ -181,6 +185,11 @@
     </prerequisites>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.7.3</version>
+        </dependency>
         <dependency>
             <groupId>com.codahale.metrics</groupId>
             <artifactId>metrics-core</artifactId>
@@ -391,7 +400,7 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.30</version>
         </dependency>
-        
+
 
         <!-- Test dependencies -->
         <dependency>
@@ -453,11 +462,15 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <message>You are running an older version of Maven. JHipster requires at least Maven 3.0</message>
+                                    <message>You are running an older version of Maven. JHipster requires at least Maven
+                                        3.0
+                                    </message>
                                     <version>[3.0.0,)</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <message>You are running an older version of Java. JHipster requires at least JDK 1.7</message>
+                                    <message>You are running an older version of Java. JHipster requires at least JDK
+                                        1.7
+                                    </message>
                                     <version>[1.7.0,)</version>
                                 </requireJavaVersion>
                             </rules>
@@ -575,7 +588,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <execute />
+                                        <execute/>
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -590,7 +603,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <execute />
+                                        <execute/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>

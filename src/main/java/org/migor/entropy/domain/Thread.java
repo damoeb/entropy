@@ -29,7 +29,7 @@ public class Thread implements Serializable {
     @Column(name = "uri")
     private String uri;
 
-    @Size(min = 1, max = 128)
+    @Size(min = 0, max = 128)
     @Column(name = "title")
     private String title;
 

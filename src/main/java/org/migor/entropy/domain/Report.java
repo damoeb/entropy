@@ -15,9 +15,10 @@ import java.io.Serializable;
  * A Report.
  */
 @Entity
-@Table(name = "T_REPORT")
+@Table(name = "T_REPORT", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"client_id", "comment_id"})
+})
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-// todo unique constraint commentId, clientId, threadId
 // todo extends AbstractAuditingEntity
 public class Report implements Serializable {
 

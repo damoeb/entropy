@@ -10,6 +10,8 @@ import org.migor.entropy.web.rest.Once;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import javax.inject.Inject;
 import java.lang.reflect.Method;
@@ -44,7 +46,7 @@ public class DoormanAspect {
             Once once = method.getAnnotation(Once.class);
 
             if (!doormanService.knock(once)) {
-                throw new IllegalAccessException("Request blocked temporarily");
+                new ResponseEntity<>(HttpStatus.LOCKED);
             }
 
             doormanService.enter(once);

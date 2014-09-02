@@ -64,7 +64,7 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
 
         $scope.toggleReplyForm = function (comment) {
 
-            $scope.draft.subject = comment.subject;
+            $scope.draft.title = comment.title;
             comment.reply = !comment.reply;
             comment.report = false;
         };

@@ -18,7 +18,7 @@ entropyApp
                 })
                 .when('/threads/create', {
                     templateUrl: 'views/create-thread.html',
-                    controller: 'ThreadsController',
+                    controller: 'CreateThreadsController',
                     access: {
                         authorizedRoles: [USER_ROLES.all]
                     }

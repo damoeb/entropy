@@ -3,12 +3,13 @@ package org.migor.entropy.config;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.servlet.InstrumentedFilter;
 import com.codahale.metrics.servlets.MetricsServlet;
-import org.migor.entropy.web.filter.CachingHttpHeadersFilter;
-import org.migor.entropy.web.filter.StaticResourcesProductionFilter;
-import org.migor.entropy.web.filter.gzip.GZipServletFilter;
 import org.atmosphere.cache.UUIDBroadcasterCache;
 import org.atmosphere.cpr.AtmosphereFramework;
 import org.atmosphere.cpr.AtmosphereServlet;
+import org.migor.entropy.web.filter.CachingHttpHeadersFilter;
+import org.migor.entropy.web.filter.StaticResourcesProductionFilter;
+import org.migor.entropy.web.filter.UrlCatcherServletFilter;
+import org.migor.entropy.web.filter.gzip.GZipServletFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -52,6 +53,7 @@ public class WebConfigurer implements ServletContextInitializer {
             initCachingHttpHeadersFilter(servletContext, disps);
         }
         initGzipFilter(servletContext, disps);
+        initUrlCatcherFilter(servletContext, disps);
 
         log.info("Web application fully configured");
     }
@@ -75,6 +77,22 @@ public class WebConfigurer implements ServletContextInitializer {
         compressingFilter.addMappingForUrlPatterns(disps, true, "/metrics/*");
 
         compressingFilter.setAsyncSupported(true);
+    }
+
+    /**
+     * Initializes the UrlCatcher filter.
+     */
+    private void initUrlCatcherFilter(ServletContext servletContext, EnumSet<DispatcherType> disps) {
+        log.debug("Registering UrlCatcher Filter");
+
+        FilterRegistration.Dynamic urlCatcherFilter = servletContext.addFilter("urlCatcherFilter", new UrlCatcherServletFilter());
+        Map<String, String> parameters = new HashMap<>();
+
+        urlCatcherFilter.setInitParameters(parameters);
+
+        urlCatcherFilter.addMappingForUrlPatterns(disps, true, "/*");
+
+        urlCatcherFilter.setAsyncSupported(false);
     }
 
     /**

@@ -14,9 +14,10 @@ import java.io.Serializable;
  * A Lock.
  */
 @Entity
-@Table(name = "T_LOCK")
+@Table(name = "T_LOCK", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"group_id", "client_id"})
+})
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-// todo unique constraints
 public class Lock implements Serializable {
 
     @Id

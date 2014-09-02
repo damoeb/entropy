@@ -14,7 +14,9 @@ import java.io.Serializable;
  * A Ban.
  */
 @Entity
-@Table(name = "T_BAN")
+@Table(name = "T_BAN", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"type", "expression"})
+})
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Ban extends AbstractAuditingEntity implements Serializable {
 

@@ -15,7 +15,9 @@ import java.io.Serializable;
  * A Vote.
  */
 @Entity
-@Table(name = "T_VOTE")
+@Table(name = "T_VOTE", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"comment_id", "client_id"})
+})
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Vote implements Serializable {
 

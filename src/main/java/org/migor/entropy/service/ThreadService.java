@@ -43,7 +43,7 @@ public class ThreadService {
 
         Comment first = new Comment();
         first.setThreadId(thread.getId());
-        first.setSubject(thread.getTitle());
+        first.setTitle(thread.getTitle());
         first.setText(thread.getDescription());
         first.setAuthorId(SecurityUtils.getCurrentLogin());
         first.setDisplayName("Anonymous");
