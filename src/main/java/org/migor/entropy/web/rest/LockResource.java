@@ -2,16 +2,20 @@ package org.migor.entropy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.migor.entropy.domain.Lock;
+import org.migor.entropy.domain.PrivilegeName;
 import org.migor.entropy.repository.LockRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -27,27 +31,15 @@ public class LockResource {
     private LockRepository lockRepository;
 
     /**
-     * POST  /rest/locks -> Create a new lock.
-     */
-    @RequestMapping(value = "/rest/locks",
-            method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    public void create(@RequestBody Lock lock) {
-        log.debug("REST request to save Lock : {}", lock);
-        lockRepository.save(lock);
-    }
-
-    /**
      * GET  /rest/locks -> get all the locks.
      */
     @RequestMapping(value = "/rest/locks",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public List<Lock> getAll() {
+    public ResponseEntity<List<Lock>> getAll(HttpServletRequest request) {
         log.debug("REST request to get all Locks");
-        return lockRepository.findAll();
+        return new ResponseEntity<>(lockRepository.findAll(), HttpStatus.OK);
     }
 
     /**
@@ -57,7 +49,7 @@ public class LockResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Lock> get(@PathVariable Long id, HttpServletResponse response) {
+    public ResponseEntity<Lock> get(@PathVariable Long id, HttpServletRequest request) {
         log.debug("REST request to get Lock : {}", id);
         Lock lock = lockRepository.findOne(id);
         if (lock == null) {
@@ -73,8 +65,10 @@ public class LockResource {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public void delete(@PathVariable Long id) {
+    @Privileged(PrivilegeName.DELETE_LOCK)
+    public ResponseEntity<Object> delete(@PathVariable Long id, HttpServletRequest request) {
         log.debug("REST request to delete Lock : {}", id);
         lockRepository.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

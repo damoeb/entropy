@@ -1,9 +1,8 @@
 package org.migor.entropy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import org.migor.entropy.domain.Comment;
-import org.migor.entropy.domain.Report;
-import org.migor.entropy.domain.ReportStatus;
+import org.migor.entropy.config.ErrorCode;
+import org.migor.entropy.domain.*;
 import org.migor.entropy.repository.CommentRepository;
 import org.migor.entropy.repository.ReportRepository;
 import org.migor.entropy.security.SecurityUtils;
@@ -15,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * REST controller for managing Report.
@@ -32,9 +31,6 @@ public class ReportResource {
     @Inject
     private CommentRepository commentRepository;
 
-    @Inject
-    private CommentResource commentResource;
-
     /**
      * POST  /rest/reports -> Create a new report.
      */
@@ -42,18 +38,18 @@ public class ReportResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public void create(@RequestBody Report report) {
+    public ResponseEntity<Object> create(@RequestBody Report report, HttpServletRequest request) throws DoormanException {
         log.debug("REST request to save Report : {}", report);
         Report existing = reportRepository.findByCommentIdAndClientId(report.getCommentId(), SecurityUtils.getCurrentLogin());
         if (existing != null) {
             // multiple reports of user for same comment
-            return;
+            throw new DoormanException(Report.class, ErrorCode.ALREADY_EXISTS);
         }
 
         Comment comment = commentRepository.findOne(report.getCommentId());
 
         if (comment == null) {
-            throw new IllegalArgumentException("Comment does not exist");
+            throw new DoormanException(Comment.class, ErrorCode.RESOURCE_NOT_FOUND);
         }
 
         report.setClientId(SecurityUtils.getCurrentLogin());
@@ -62,33 +58,36 @@ public class ReportResource {
         report.setStage(comment.getReportStage());
 
         reportRepository.save(report);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
-     * POST  /rest/reports/{id}/approve -> Create a new report.
+     * POST  /rest/reports/{id}/approve -> Approve a report.
      */
     @RequestMapping(value = "/rest/reports/{id}/approve",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Report> approve(@PathVariable Long id, HttpServletResponse response) {
+    @Privileged(PrivilegeName.FINALIZE_REPORT)
+    public ResponseEntity<Report> approve(@PathVariable Long id, HttpServletRequest request) throws DoormanException {
         log.debug("REST request to approve Report : {}", id);
 
         Report report = reportRepository.findOne(id);
         if (report == null) {
             // does not exist
-            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+            throw new DoormanException(Report.class, ErrorCode.RESOURCE_NOT_FOUND);
         }
 
         if (report.getStatus() != ReportStatus.PENDING) {
             // Invalid status
-            return new ResponseEntity<>(report, HttpStatus.EXPECTATION_FAILED);
+            throw new DoormanException(Report.class, ErrorCode.INVALID_STATUS);
         }
 
         Comment comment = commentRepository.findOne(report.getCommentId());
 
         if (comment == null) {
-            return new ResponseEntity<>(report, HttpStatus.EXPECTATION_FAILED);
+            throw new DoormanException(Comment.class, ErrorCode.RESOURCE_NOT_FOUND);
         }
 
         if (comment.getReportStage().equals(report.getStage())) {
@@ -108,30 +107,31 @@ public class ReportResource {
     }
 
     /**
-     * POST  /rest/reports/{id}/reject -> Create a new report.
+     * POST  /rest/reports/{id}/reject -> Reject a report.
      */
     @RequestMapping(value = "/rest/reports/{id}/reject",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Report> reject(@PathVariable Long id, HttpServletResponse response) {
+    @Privileged(PrivilegeName.FINALIZE_REPORT)
+    public ResponseEntity<Report> reject(@PathVariable Long id, HttpServletRequest request) throws DoormanException {
         log.debug("REST request to reject Report : {}", id);
 
         Report report = reportRepository.findOne(id);
         if (report == null) {
             // does not exist
-            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+            throw new DoormanException(Report.class, ErrorCode.RESOURCE_NOT_FOUND);
         }
 
         if (report.getStatus() != ReportStatus.PENDING) {
             // Invalid status
-            return new ResponseEntity<>(report, HttpStatus.EXPECTATION_FAILED);
+            throw new DoormanException(Report.class, ErrorCode.INVALID_STATUS);
         }
 
         Comment comment = commentRepository.findOne(report.getCommentId());
 
         if (comment == null) {
-            return new ResponseEntity<>(report, HttpStatus.EXPECTATION_FAILED);
+            throw new DoormanException(Comment.class, ErrorCode.RESOURCE_NOT_FOUND);
         }
 
         if (comment.getReportStage().equals(report.getStage()) && report.isAbused()) {

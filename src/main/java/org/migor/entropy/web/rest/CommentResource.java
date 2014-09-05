@@ -3,6 +3,7 @@ package org.migor.entropy.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import org.migor.entropy.domain.Comment;
 import org.migor.entropy.domain.CommentStatus;
+import org.migor.entropy.domain.PrivilegeName;
 import org.migor.entropy.security.SecurityUtils;
 import org.migor.entropy.service.CommentService;
 import org.slf4j.Logger;
@@ -13,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,17 +36,20 @@ public class CommentResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    @Once(group = "post", every = 5, timeUnit = TimeUnit.SECONDS)
-    public void create(@RequestBody Comment comment) {
+    @LimitFrequency(resource = "comment", freeze = 5, timeUnit = TimeUnit.SECONDS)
+    @Privileged(PrivilegeName.CREATE_COMMENT)
+    public ResponseEntity<Object> create(@RequestBody Comment comment, HttpServletRequest request) {
         log.debug("REST request to save Comment : {}", comment);
 
         if (comment != null) {
             comment.setAuthorId(SecurityUtils.getCurrentLogin());
             comment.setDisplayName("Anonymous");
-            comment.setStatus(CommentStatus.APPROVED); // todo default status depending on user trust
+            comment.setStatus(CommentStatus.PENDING);
 
             commentService.create(comment);
         }
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
@@ -55,7 +59,7 @@ public class CommentResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Comment> get(@PathVariable Long id, HttpServletResponse response) {
+    public ResponseEntity<Comment> get(@PathVariable Long id, HttpServletRequest request) {
         log.debug("REST request to get Comment : {}", id);
         Comment comment = commentService.get(id);
         if (comment == null) {
@@ -72,9 +76,10 @@ public class CommentResource {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Object> delete(@PathVariable Long id, HttpServletRequest request) {
         log.debug("REST request to delete Comment : {}", id);
         commentService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
@@ -84,8 +89,9 @@ public class CommentResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    @Once(group = "vote", every = 5, timeUnit = TimeUnit.SECONDS)
-    public ResponseEntity<Comment> like(@PathVariable Long id) {
+    @LimitFrequency(resource = "vote", freeze = 5, timeUnit = TimeUnit.SECONDS)
+    @Privileged(PrivilegeName.CREATE_VOTE)
+    public ResponseEntity<Comment> like(@PathVariable Long id, HttpServletRequest request) {
         log.debug("REST request to like Comment : {}", id);
 
         try {
@@ -104,8 +110,9 @@ public class CommentResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    @Once(group = "vote", every = 5, timeUnit = TimeUnit.SECONDS)
-    public ResponseEntity<Comment> dislike(@PathVariable Long id, HttpServletResponse response) {
+    @LimitFrequency(resource = "vote", freeze = 5, timeUnit = TimeUnit.SECONDS)
+    @Privileged(PrivilegeName.CREATE_VOTE)
+    public ResponseEntity<Comment> dislike(@PathVariable Long id, HttpServletRequest request) {
         log.debug("REST request to dislike Comment : {}", id);
 
         try {

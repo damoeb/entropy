@@ -31,6 +31,9 @@ public class CommentService {
     @Inject
     private VoteRepository voteRepository;
 
+    @Inject
+    private ReputationService reputationService;
+
 
     public Comment create(Comment comment) {
 
@@ -53,6 +56,9 @@ public class CommentService {
 
             comment.setLevel(parent.getLevel() + 1);
         }
+
+        reputationService.judge(comment);
+
 
         thread.setCommentCount(thread.getCommentCount() + 1);
         thread.setLastModifiedDate(DateTime.now());

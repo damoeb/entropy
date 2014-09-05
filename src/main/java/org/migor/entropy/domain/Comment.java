@@ -49,6 +49,9 @@ public class Comment implements Serializable {
     @Column(name = "level")
     private Integer level;
 
+    @Column(name = "reputation", nullable = false)
+    private Integer reputation = 0;
+
     @CreatedDate
     @NotNull
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -205,7 +208,7 @@ public class Comment implements Serializable {
         this.status = status;
     }
 
-    public String getSubject() {
+    public String getTitle() {
         return title;
     }
 
@@ -251,6 +254,14 @@ public class Comment implements Serializable {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public Integer getReputation() {
+        return reputation;
+    }
+
+    public void setReputation(Integer reputation) {
+        this.reputation = reputation;
     }
 
     @Override

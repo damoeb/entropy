@@ -28,7 +28,9 @@
             </column>
             <column name="last_modified_by" type="varchar(50)"/>
             <column name="last_modified_date" type="timestamp"/>
-            <column name="reputation" type="INT(10)"/>
+            <column name="reputation" type="INT(10)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
         <createTable tableName="T_AUTHORITY">
@@ -402,6 +404,28 @@
         <addUniqueConstraint columnNames="type, expression"
                              constraintName="unique_ban"
                              tableName="T_BAN"/>
+
+    </changeSet>
+
+    <changeSet author="damoeb (generated)" id="1405721119963-33">
+        <createTable tableName="T_PRIVILEGE">
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reputation" type="INT(10)" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint columnNames="name"
+                             constraintName="unique_privilege"
+                             tableName="T_PRIVILEGE"/>
+
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/privileges.csv"
+                  separator=";"
+                  tableName="T_PRIVILEGE">
+        </loadData>
 
     </changeSet>
 

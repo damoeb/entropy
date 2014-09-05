@@ -1,5 +1,6 @@
 package org.migor.entropy.service;
 
+import org.migor.entropy.config.ErrorCode;
 import org.migor.entropy.domain.*;
 import org.migor.entropy.domain.Thread;
 import org.migor.entropy.repository.CommentRepository;
@@ -57,18 +58,16 @@ public class ThreadService {
     }
 
     public void delete(Long id) {
-        // todo check permissions
         threadRepository.delete(id);
     }
 
-
-    public Map<String, Object> getDetailed(Long id) {
+    public Map<String, Object> getDetailed(Long id) throws DoormanException {
 
         Map<String, Object> responseObj = new HashMap<>();
 
         Thread thread = threadRepository.findOne(id);
         if (thread == null) {
-            throw new IllegalArgumentException("Thread not found");
+            throw new DoormanException(Thread.class, ErrorCode.RESOURCE_NOT_FOUND);
         }
         responseObj.put("thread", thread);
         responseObj.put("approved", commentRepository.findByThreadIdAndStatus(id, CommentStatus.APPROVED));
@@ -77,13 +76,13 @@ public class ThreadService {
         return responseObj;
     }
 
-    public Map<String, Object> getReports(@PathVariable Long id) {
+    public Map<String, Object> getReports(@PathVariable Long id) throws DoormanException {
 
         Map<String, Object> responseObj = new HashMap<>();
 
         Thread thread = threadRepository.findOne(id);
         if (thread == null) {
-            throw new IllegalArgumentException("Thread not found");
+            throw new DoormanException(Thread.class, ErrorCode.RESOURCE_NOT_FOUND);
         }
         responseObj.put("thread", thread);
         responseObj.put("reports", reportRepository.findByThreadIdAndStatus(id, ReportStatus.PENDING));

@@ -28,6 +28,7 @@ public class Vote implements Serializable {
     /**
      * browser signature or login
      */
+    // todo fk to user
     @NotNull
     @Size(min = 1, max = 250)
     @Column(name = "client_id")

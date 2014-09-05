@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -33,9 +33,10 @@ public class VoteResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public void create(@RequestBody Vote vote) {
+    public ResponseEntity<Object> create(@RequestBody Vote vote, HttpServletRequest request) {
         log.debug("REST request to save Vote : {}", vote);
         voteRepository.save(vote);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
@@ -45,7 +46,7 @@ public class VoteResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public List<Vote> getAll() {
+    public List<Vote> getAll(HttpServletRequest request) {
         log.debug("REST request to get all Votes");
         return voteRepository.findAll();
     }
@@ -57,7 +58,7 @@ public class VoteResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Vote> get(@PathVariable Long id, HttpServletResponse response) {
+    public ResponseEntity<Vote> get(@PathVariable Long id, HttpServletRequest request) {
         log.debug("REST request to get Vote : {}", id);
         Vote vote = voteRepository.findOne(id);
         if (vote == null) {
@@ -73,8 +74,9 @@ public class VoteResource {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Object> delete(@PathVariable Long id, HttpServletRequest request) {
         log.debug("REST request to delete Vote : {}", id);
         voteRepository.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -11,10 +11,10 @@ import java.util.concurrent.TimeUnit;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Once {
-    String group();
+public @interface LimitFrequency {
+    String resource();
 
-    int every();
+    int freeze();
 
     TimeUnit timeUnit();
 }

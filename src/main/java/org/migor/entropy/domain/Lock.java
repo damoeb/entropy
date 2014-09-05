@@ -31,6 +31,7 @@ public class Lock implements Serializable {
     /**
      * browser signature or login
      */
+    // todo fk to user
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "client_id")

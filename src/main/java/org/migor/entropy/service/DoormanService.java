@@ -4,7 +4,7 @@ import org.joda.time.DateTime;
 import org.migor.entropy.domain.Lock;
 import org.migor.entropy.repository.LockRepository;
 import org.migor.entropy.security.SecurityUtils;
-import org.migor.entropy.web.rest.Once;
+import org.migor.entropy.web.rest.LimitFrequency;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,26 +23,26 @@ public class DoormanService {
     private LockRepository lockRepository;
 
     /**
-     * @param once
+     * @param limitFrequency
      * @return
      */
-    public boolean knock(Once once) {
-        Lock lock = lockRepository.findByGroupIdAndClientId(once.group(), SecurityUtils.getCurrentLogin());
+    public boolean knock(LimitFrequency limitFrequency) {
+        Lock lock = lockRepository.findByGroupIdAndClientId(limitFrequency.resource(), SecurityUtils.getCurrentLogin());
         return lock == null || lock.getExpiration().isBeforeNow();
     }
 
     /**
-     * @param once
+     * @param limitFrequency
      */
-    public void enter(Once once) {
+    public void enter(LimitFrequency limitFrequency) {
 
-        Lock lock = lockRepository.findByGroupIdAndClientId(once.group(), SecurityUtils.getCurrentLogin());
+        Lock lock = lockRepository.findByGroupIdAndClientId(limitFrequency.resource(), SecurityUtils.getCurrentLogin());
         if (lock == null) {
             lock = new Lock();
         }
         lock.setClientId(SecurityUtils.getCurrentLogin());
-        lock.setGroupId(once.group());
-        DateTime expiration = DateTime.now().plus(TimeUnit.MILLISECONDS.convert(once.every(), once.timeUnit()));
+        lock.setGroupId(limitFrequency.resource());
+        DateTime expiration = DateTime.now().plus(TimeUnit.MILLISECONDS.convert(limitFrequency.freeze(), limitFrequency.timeUnit()));
         lock.setExpiration(expiration);
 
         lockRepository.save(lock);

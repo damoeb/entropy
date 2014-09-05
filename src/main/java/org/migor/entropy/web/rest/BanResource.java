@@ -2,6 +2,7 @@ package org.migor.entropy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.migor.entropy.domain.Ban;
+import org.migor.entropy.domain.PrivilegeName;
 import org.migor.entropy.repository.BanRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -33,9 +34,11 @@ public class BanResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public void create(@RequestBody Ban ban) {
+    @Privileged(PrivilegeName.CREATE_BAN)
+    public ResponseEntity<Object> create(@RequestBody Ban ban, HttpServletRequest request) {
         log.debug("REST request to save Ban : {}", ban);
         banRepository.save(ban);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
@@ -45,7 +48,7 @@ public class BanResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public List<Ban> getAll() {
+    public List<Ban> getAll(HttpServletRequest request) {
         log.debug("REST request to get all Bans");
         return banRepository.findAll();
     }
@@ -57,7 +60,7 @@ public class BanResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Ban> get(@PathVariable Long id, HttpServletResponse response) {
+    public ResponseEntity<Ban> get(@PathVariable Long id, HttpServletRequest request) {
         log.debug("REST request to get Ban : {}", id);
         Ban ban = banRepository.findOne(id);
         if (ban == null) {
@@ -73,8 +76,10 @@ public class BanResource {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public void delete(@PathVariable Long id) {
+    @Privileged(PrivilegeName.DELETE_BAN)
+    public ResponseEntity<Object> delete(@PathVariable Long id, HttpServletRequest request) {
         log.debug("REST request to delete Ban : {}", id);
         banRepository.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

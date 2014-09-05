@@ -1,6 +1,8 @@
 package org.migor.entropy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import org.migor.entropy.domain.DoormanException;
+import org.migor.entropy.domain.PrivilegeName;
 import org.migor.entropy.domain.Thread;
 import org.migor.entropy.service.ThreadService;
 import org.slf4j.Logger;
@@ -11,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -35,11 +37,14 @@ public class ThreadResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    @Once(group = "thread", every = 10, timeUnit = TimeUnit.MINUTES)
-    public void create(@RequestBody Thread thread) {
+    @LimitFrequency(resource = "thread", freeze = 10, timeUnit = TimeUnit.MINUTES)
+    @Privileged(PrivilegeName.CREATE_THREAD)
+    public ResponseEntity<Object> create(@RequestBody Thread thread, HttpServletRequest request) {
         log.debug("REST request to save Thread : {}", thread);
 
         threadService.create(thread);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
@@ -49,7 +54,7 @@ public class ThreadResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<List<Thread>> getAll() {
+    public ResponseEntity<List<Thread>> getAll(HttpServletRequest request) {
         log.debug("REST request to get all Threads");
         return new ResponseEntity<>(threadService.getAll(), HttpStatus.OK);
     }
@@ -61,15 +66,10 @@ public class ThreadResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Map<String, Object>> get(@PathVariable Long id, HttpServletResponse response) {
+    public ResponseEntity<Map<String, Object>> get(@PathVariable Long id, HttpServletRequest request) throws DoormanException {
         log.debug("REST request to get Thread : {}", id);
 
-        try {
-            return new ResponseEntity<>(threadService.getDetailed(id), HttpStatus.OK);
-
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
+        return new ResponseEntity<>(threadService.getDetailed(id), HttpStatus.OK);
     }
 
     /**
@@ -79,15 +79,10 @@ public class ThreadResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Map<String, Object>> reports(@PathVariable Long id, HttpServletResponse response) {
+    public ResponseEntity<Map<String, Object>> reports(@PathVariable Long id, HttpServletRequest request) throws DoormanException {
         log.debug("REST request to get reports of Thread : {}", id);
 
-        try {
-            return new ResponseEntity<>(threadService.getReports(id), HttpStatus.OK);
-
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
+        return new ResponseEntity<>(threadService.getReports(id), HttpStatus.OK);
     }
 
     /**
@@ -97,8 +92,10 @@ public class ThreadResource {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public void delete(@PathVariable Long id) {
+    @Privileged(PrivilegeName.DELETE_THREAD)
+    public ResponseEntity<Object> delete(@PathVariable Long id, HttpServletRequest request) {
         log.debug("REST request to delete Thread : {}", id);
         threadService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

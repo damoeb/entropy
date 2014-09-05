@@ -1,6 +1,7 @@
 package org.migor.entropy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import org.apache.commons.lang.StringUtils;
 import org.migor.entropy.domain.Authority;
 import org.migor.entropy.domain.PersistentToken;
 import org.migor.entropy.domain.User;
@@ -10,7 +11,6 @@ import org.migor.entropy.security.SecurityUtils;
 import org.migor.entropy.service.MailService;
 import org.migor.entropy.service.UserService;
 import org.migor.entropy.web.rest.dto.UserDTO;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +82,7 @@ public class AccountResource {
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
     }
+
     /**
      * GET  /rest/activate -> activate the registered user.
      */
@@ -89,7 +90,7 @@ public class AccountResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<String> activateAccount(@RequestParam(value = "key") String key) {
+    public ResponseEntity<String> activateAccount(@RequestParam(value = "key") String key, HttpServletRequest request) {
         User user = userService.activateRegistration(key);
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -116,25 +117,25 @@ public class AccountResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<UserDTO> getAccount() {
+    public ResponseEntity<UserDTO> getAccount(HttpServletRequest request) {
         User user = userService.getUserWithAuthorities();
         if (user == null) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         List<String> roles = new ArrayList<>();
         for (Authority authority : user.getAuthorities()) {
             roles.add(authority.getName());
         }
         return new ResponseEntity<>(
-            new UserDTO(
-                user.getLogin(),
-                null,
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getLangKey(),
-                roles),
-            HttpStatus.OK);
+                new UserDTO(
+                        user.getLogin(),
+                        null,
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getEmail(),
+                        user.getLangKey(),
+                        roles),
+                HttpStatus.OK);
     }
 
     /**
@@ -144,7 +145,7 @@ public class AccountResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public void saveAccount(@RequestBody UserDTO userDTO) {
+    public void saveAccount(@RequestBody UserDTO userDTO, HttpServletRequest request) {
         userService.updateUserInformation(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
     }
 
@@ -155,7 +156,7 @@ public class AccountResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<?> changePassword(@RequestBody String password) {
+    public ResponseEntity<?> changePassword(@RequestBody String password, HttpServletRequest request) {
         if (StringUtils.isEmpty(password)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -170,28 +171,28 @@ public class AccountResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<List<PersistentToken>> getCurrentSessions() {
+    public ResponseEntity<List<PersistentToken>> getCurrentSessions(HttpServletRequest request) {
         User user = userRepository.findOne(SecurityUtils.getCurrentLogin());
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(
-            persistentTokenRepository.findByUser(user),
-            HttpStatus.OK);
+                persistentTokenRepository.findByUser(user),
+                HttpStatus.OK);
     }
 
     /**
      * DELETE  /rest/account/sessions?series={series} -> invalidate an existing session.
-     *
+     * <p/>
      * - You can only delete your own sessions, not any other user's session
      * - If you delete one of your existing sessions, and that you are currently logged in on that session, you will
-     *   still be able to use that session, until you quit your browser: it does not work in real time (there is
-     *   no API for that), it only removes the "remember me" cookie
+     * still be able to use that session, until you quit your browser: it does not work in real time (there is
+     * no API for that), it only removes the "remember me" cookie
      * - This is also true if you invalidate your current session: you will still be able to use it until you close
-     *   your browser or that the session times out. But automatic login (the "remember me" cookie) will not work
-     *   anymore.
-     *   There is an API to invalidate the current session, but there is no API to check which session uses which
-     *   cookie.
+     * your browser or that the session times out. But automatic login (the "remember me" cookie) will not work
+     * anymore.
+     * There is an API to invalidate the current session, but there is no API to check which session uses which
+     * cookie.
      */
     @RequestMapping(value = "/rest/account/sessions/{series}",
             method = RequestMethod.DELETE)
@@ -212,8 +213,8 @@ public class AccountResource {
         Map<String, Object> variables = new HashMap<String, Object>();
         variables.put("user", user);
         variables.put("baseUrl", request.getScheme() + "://" +   // "http" + "://
-                                 request.getServerName() +       // "myhost"
-                                 ":" + request.getServerPort());
+                request.getServerName() +       // "myhost"
+                ":" + request.getServerPort());
         IWebContext context = new SpringWebContext(request, response, servletContext,
                 locale, variables, applicationContext);
         return templateEngine.process(MailService.EMAIL_ACTIVATION_PREFIX + MailService.TEMPLATE_SUFFIX, context);
