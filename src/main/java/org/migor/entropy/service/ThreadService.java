@@ -36,7 +36,7 @@ public class ThreadService {
     @Inject
     private ReportRepository reportRepository;
 
-    public void create(Thread thread) {
+    public void create(Thread thread) throws DoormanException {
 
         thread.setStatus(ThreadStatus.OPEN);
 

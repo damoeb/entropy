@@ -72,6 +72,12 @@ public class Thread implements Serializable {
     private Integer dislikes = 0;
 
     /**
+     * Disable comments
+     */
+    @Column(name = "read_only")
+    private Boolean readOnly = false; // todo implement readonly
+
+    /**
      * Submissions score: likes - dislikes via reddit
      */
 //    @Column(name = "score")
@@ -157,7 +163,7 @@ public class Thread implements Serializable {
         return dislikes;
     }
 
-    public void setDislikes(int dislikes) {
+    public void setDislikes(Integer dislikes) {
         this.dislikes = dislikes;
     }
 
@@ -175,6 +181,14 @@ public class Thread implements Serializable {
 
     public void setStatus(ThreadStatus status) {
         this.status = status;
+    }
+
+    public Boolean getReadOnly() {
+        return readOnly;
+    }
+
+    public void setReadOnly(Boolean readOnly) {
+        this.readOnly = readOnly;
     }
 
     @Override

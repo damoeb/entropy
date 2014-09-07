@@ -1,8 +1,10 @@
 package org.migor.entropy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import org.migor.entropy.config.ErrorCode;
 import org.migor.entropy.domain.Comment;
 import org.migor.entropy.domain.CommentStatus;
+import org.migor.entropy.domain.DoormanException;
 import org.migor.entropy.domain.PrivilegeName;
 import org.migor.entropy.security.SecurityUtils;
 import org.migor.entropy.service.CommentService;
@@ -38,7 +40,7 @@ public class CommentResource {
     @Timed
     @LimitFrequency(resource = "comment", freeze = 5, timeUnit = TimeUnit.SECONDS)
     @Privileged(PrivilegeName.CREATE_COMMENT)
-    public ResponseEntity<Object> create(@RequestBody Comment comment, HttpServletRequest request) {
+    public ResponseEntity<Object> create(@RequestBody Comment comment, HttpServletRequest request) throws DoormanException {
         log.debug("REST request to save Comment : {}", comment);
 
         if (comment != null) {
@@ -59,11 +61,11 @@ public class CommentResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Comment> get(@PathVariable Long id, HttpServletRequest request) {
+    public ResponseEntity<Comment> get(@PathVariable Long id, HttpServletRequest request) throws DoormanException {
         log.debug("REST request to get Comment : {}", id);
         Comment comment = commentService.get(id);
         if (comment == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new DoormanException(Comment.class, ErrorCode.RESOURCE_NOT_FOUND);
         }
 
         return new ResponseEntity<>(comment, HttpStatus.OK);
@@ -91,15 +93,10 @@ public class CommentResource {
     @Timed
     @LimitFrequency(resource = "vote", freeze = 5, timeUnit = TimeUnit.SECONDS)
     @Privileged(PrivilegeName.CREATE_VOTE)
-    public ResponseEntity<Comment> like(@PathVariable Long id, HttpServletRequest request) {
+    public ResponseEntity<Comment> like(@PathVariable Long id, HttpServletRequest request) throws DoormanException {
         log.debug("REST request to like Comment : {}", id);
 
-        try {
-            return new ResponseEntity<>(commentService.like(id), HttpStatus.OK);
-
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
+        return new ResponseEntity<>(commentService.like(id), HttpStatus.OK);
     }
 
 
@@ -112,14 +109,9 @@ public class CommentResource {
     @Timed
     @LimitFrequency(resource = "vote", freeze = 5, timeUnit = TimeUnit.SECONDS)
     @Privileged(PrivilegeName.CREATE_VOTE)
-    public ResponseEntity<Comment> dislike(@PathVariable Long id, HttpServletRequest request) {
+    public ResponseEntity<Comment> dislike(@PathVariable Long id, HttpServletRequest request) throws DoormanException {
         log.debug("REST request to dislike Comment : {}", id);
 
-        try {
-            return new ResponseEntity<>(commentService.dislike(id), HttpStatus.OK);
-
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
+        return new ResponseEntity<>(commentService.dislike(id), HttpStatus.OK);
     }
 }

@@ -18,5 +18,5 @@ public enum PrivilegeName {
 
     CREATE_VOTE,
 
-    DELETE_LOCK
+    DELETE_VOTE, DELETE_LOCK
 }

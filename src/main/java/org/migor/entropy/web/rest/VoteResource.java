@@ -1,6 +1,9 @@
 package org.migor.entropy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import org.migor.entropy.config.ErrorCode;
+import org.migor.entropy.domain.DoormanException;
+import org.migor.entropy.domain.PrivilegeName;
 import org.migor.entropy.domain.Vote;
 import org.migor.entropy.repository.VoteRepository;
 import org.slf4j.Logger;
@@ -8,11 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * REST controller for managing Vote.
@@ -26,30 +31,30 @@ public class VoteResource {
     @Inject
     private VoteRepository voteRepository;
 
-    /**
-     * POST  /rest/votes -> Create a new vote.
-     */
-    @RequestMapping(value = "/rest/votes",
-            method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    public ResponseEntity<Object> create(@RequestBody Vote vote, HttpServletRequest request) {
-        log.debug("REST request to save Vote : {}", vote);
-        voteRepository.save(vote);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    /**
-     * GET  /rest/votes -> get all the votes.
-     */
-    @RequestMapping(value = "/rest/votes",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    public List<Vote> getAll(HttpServletRequest request) {
-        log.debug("REST request to get all Votes");
-        return voteRepository.findAll();
-    }
+//    /**
+//     * POST  /rest/votes -> Create a new vote.
+//     */
+//    @RequestMapping(value = "/rest/votes",
+//            method = RequestMethod.POST,
+//            produces = MediaType.APPLICATION_JSON_VALUE)
+//    @Timed
+//    public ResponseEntity<Object> create(@RequestBody Vote vote, HttpServletRequest request) {
+//        log.debug("REST request to save Vote : {}", vote);
+//        voteRepository.save(vote);
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
+//
+//    /**
+//     * GET  /rest/votes -> get all the votes.
+//     */
+//    @RequestMapping(value = "/rest/votes",
+//            method = RequestMethod.GET,
+//            produces = MediaType.APPLICATION_JSON_VALUE)
+//    @Timed
+//    public List<Vote> getAll(HttpServletRequest request) {
+//        log.debug("REST request to get all Votes");
+//        return voteRepository.findAll();
+//    }
 
     /**
      * GET  /rest/votes/:id -> get the "id" vote.
@@ -58,11 +63,11 @@ public class VoteResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Vote> get(@PathVariable Long id, HttpServletRequest request) {
+    public ResponseEntity<Vote> get(@PathVariable Long id, HttpServletRequest request) throws DoormanException {
         log.debug("REST request to get Vote : {}", id);
         Vote vote = voteRepository.findOne(id);
         if (vote == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new DoormanException(Vote.class, ErrorCode.RESOURCE_NOT_FOUND);
         }
         return new ResponseEntity<>(vote, HttpStatus.OK);
     }
@@ -74,6 +79,7 @@ public class VoteResource {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @Privileged(PrivilegeName.DELETE_VOTE)
     public ResponseEntity<Object> delete(@PathVariable Long id, HttpServletRequest request) {
         log.debug("REST request to delete Vote : {}", id);
         voteRepository.delete(id);

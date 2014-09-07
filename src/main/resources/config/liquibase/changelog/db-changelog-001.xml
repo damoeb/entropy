@@ -168,6 +168,7 @@
             <column name="uri" type="VARCHAR(512)"/>
             <column name="likes" type="INT(10)"/>
             <column name="dislikes" type="INT(10)"/>
+            <column name="read_only" type="boolean" defaultValueBoolean="false"/>
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="creator_id"

@@ -1,10 +1,9 @@
 package org.migor.entropy.service;
 
 import org.joda.time.DateTime;
-import org.migor.entropy.domain.Comment;
+import org.migor.entropy.config.ErrorCode;
+import org.migor.entropy.domain.*;
 import org.migor.entropy.domain.Thread;
-import org.migor.entropy.domain.ThreadStatus;
-import org.migor.entropy.domain.Vote;
 import org.migor.entropy.repository.CommentRepository;
 import org.migor.entropy.repository.ThreadRepository;
 import org.migor.entropy.repository.VoteRepository;
@@ -35,14 +34,14 @@ public class CommentService {
     private ReputationService reputationService;
 
 
-    public Comment create(Comment comment) {
+    public Comment create(Comment comment) throws DoormanException {
 
         Thread thread = threadRepository.findOne(comment.getThreadId());
         if (thread == null) {
-            throw new IllegalArgumentException("Invalid threadId");
+            throw new DoormanException(Thread.class, ErrorCode.RESOURCE_NOT_FOUND);
         }
         if (ThreadStatus.CLOSED == thread.getStatus()) {
-            throw new IllegalArgumentException("Already closed");
+            throw new DoormanException(Thread.class, ErrorCode.INVALID_STATUS, "Already closed");
         }
 
         if (comment.getParentId() == null) {
@@ -51,7 +50,7 @@ public class CommentService {
             Comment parent = commentRepository.findOne(comment.getParentId());
 
             if (parent.getThreadId() != thread.getId()) {
-                throw new IllegalArgumentException("Invalid threadId");
+                throw new DoormanException(Thread.class, ErrorCode.INVALID_DATA, "ParentId is in wrong thread");
             }
 
             comment.setLevel(parent.getLevel() + 1);
@@ -76,21 +75,21 @@ public class CommentService {
         commentRepository.delete(id);
     }
 
-    public Comment like(Long id) {
+    public Comment like(Long id) throws DoormanException {
 
         Comment comment = commentRepository.findOne(id);
         if (comment == null) {
-            throw new IllegalArgumentException("Comment not found");
+            throw new DoormanException(Comment.class, ErrorCode.RESOURCE_NOT_FOUND);
         }
 
         Vote vote = voteRepository.findByCommentIdAndClientId(id, SecurityUtils.getCurrentLogin());
         if (vote != null) {
-            throw new IllegalArgumentException("Already voted");
+            throw new DoormanException(Vote.class, ErrorCode.ALREADY_EXISTS);
         }
 
         Thread thread = threadRepository.findOne(comment.getThreadId());
         if (ThreadStatus.CLOSED == thread.getStatus()) {
-            throw new IllegalArgumentException("Thread is closed");
+            throw new DoormanException(Thread.class, ErrorCode.INVALID_STATUS, "Already closed");
         }
 
         comment.setLikes(comment.getLikes() + 1);
@@ -111,20 +110,20 @@ public class CommentService {
         return comment;
     }
 
-    public Comment dislike(Long id) {
+    public Comment dislike(Long id) throws DoormanException {
         Comment comment = commentRepository.findOne(id);
         if (comment == null) {
-            throw new IllegalArgumentException("Comment not found");
+            throw new DoormanException(Comment.class, ErrorCode.RESOURCE_NOT_FOUND);
         }
 
         Vote vote = voteRepository.findByCommentIdAndClientId(id, SecurityUtils.getCurrentLogin());
         if (vote != null) {
-            throw new IllegalArgumentException("Already voted");
+            throw new DoormanException(Vote.class, ErrorCode.ALREADY_EXISTS);
         }
 
         Thread thread = threadRepository.findOne(comment.getThreadId());
         if (ThreadStatus.CLOSED == thread.getStatus()) {
-            throw new IllegalArgumentException("Thread is closed");
+            throw new DoormanException(Thread.class, ErrorCode.INVALID_STATUS, "Already closed");
         }
 
         comment.setDislikes(comment.getDislikes() + 1);

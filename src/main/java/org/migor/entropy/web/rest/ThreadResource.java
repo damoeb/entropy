@@ -39,7 +39,7 @@ public class ThreadResource {
     @Timed
     @LimitFrequency(resource = "thread", freeze = 10, timeUnit = TimeUnit.MINUTES)
     @Privileged(PrivilegeName.CREATE_THREAD)
-    public ResponseEntity<Object> create(@RequestBody Thread thread, HttpServletRequest request) {
+    public ResponseEntity<Object> create(@RequestBody Thread thread, HttpServletRequest request) throws DoormanException {
         log.debug("REST request to save Thread : {}", thread);
 
         threadService.create(thread);

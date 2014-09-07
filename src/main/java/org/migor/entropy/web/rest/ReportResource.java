@@ -91,6 +91,9 @@ public class ReportResource {
         }
 
         if (comment.getReportStage().equals(report.getStage())) {
+//            User author = comment.getAuthor();
+//            author.setPunishmentCount(author.getPunishmentCount() + 1);
+//            author.getPunishments().add();
             // todo punish comment author
             // todo delete comment
 //            comment.setStatus(CommentStatus.DELETED);
