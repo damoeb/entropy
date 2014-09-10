@@ -101,7 +101,7 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
         };
 
         $scope.dislike = function (comment) {
-            var vote = {like: true, commentId: comment.id};
+            var vote = {like: false, commentId: comment.id};
 
             Vote.save(vote, function (updated) {
                 $log.log(updated);
