@@ -1,6 +1,7 @@
 package org.migor.entropy.config;
 
 /**
+ * Error codes used by DoormanExceptions
  * Created by damoeb on 9/5/14.
  */
 public enum ErrorCode {
@@ -11,7 +12,8 @@ public enum ErrorCode {
     RESOURCE_NOT_FOUND(4, "does not exist"),
     INVALID_STATUS(5, "status is invalid"),
     ALREADY_EXISTS(6, "already exists"),
-    INVALID_DATA(7, "invalid data");
+    INVALID_DATA(7, "invalid data"),
+    BLOCKED(8, "Request is blocked");
 
     private final int code;
     private final String message;

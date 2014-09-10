@@ -1,6 +1,8 @@
 package org.migor.entropy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import org.apache.commons.lang.StringUtils;
+import org.migor.entropy.config.Constants;
 import org.migor.entropy.config.ErrorCode;
 import org.migor.entropy.domain.*;
 import org.migor.entropy.repository.CommentRepository;
@@ -11,6 +13,7 @@ import org.migor.entropy.security.SecurityUtils;
 import org.migor.entropy.service.CommentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +33,9 @@ import javax.servlet.http.HttpServletRequest;
 public class ReportResource {
 
     private final Logger log = LoggerFactory.getLogger(ReportResource.class);
+
+    @Inject
+    private Environment env;
 
     @Inject
     private ReportRepository reportRepository;
@@ -66,6 +72,13 @@ public class ReportResource {
 
         if (comment == null) {
             throw new DoormanException(Comment.class, ErrorCode.RESOURCE_NOT_FOUND);
+        }
+
+        // block reports of own comment
+        if (!env.acceptsProfiles(Constants.SPRING_PROFILE_DEVELOPMENT)) {
+            if (StringUtils.equals(comment.getAuthorId(), SecurityUtils.getCurrentLogin())) {
+                throw new DoormanException(Report.class, ErrorCode.BLOCKED, "You cannot vote your own comment");
+            }
         }
 
         report.setAuthorId(SecurityUtils.getCurrentLogin());

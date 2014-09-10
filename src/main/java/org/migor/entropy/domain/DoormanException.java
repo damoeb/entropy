@@ -23,7 +23,7 @@ public class DoormanException extends Exception {
         this(errorCode, errorCode.getMessage() + ": " + resource.getSimpleName());
     }
 
-    public DoormanException(Class<Thread> resource, ErrorCode errorCode, String customMessage) {
+    public DoormanException(Class<?> resource, ErrorCode errorCode, String customMessage) {
         this(errorCode, errorCode.getMessage() + ": " + resource.getSimpleName() + ". " + customMessage);
     }
 
