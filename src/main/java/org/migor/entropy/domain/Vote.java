@@ -39,13 +39,23 @@ public class Vote implements Serializable {
     @Column(name = "comment_id")
     private Long commentId;
 
-    // todo add isLike boolean
+    @NotNull
+    @Column(name = "is_like")
+    private boolean like;
 
     @CreatedDate
     @NotNull
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @Column(name = "created_date")
     private DateTime createdDate = DateTime.now();
+
+    public boolean isLike() {
+        return like;
+    }
+
+    public void setLike(boolean like) {
+        this.like = like;
+    }
 
     public User getAuthor() {
         return author;

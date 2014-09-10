@@ -5,11 +5,9 @@ import org.migor.entropy.config.ErrorCode;
 import org.migor.entropy.domain.Comment;
 import org.migor.entropy.domain.DoormanException;
 import org.migor.entropy.domain.Thread;
-import org.migor.entropy.domain.Vote;
 import org.migor.entropy.repository.CommentRepository;
 import org.migor.entropy.repository.ThreadRepository;
 import org.migor.entropy.repository.VoteRepository;
-import org.migor.entropy.security.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -88,81 +86,4 @@ public class CommentService {
 //        commentRepository.delete(id);
     }
 
-    public Comment like(Long id) throws DoormanException {
-
-        if (id == null) {
-            throw new IllegalArgumentException("id is null");
-        }
-
-        Comment comment = commentRepository.findOne(id);
-        if (comment == null) {
-            throw new DoormanException(Comment.class, ErrorCode.RESOURCE_NOT_FOUND);
-        }
-
-        Vote vote = voteRepository.findByCommentIdAndAuthorId(id, SecurityUtils.getCurrentLogin());
-        if (vote != null) {
-            throw new DoormanException(Vote.class, ErrorCode.ALREADY_EXISTS);
-        }
-
-        Thread thread = threadRepository.findOne(comment.getThreadId());
-        if (Thread.Status.CLOSED == thread.getStatus()) {
-            throw new DoormanException(Thread.class, ErrorCode.INVALID_STATUS, "Already closed");
-        }
-
-        comment.setLikes(comment.getLikes() + 1);
-        comment.setScore(comment.getLikes() - comment.getDislikes());
-        commentRepository.save(comment);
-
-        thread.setLikes(thread.getLikes() + 1);
-        thread.setLastModifiedDate(DateTime.now());
-        threadRepository.save(thread);
-
-        vote = new Vote();
-        vote.setAuthorId(SecurityUtils.getCurrentLogin());
-        vote.setCommentId(comment.getId());
-        vote.setCreatedDate(DateTime.now());
-
-        voteRepository.save(vote);
-
-        return comment;
-    }
-
-    public Comment dislike(Long id) throws DoormanException {
-
-        if (id == null) {
-            throw new IllegalArgumentException("id is null");
-        }
-
-        Comment comment = commentRepository.findOne(id);
-        if (comment == null) {
-            throw new DoormanException(Comment.class, ErrorCode.RESOURCE_NOT_FOUND);
-        }
-
-        Vote vote = voteRepository.findByCommentIdAndAuthorId(id, SecurityUtils.getCurrentLogin());
-        if (vote != null) {
-            throw new DoormanException(Vote.class, ErrorCode.ALREADY_EXISTS);
-        }
-
-        Thread thread = threadRepository.findOne(comment.getThreadId());
-        if (Thread.Status.CLOSED == thread.getStatus()) {
-            throw new DoormanException(Thread.class, ErrorCode.INVALID_STATUS, "Already closed");
-        }
-
-        comment.setDislikes(comment.getDislikes() + 1);
-        comment.setScore(comment.getLikes() - comment.getDislikes());
-        commentRepository.save(comment);
-
-        thread.setDislikes(thread.getDislikes() + 1);
-        thread.setLastModifiedDate(DateTime.now());
-        threadRepository.save(thread);
-
-        vote = new Vote();
-        vote.setAuthorId(SecurityUtils.getCurrentLogin());
-        vote.setCommentId(comment.getId());
-        vote.setCreatedDate(DateTime.now());
-
-        voteRepository.save(vote);
-
-        return comment;
-    }
 }

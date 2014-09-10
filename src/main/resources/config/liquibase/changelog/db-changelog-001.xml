@@ -346,6 +346,7 @@
             <column name="id" type="BIGINT(19)">
                 <constraints nullable="false"/>
             </column>
+            <column name="is_like" type="boolean" defaultValueBoolean="false"/>
             <column name="author_id" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>

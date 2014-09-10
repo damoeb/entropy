@@ -84,37 +84,4 @@ public class CommentResource {
         commentService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    /**
-     * POST  /rest/comments/:id/like -> like the "id" comment.
-     */
-    // todo move to VoteResource, block votes from myself
-    @RequestMapping(value = "/rest/comments/{id}/like",
-            method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    @LimitFrequency(resource = "vote", freeze = 5, timeUnit = TimeUnit.SECONDS)
-    @Privileged(PrivilegeName.SAVE_VOTE)
-    public ResponseEntity<Comment> like(@PathVariable Long id, HttpServletRequest request) throws DoormanException {
-        log.debug("REST request to like Comment : {}", id);
-
-        return new ResponseEntity<>(commentService.like(id), HttpStatus.OK);
-    }
-
-
-    /**
-     * POST  /rest/comments/:id/dislike -> dislike the "id" comment.
-     */
-    // todo move to VoteResource, block votes from myself
-    @RequestMapping(value = "/rest/comments/{id}/dislike",
-            method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    @LimitFrequency(resource = "vote", freeze = 5, timeUnit = TimeUnit.SECONDS)
-    @Privileged(PrivilegeName.SAVE_VOTE)
-    public ResponseEntity<Comment> dislike(@PathVariable Long id, HttpServletRequest request) throws DoormanException {
-        log.debug("REST request to dislike Comment : {}", id);
-
-        return new ResponseEntity<>(commentService.dislike(id), HttpStatus.OK);
-    }
 }

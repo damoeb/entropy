@@ -1,7 +1,7 @@
 'use strict';
 
-entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 'Comment', 'Report', '$log', '$location', '$anchorScroll',
-    function ($scope, $routeParams, Thread, Comment, Report, $log, $location, $anchorScroll) {
+entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 'Comment', 'Report', 'Vote', '$log', '$location', '$anchorScroll',
+    function ($scope, $routeParams, Thread, Comment, Report, Vote, $log, $location, $anchorScroll) {
 
         $scope.draft = {};
         $scope.reportModel = {};
@@ -87,9 +87,12 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
 
         $scope.like = function (comment) {
             comment.likes++;
-            Comment.like({id: comment.id}, function (updated) {
+
+            var vote = {like: true, commentId: comment.id};
+
+            Vote.save(vote, function (updated) {
                 $log.log(updated);
-                comment.like = updated.like;
+                comment.likes++;
             });
         };
 
@@ -98,9 +101,11 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
         };
 
         $scope.dislike = function (comment) {
-            Comment.dislike({id: comment.id, up: false}, function (updated) {
+            var vote = {like: true, commentId: comment.id};
+
+            Vote.save(vote, function (updated) {
                 $log.log(updated);
-                comment.dislikes = updated.dislikes;
+                comment.likes++;
             });
         };
 
