@@ -1,22 +1,30 @@
 package org.migor.entropy.domain;
 
 /**
+ * Defines privileges that are watched by DoormanAspect.
+ * <p/>
  * Created by damoeb on 9/3/14.
  */
 public enum PrivilegeName {
-    CREATE_THREAD,
+    SAVE_THREAD,
     DELETE_THREAD,
 
-    CREATE_COMMENT,
+    SAVE_COMMENT,
     REPLY,
     DELETE_COMMENT,
 
-    CREATE_BAN,
+    SAVE_BAN,
     DELETE_BAN,
 
+    SAVE_PRIVILEGE,
+    DELETE_PRIVILEGE,
+
+    SAVE_REPORT,
     FINALIZE_REPORT,
 
-    CREATE_VOTE,
+    SAVE_VOTE,
 
-    DELETE_VOTE, DELETE_LOCK
+    DELETE_VOTE,
+    DELETE_LOCK
+
 }

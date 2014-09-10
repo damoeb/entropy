@@ -1,11 +1,11 @@
 <div>
 
-    <h2>Privileges</h2>
+    <h2>Rewards</h2>
 
-    <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#savePrivilegeModal" ng-click="clear()">
-        <span class="glyphicon glyphicon-flash"></span> Create a new Privilege
+    <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#saveRewardModal" ng-click="clear()">
+        <span class="glyphicon glyphicon-flash"></span> Create a new Reward
     </button>
-    <div class="modal fade" id="savePrivilegeModal" tabindex="-1" role="dialog" aria-labelledby="myPrivilegeLabel"
+    <div class="modal fade" id="saveRewardModal" tabindex="-1" role="dialog" aria-labelledby="myRewardLabel"
          aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -16,26 +16,31 @@
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
                                 ng-click="clear()">&times;</button>
-                        <h4 class="modal-title" id="myPrivilegeLabel">Create or edit a Privilege</h4>
+                        <h4 class="modal-title" id="myRewardLabel">Create or edit a Reward</h4>
                     </div>
                     <div class="modal-body">
-
                         <div class="form-group">
                             <label>ID</label>
                             <input type="text" class="form-control" name="id"
-                                   ng-model="privilege.id" readonly>
+                                   ng-model="reward.id" readonly>
                         </div>
 
                         <div class="form-group">
-                            <label>Name</label>
-                            <input type="text" class="form-control" name="name"
-                                   ng-model="privilege.name" ng-minlength=1 ng-maxlength=100 required>
+                            <label>User</label>
+                            <input type="text" class="form-control" name="test"
+                                   ng-model="reward.userId" ng-minlength=1 ng-maxlength=50 required>
                         </div>
 
                         <div class="form-group">
-                            <label>Reputation</label>
-                            <input type="date" class="form-control" name="reputation"
-                                   ng-model="privilege.reputation" required>
+                            <label>Comment</label>
+                            <input type="date" class="form-control" name="test"
+                                   ng-model="reward.commentId" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Report</label>
+                            <input type="date" class="form-control" name="test"
+                                   ng-model="reward.reportId" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -56,24 +61,26 @@
             <thead>
             <tr>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Reputation</th>
+                <th>User</th>
+                <th>Comment</th>
+                <th>Report</th>
                 <th></th>
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="privilege in privileges | orderBy:id">
-                <td>{{privilege.id}}</td>
-                <td>{{privilege.name}}</td>
-                <td>{{privilege.reputation}}</td>
+            <tr ng-repeat="reward in rewards">
+                <td>{{reward.id}}</td>
+                <td>{{reward.userId}}</td>
+                <td>{{reward.commentId}}</td>
+                <td>{{reward.reportId}}</td>
                 <td>
                     <button type="submit"
-                            ng-click="update(privilege.id)"
+                            ng-click="update(reward.id)"
                             class="btn">
                         <span class="glyphicon glyphicon-pencil"></span> Edit
                     </button>
                     <button type="submit"
-                            ng-click="delete(privilege.id)"
+                            ng-click="delete(reward.id)"
                             class="btn btn-danger">
                         <span class="glyphicon glyphicon-remove-circle"></span> Delete
                     </button>

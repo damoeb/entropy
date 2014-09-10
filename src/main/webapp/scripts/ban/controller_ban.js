@@ -27,6 +27,6 @@ entropyApp.controller('BanController', ['$scope', 'resolvedBan', 'Ban',
         };
 
         $scope.clear = function () {
-            $scope.ban = {id: null, sampleTextAttribute: null, sampleDateAttribute: null};
+            $scope.ban = {id: null, type: null, reason: null, expression: null, expiration: null};
         };
     }]);

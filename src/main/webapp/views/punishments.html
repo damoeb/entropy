@@ -1,0 +1,32 @@
+<div>
+
+    <h2>Punishments</h2>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>User</th>
+                <th>Comment</th>
+                <th>Report</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="punishment in punishments">
+                <td>{{punishment.id}}</td>
+                <td>{{punishment.userId}}</td>
+                <td>{{punishment.commentId}}</td>
+                <td>{{punishment.reportId}}</td>
+                <td>
+                    <button type="submit"
+                            ng-click="delete(punishment.id)"
+                            class="btn btn-danger">
+                        <span class="glyphicon glyphicon-remove-circle"></span> Delete
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

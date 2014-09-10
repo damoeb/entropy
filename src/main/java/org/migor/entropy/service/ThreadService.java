@@ -1,7 +1,9 @@
 package org.migor.entropy.service;
 
 import org.migor.entropy.config.ErrorCode;
-import org.migor.entropy.domain.*;
+import org.migor.entropy.domain.Comment;
+import org.migor.entropy.domain.DoormanException;
+import org.migor.entropy.domain.Report;
 import org.migor.entropy.domain.Thread;
 import org.migor.entropy.repository.CommentRepository;
 import org.migor.entropy.repository.ReportRepository;
@@ -38,7 +40,11 @@ public class ThreadService {
 
     public void create(Thread thread) throws DoormanException {
 
-        thread.setStatus(ThreadStatus.OPEN);
+        if (thread == null) {
+            throw new IllegalArgumentException("thread is null");
+        }
+
+        thread.setStatus(Thread.Status.OPEN);
 
         thread = threadRepository.save(thread);
 
@@ -48,7 +54,7 @@ public class ThreadService {
         first.setText(thread.getDescription());
         first.setAuthorId(SecurityUtils.getCurrentLogin());
         first.setDisplayName("Anonymous");
-        first.setStatus(CommentStatus.APPROVED);
+        first.setStatus(Comment.Status.APPROVED);
 
         commentService.create(first);
     }
@@ -63,6 +69,10 @@ public class ThreadService {
 
     public Map<String, Object> getDetailed(Long id) throws DoormanException {
 
+        if (id == null) {
+            throw new IllegalArgumentException("id is null");
+        }
+
         Map<String, Object> responseObj = new HashMap<>();
 
         Thread thread = threadRepository.findOne(id);
@@ -70,14 +80,18 @@ public class ThreadService {
             throw new DoormanException(Thread.class, ErrorCode.RESOURCE_NOT_FOUND);
         }
         responseObj.put("thread", thread);
-        responseObj.put("approved", commentRepository.findByThreadIdAndStatus(id, CommentStatus.APPROVED));
-        responseObj.put("pendingCount", commentRepository.getCountForThreadIdAndStatus(id, CommentStatus.PENDING));
-        responseObj.put("reportCount", commentRepository.getReportCountForThreadIdAndReportStatus(id, ReportStatus.PENDING));
+        responseObj.put("approved", commentRepository.findByThreadIdAndStatus(id, Comment.Status.APPROVED));
+        responseObj.put("pendingCount", commentRepository.getCountForThreadIdAndStatus(id, Comment.Status.PENDING));
+        responseObj.put("reportCount", commentRepository.getReportCountForThreadIdAndReportStatus(id, Report.Status.PENDING));
         return responseObj;
     }
 
     public Map<String, Object> getReports(@PathVariable Long id) throws DoormanException {
 
+        if (id == null) {
+            throw new IllegalArgumentException("id is null");
+        }
+
         Map<String, Object> responseObj = new HashMap<>();
 
         Thread thread = threadRepository.findOne(id);
@@ -85,8 +99,8 @@ public class ThreadService {
             throw new DoormanException(Thread.class, ErrorCode.RESOURCE_NOT_FOUND);
         }
         responseObj.put("thread", thread);
-        responseObj.put("reports", reportRepository.findByThreadIdAndStatus(id, ReportStatus.PENDING));
-        responseObj.put("comments", commentRepository.findByThreadIdAndReportStatus(id, ReportStatus.PENDING));
+        responseObj.put("reports", reportRepository.findByThreadIdAndStatus(id, Report.Status.PENDING));
+        responseObj.put("comments", commentRepository.findByThreadIdAndReportStatus(id, Report.Status.PENDING));
 
         return responseObj;
     }

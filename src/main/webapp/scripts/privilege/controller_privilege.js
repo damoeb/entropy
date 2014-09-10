@@ -27,6 +27,6 @@ entropyApp.controller('PrivilegeController', ['$scope', 'resolvedPrivilege', 'Pr
         };
 
         $scope.clear = function () {
-            $scope.privilege = {id: null, sampleTextAttribute: null, sampleDateAttribute: null};
+            $scope.privilege = {id: null, name: null, reputation: null};
         };
     }]);

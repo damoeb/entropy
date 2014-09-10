@@ -85,7 +85,7 @@ public class Thread implements Serializable {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private ThreadStatus status;
+    private Status status;
 
     public long getId() {
         return id;
@@ -175,11 +175,11 @@ public class Thread implements Serializable {
         this.description = description;
     }
 
-    public ThreadStatus getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(ThreadStatus status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -224,5 +224,12 @@ public class Thread implements Serializable {
                 ", lastModifiedDate=" + lastModifiedDate +
                 ", commentCount=" + commentCount +
                 '}';
+    }
+
+    /**
+     * Created by damoeb on 7/28/14.
+     */
+    public static enum Status {
+        OPEN, CLOSED
     }
 }

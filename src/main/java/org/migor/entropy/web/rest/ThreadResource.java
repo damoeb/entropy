@@ -37,8 +37,8 @@ public class ThreadResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    @LimitFrequency(resource = "thread", freeze = 10, timeUnit = TimeUnit.MINUTES)
-    @Privileged(PrivilegeName.CREATE_THREAD)
+    @LimitFrequency(resource = "thread", freeze = 10, timeUnit = TimeUnit.SECONDS)
+    @Privileged(PrivilegeName.SAVE_THREAD)
     public ResponseEntity<Object> create(@RequestBody Thread thread, HttpServletRequest request) throws DoormanException {
         log.debug("REST request to save Thread : {}", thread);
 

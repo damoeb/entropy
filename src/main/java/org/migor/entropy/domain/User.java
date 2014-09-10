@@ -67,7 +67,33 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Punishment> punishments;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Reward> rewards;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<PersistentToken> persistentTokens;
+
+    public Set<Reward> getRewards() {
+        return rewards;
+    }
+
+    public void setRewards(Set<Reward> rewards) {
+        this.rewards = rewards;
+    }
+
+    public Set<Punishment> getPunishments() {
+        return punishments;
+    }
+
+    public void setPunishments(Set<Punishment> punishments) {
+        this.punishments = punishments;
+    }
 
     public String getLogin() {
         return login;

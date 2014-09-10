@@ -4,7 +4,6 @@ import org.joda.time.DateTime;
 import org.migor.entropy.domain.Ban;
 import org.migor.entropy.domain.BanType;
 import org.migor.entropy.repository.BanRepository;
-import org.migor.entropy.security.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,8 +22,8 @@ public class BanService {
     @Inject
     private BanRepository banRepository;
 
-    public boolean isBannedUser(String currentLogin) {
-        Ban ban = banRepository.findByTypeAndExpression(BanType.USER_ID, SecurityUtils.getCurrentLogin());
+    public boolean isBannedUser(String userLogin) {
+        Ban ban = banRepository.findByTypeAndExpression(BanType.USER_ID, userLogin);
         return ban != null;
     }
 

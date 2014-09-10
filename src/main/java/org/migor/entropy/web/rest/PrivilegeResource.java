@@ -2,6 +2,7 @@ package org.migor.entropy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.migor.entropy.domain.Privilege;
+import org.migor.entropy.domain.PrivilegeName;
 import org.migor.entropy.repository.PrivilegeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +34,12 @@ public class PrivilegeResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @Privileged(PrivilegeName.SAVE_PRIVILEGE)
     public ResponseEntity<Object> create(@RequestBody Privilege privilege, HttpServletRequest request) {
         log.debug("REST request to save Privilege : {}", privilege);
+
+        // todo disable lockout, e.g. user.reputation,
+
         privilegeRepository.save(privilege);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -74,6 +79,7 @@ public class PrivilegeResource {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @Privileged(PrivilegeName.DELETE_PRIVILEGE)
     public ResponseEntity<Object> delete(@PathVariable Long id, HttpServletRequest request) {
         log.debug("REST request to delete Privilege : {}", id);
         privilegeRepository.delete(id);

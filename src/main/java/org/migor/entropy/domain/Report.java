@@ -1,5 +1,6 @@
 package org.migor.entropy.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -16,7 +17,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "T_REPORT", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"client_id", "comment_id"})
+        @UniqueConstraint(columnNames = {"author_id", "comment_id"})
 })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 // todo extends AbstractAuditingEntity
@@ -26,14 +27,15 @@ public class Report implements Serializable {
     @GeneratedValue(strategy = GenerationType.TABLE)
     private long id;
 
-    /**
-     * browser signature or login
-     */
-    // todo fk to user
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "author_id", insertable = false, updatable = false)
+    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+    private User author;
+
     @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "client_id")
-    private String clientId;
+    @Column(name = "author_id")
+    private String authorId;
 
     @NotNull
     @Size(min = 1, max = 512)
@@ -43,7 +45,7 @@ public class Report implements Serializable {
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private ReportStatus status;
+    private Status status;
 
     @NotNull
     @Column(name = "comment_id")
@@ -74,12 +76,16 @@ public class Report implements Serializable {
         this.id = id;
     }
 
-    public String getClientId() {
-        return clientId;
+    public User getAuthor() {
+        return author;
     }
 
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
     }
 
     public String getReason() {
@@ -90,11 +96,11 @@ public class Report implements Serializable {
         this.reason = reason;
     }
 
-    public ReportStatus getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(ReportStatus status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -165,11 +171,18 @@ public class Report implements Serializable {
     public String toString() {
         return "Report{" +
                 "id=" + id +
-                ", clientId='" + clientId + '\'' +
+                ", authorId='" + authorId + '\'' +
                 ", reason='" + reason + '\'' +
                 ", status=" + status +
                 ", commentId=" + commentId +
                 ", createdDate=" + createdDate +
                 '}';
+    }
+
+    /**
+     * Created by damoeb on 8/8/14.
+     */
+    public static enum Status {
+        PENDING, APPROVED, REJECTED
     }
 }

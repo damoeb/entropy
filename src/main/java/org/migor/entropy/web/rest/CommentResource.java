@@ -3,7 +3,6 @@ package org.migor.entropy.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import org.migor.entropy.config.ErrorCode;
 import org.migor.entropy.domain.Comment;
-import org.migor.entropy.domain.CommentStatus;
 import org.migor.entropy.domain.DoormanException;
 import org.migor.entropy.domain.PrivilegeName;
 import org.migor.entropy.security.SecurityUtils;
@@ -39,14 +38,16 @@ public class CommentResource {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @LimitFrequency(resource = "comment", freeze = 5, timeUnit = TimeUnit.SECONDS)
-    @Privileged(PrivilegeName.CREATE_COMMENT)
+    @Privileged(PrivilegeName.SAVE_COMMENT)
     public ResponseEntity<Object> create(@RequestBody Comment comment, HttpServletRequest request) throws DoormanException {
         log.debug("REST request to save Comment : {}", comment);
 
         if (comment != null) {
             comment.setAuthorId(SecurityUtils.getCurrentLogin());
             comment.setDisplayName("Anonymous");
-            comment.setStatus(CommentStatus.PENDING);
+
+            // todo use reputation service to get status
+            comment.setStatus(Comment.Status.APPROVED);
 
             commentService.create(comment);
         }
@@ -87,12 +88,13 @@ public class CommentResource {
     /**
      * POST  /rest/comments/:id/like -> like the "id" comment.
      */
+    // todo move to VoteResource, block votes from myself
     @RequestMapping(value = "/rest/comments/{id}/like",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @LimitFrequency(resource = "vote", freeze = 5, timeUnit = TimeUnit.SECONDS)
-    @Privileged(PrivilegeName.CREATE_VOTE)
+    @Privileged(PrivilegeName.SAVE_VOTE)
     public ResponseEntity<Comment> like(@PathVariable Long id, HttpServletRequest request) throws DoormanException {
         log.debug("REST request to like Comment : {}", id);
 
@@ -103,12 +105,13 @@ public class CommentResource {
     /**
      * POST  /rest/comments/:id/dislike -> dislike the "id" comment.
      */
+    // todo move to VoteResource, block votes from myself
     @RequestMapping(value = "/rest/comments/{id}/dislike",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @LimitFrequency(resource = "vote", freeze = 5, timeUnit = TimeUnit.SECONDS)
-    @Privileged(PrivilegeName.CREATE_VOTE)
+    @Privileged(PrivilegeName.SAVE_VOTE)
     public ResponseEntity<Comment> dislike(@PathVariable Long id, HttpServletRequest request) throws DoormanException {
         log.debug("REST request to dislike Comment : {}", id);
 

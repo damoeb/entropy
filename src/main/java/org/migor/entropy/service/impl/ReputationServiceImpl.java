@@ -1,7 +1,6 @@
 package org.migor.entropy.service.impl;
 
 import org.migor.entropy.domain.Comment;
-import org.migor.entropy.domain.User;
 import org.migor.entropy.service.ReputationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,15 +16,20 @@ public class ReputationServiceImpl implements ReputationService {
     @Override
     public void judge(Comment comment) {
 
+        if (comment == null) {
+            throw new IllegalArgumentException("comment is null");
+        }
+
         int reputation = 0;
 
-        User author = comment.getAuthor();
-        author.getReputation();
-
-//        comment.getThread().getHarassmentRules();
-
-        comment.getText();
-        comment.getTitle();
+        // todo implement
+//        User author = comment.getAuthor();
+//        author.getReputation();
+//
+////        comment.getThread().getHarassmentRules();
+//
+//        comment.getText();
+//        comment.getTitle();
 
         comment.setReputation(reputation);
     }

@@ -3,6 +3,8 @@ package org.migor.entropy.domain;
 import org.migor.entropy.config.ErrorCode;
 
 /**
+ * verbose exception used for REST calls.
+ * <p/>
  * Created by damoeb on 9/5/14.
  */
 public class DoormanException extends Exception {

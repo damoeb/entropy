@@ -1,5 +1,6 @@
 package org.migor.entropy.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -8,7 +9,6 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -16,7 +16,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "T_VOTE", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"comment_id", "client_id"})
+        @UniqueConstraint(columnNames = {"comment_id", "author_id"})
 })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Vote implements Serializable {
@@ -25,18 +25,21 @@ public class Vote implements Serializable {
     @GeneratedValue(strategy = GenerationType.TABLE)
     private long id;
 
-    /**
-     * browser signature or login
-     */
-    // todo fk to user
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "author_id", insertable = false, updatable = false)
+    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+    private User author;
+
     @NotNull
-    @Size(min = 1, max = 250)
-    @Column(name = "client_id")
-    private String clientId;
+    @Column(name = "author_id")
+    private String authorId;
 
     @NotNull
     @Column(name = "comment_id")
     private Long commentId;
+
+    // todo add isLike boolean
 
     @CreatedDate
     @NotNull
@@ -44,20 +47,24 @@ public class Vote implements Serializable {
     @Column(name = "created_date")
     private DateTime createdDate = DateTime.now();
 
+    public User getAuthor() {
+        return author;
+    }
+
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
+    }
+
     public long getId() {
         return id;
     }
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public String getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
     }
 
     public Long getCommentId() {
@@ -103,7 +110,7 @@ public class Vote implements Serializable {
     public String toString() {
         return "Vote{" +
                 "id=" + id +
-                ", clientId='" + clientId + '\'' +
+                ", authorId='" + authorId + '\'' +
                 ", commentId=" + commentId +
                 ", createdDate=" + createdDate +
                 '}';

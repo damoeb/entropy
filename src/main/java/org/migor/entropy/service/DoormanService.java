@@ -24,10 +24,10 @@ public class DoormanService {
 
     /**
      * @param limitFrequency
-     * @return
+     * @return false, iff lock is not expired
      */
     public boolean knock(LimitFrequency limitFrequency) {
-        Lock lock = lockRepository.findByGroupIdAndClientId(limitFrequency.resource(), SecurityUtils.getCurrentLogin());
+        Lock lock = lockRepository.findByGroupIdAndAuthorId(limitFrequency.resource(), SecurityUtils.getCurrentLogin());
         return lock == null || lock.getExpiration().isBeforeNow();
     }
 
@@ -36,11 +36,11 @@ public class DoormanService {
      */
     public void enter(LimitFrequency limitFrequency) {
 
-        Lock lock = lockRepository.findByGroupIdAndClientId(limitFrequency.resource(), SecurityUtils.getCurrentLogin());
+        Lock lock = lockRepository.findByGroupIdAndAuthorId(limitFrequency.resource(), SecurityUtils.getCurrentLogin());
         if (lock == null) {
             lock = new Lock();
         }
-        lock.setClientId(SecurityUtils.getCurrentLogin());
+        lock.setAuthorId(SecurityUtils.getCurrentLogin());
         lock.setGroupId(limitFrequency.resource());
         DateTime expiration = DateTime.now().plus(TimeUnit.MILLISECONDS.convert(limitFrequency.freeze(), limitFrequency.timeUnit()));
         lock.setExpiration(expiration);

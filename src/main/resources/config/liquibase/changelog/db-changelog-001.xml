@@ -20,17 +20,19 @@
             <column name="activated" type="boolean" defaultValueBoolean="false" valueBoolean="false"/>
             <column name="lang_key" type="varchar(5)"/>
             <column name="activation_key" type="varchar(20)"/>
-            <column name="created_by" type="varchar(50)" defaultValue="system">
+            <column name="reputation" type="INT(10)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- audit -->
+            <column name="created_by" type="varchar(255)" defaultValue="system">
                 <constraints nullable="false"/>
             </column>
             <column name="created_date" type="timestamp" defaultValueDate="${now}">
                 <constraints nullable="false"/>
             </column>
-            <column name="last_modified_by" type="varchar(50)"/>
+            <column name="last_modified_by" type="varchar(255)"/>
             <column name="last_modified_date" type="timestamp"/>
-            <column name="reputation" type="INT(10)" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
         </createTable>
 
         <createTable tableName="T_AUTHORITY">
@@ -215,6 +217,9 @@
             <column name="thread_id" type="BIGINT(19)">
                 <constraints nullable="false"/>
             </column>
+            <column name="reputation" type="INT(10)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
     </changeSet>
@@ -259,12 +264,6 @@
     <changeSet author="damoeb (generated)" id="1405721119963-13">
         <addNotNullConstraint columnDataType="varchar(255)" columnName="token_value" tableName="T_PERSISTENT_TOKEN"/>
     </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-14">
-        <modifyDataType columnName="created_by" newDataType="varchar(255)" tableName="T_USER"/>
-    </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-15">
-        <dropDefaultValue columnDataType="varchar(255)" columnName="created_by" tableName="T_USER"/>
-    </changeSet>
     <changeSet author="damoeb (generated)" id="1405721119963-16">
         <modifyDataType columnName="name" newDataType="varchar(50)" tableName="T_USER_AUTHORITY"/>
     </changeSet>
@@ -274,9 +273,9 @@
     <changeSet author="damoeb (generated)" id="1405721119963-18">
         <dropDefaultValue columnDataType="boolean" columnName="activated" tableName="T_USER"/>
     </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-19">
-        <modifyDataType columnName="last_modified_date" newDataType="datetime(19)" tableName="T_USER"/>
-    </changeSet>
+    <!--<changeSet author="damoeb (generated)" id="1405721119963-19">-->
+    <!--<modifyDataType columnName="last_modified_date" newDataType="datetime(19)" tableName="T_USER"/>-->
+    <!--</changeSet>-->
     <changeSet author="damoeb (generated)" id="1405721119963-20">
         <modifyDataType columnName="principal" newDataType="varchar(255)" tableName="T_PERSISTENT_AUDIT_EVENT"/>
     </changeSet>
@@ -293,15 +292,15 @@
     <changeSet author="damoeb (generated)" id="1405721119963-24">
         <modifyDataType columnName="name" newDataType="varchar(255)" tableName="T_PERSISTENT_AUDIT_EVENT_DATA"/>
     </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-25">
-        <modifyDataType columnName="last_modified_by" newDataType="varchar(255)" tableName="T_USER"/>
-    </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-26">
-        <modifyDataType columnName="created_date" newDataType="datetime(19)" tableName="T_USER"/>
-    </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-27">
-        <dropDefaultValue columnDataType="datetime(19)" columnName="created_date" tableName="T_USER"/>
-    </changeSet>
+    <!--<changeSet author="damoeb (generated)" id="1405721119963-25">-->
+    <!--<modifyDataType columnName="last_modified_by" newDataType="varchar(255)" tableName="T_USER"/>-->
+    <!--</changeSet>-->
+    <!--<changeSet author="damoeb (generated)" id="1405721119963-26">-->
+    <!--<modifyDataType columnName="created_date" newDataType="datetime(19)" tableName="T_USER"/>-->
+    <!--</changeSet>-->
+    <!--<changeSet author="damoeb (generated)" id="1405721119963-27">-->
+    <!--<dropDefaultValue columnDataType="datetime(19)" columnName="created_date" tableName="T_USER"/>-->
+    <!--</changeSet>-->
     <changeSet author="damoeb (generated)" id="1405721119963-28">
         <modifyDataType columnName="event_type" newDataType="varchar(255)" tableName="T_PERSISTENT_AUDIT_EVENT"/>
     </changeSet>
@@ -311,7 +310,7 @@
             <column name="id" type="BIGINT(19)">
                 <constraints nullable="false"/>
             </column>
-            <column name="client_id" type="VARCHAR(255)">
+            <column name="author_id" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="reason" type="VARCHAR(512)">
@@ -336,7 +335,7 @@
             </column>
         </createTable>
 
-        <addUniqueConstraint columnNames="comment_id, client_id"
+        <addUniqueConstraint columnNames="comment_id, author_id"
                              constraintName="unique_report"
                              tableName="T_REPORT"/>
 
@@ -347,7 +346,7 @@
             <column name="id" type="BIGINT(19)">
                 <constraints nullable="false"/>
             </column>
-            <column name="client_id" type="VARCHAR(255)">
+            <column name="author_id" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="comment_id" type="BIGINT(19)">
@@ -358,7 +357,7 @@
             </column>
         </createTable>
 
-        <addUniqueConstraint columnNames="comment_id, client_id"
+        <addUniqueConstraint columnNames="comment_id, author_id"
                              constraintName="unique_vote"
                              tableName="T_VOTE"/>
 
@@ -369,7 +368,7 @@
             <column name="id" type="BIGINT(19)">
                 <constraints nullable="false"/>
             </column>
-            <column name="client_id" type="VARCHAR(255)">
+            <column name="author_id" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="group_id" type="VARCHAR(100)">
@@ -380,7 +379,7 @@
             </column>
         </createTable>
 
-        <addUniqueConstraint columnNames="group_id, client_id"
+        <addUniqueConstraint columnNames="group_id, author_id"
                              constraintName="unique_lock"
                              tableName="T_LOCK"/>
 
@@ -397,9 +396,23 @@
             <column name="expression" type="VARCHAR(250)">
                 <constraints nullable="false"/>
             </column>
-            <column name="expiration" type="timestamp" defaultValue="${now}">
+            <!-- todo not null constraint -->
+            <column name="expiration" type="timestamp"/>
+
+            <column name="reason" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- audit -->
+            <column name="created_by" type="varchar(255)" defaultValue="system">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp" defaultValueDate="${now}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(255)"/>
+            <column name="last_modified_date" type="timestamp"/>
+
         </createTable>
 
         <addUniqueConstraint columnNames="type, expression"
@@ -410,6 +423,9 @@
 
     <changeSet author="damoeb (generated)" id="1405721119963-33">
         <createTable tableName="T_PRIVILEGE">
+            <column name="id" type="BIGINT(19)">
+                <constraints nullable="false"/>
+            </column>
             <column name="name" type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
@@ -427,6 +443,55 @@
                   separator=";"
                   tableName="T_PRIVILEGE">
         </loadData>
+
+    </changeSet>
+
+    <changeSet author="damoeb (generated)" id="1405721119963-34">
+        <createTable tableName="T_PUNISHMENT">
+            <column name="id" type="BIGINT(19)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="comment_id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="report_id" type="BIGINT(19)"/>
+        </createTable>
+
+        <addUniqueConstraint columnNames="id"
+                             constraintName="id_punishment"
+                             tableName="T_PUNISHMENT"/>
+
+        <addUniqueConstraint columnNames="user_id, report_id"
+                             constraintName="unique_punishment"
+                             tableName="T_PUNISHMENT"/>
+
+    </changeSet>
+
+
+    <changeSet author="damoeb (generated)" id="1405721119963-35">
+        <createTable tableName="T_REWARD">
+            <column name="id" type="BIGINT(19)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="comment_id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="report_id" type="BIGINT(19)"/>
+        </createTable>
+
+        <addUniqueConstraint columnNames="id"
+                             constraintName="id_reward"
+                             tableName="T_REWARD"/>
+
+        <addUniqueConstraint columnNames="user_id, report_id"
+                             constraintName="unique_reward"
+                             tableName="T_REWARD"/>
 
     </changeSet>
 

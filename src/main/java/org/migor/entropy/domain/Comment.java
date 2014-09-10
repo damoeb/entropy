@@ -100,7 +100,7 @@ public class Comment implements Serializable {
     @NotNull
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private CommentStatus status;
+    private Status status;
 
     /**
      * Submissions score: likes - dislikes via reddit
@@ -200,11 +200,11 @@ public class Comment implements Serializable {
         this.reportStage = reportStage;
     }
 
-    public CommentStatus getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(CommentStatus status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -298,5 +298,12 @@ public class Comment implements Serializable {
                 ", text='" + text + '\'' +
                 ", authorId='" + authorId + '\'' +
                 '}';
+    }
+
+    /**
+     * Created by damoeb on 7/28/14.
+     */
+    public static enum Status {
+        APPROVED, PENDING, REJECTED, SPAM, DELETED
     }
 }

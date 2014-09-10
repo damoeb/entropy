@@ -26,16 +26,45 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Sample text attribute</label>
-                            <input type="text" class="form-control" name="test"
-                                   ng-model="ban.sampleTextAttribute" ng-minlength=1 ng-maxlength=50 required>
+                            <label>Reason</label>
+                            <input type="text" class="form-control" name="reason"
+                                   ng-model="ban.reason" ng-minlength=1 ng-maxlength=250 required>
                         </div>
 
                         <div class="form-group">
-                            <label>Sample date attribute</label>
-                            <input type="date" class="form-control" name="test"
-                                   ng-model="ban.sampleDateAttribute" required>
+                            <label>Type</label>
+
+                            <div class="input-group">
+                                <label>
+                                    <input type="radio" name="type"
+                                           value="USER_ID" ng-model="ban.type"/>
+                                    User Id
+                                </label>
+                                <label>
+                                    <input type="radio" name="type"
+                                           value="BROWSER_ID" ng-model="ban.type"/>
+                                    Browser Fingerprint
+                                </label>
+                                <label>
+                                    <input type="radio" name="type"
+                                           value="IP" ng-model="ban.type"/>
+                                    IP
+                                </label>
+                            </div>
                         </div>
+
+                        <div class="form-group">
+                            <label>Expression</label>
+                            <input type="text" class="form-control" name="expression"
+                                   ng-model="ban.expression" ng-minlength=1 ng-maxlength=250 required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Expiration</label>
+                            <input type="text" class="form-control" name="expiration"
+                                   ng-model="ban.expiration" ng-minlength=1 required>
+                        </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">
@@ -55,16 +84,20 @@
             <thead>
             <tr>
                 <th>ID</th>
-                <th>Sample text</th>
-                <th>Sample date</th>
+                <th>Type</th>
+                <th>Reason</th>
+                <th>Expression</th>
+                <th>Expiration</th>
                 <th></th>
             </tr>
             </thead>
             <tbody>
             <tr ng-repeat="ban in bans">
                 <td>{{ban.id}}</td>
-                <td>{{ban.sampleTextAttribute}}</td>
-                <td>{{ban.sampleDateAttribute}}</td>
+                <td>{{ban.type}}</td>
+                <td>{{ban.reason}}</td>
+                <td>{{ban.expression}}</td>
+                <td>{{ban.expiration}}</td>
                 <td>
                     <button type="submit"
                             ng-click="update(ban.id)"

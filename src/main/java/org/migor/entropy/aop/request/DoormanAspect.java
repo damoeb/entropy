@@ -31,6 +31,7 @@ import java.lang.reflect.Method;
  * Aspect for controlling amount of request per user.
  */
 @Aspect
+// todo disable FrequencyLimit on @Profile("dev")
 public class DoormanAspect {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -59,67 +60,72 @@ public class DoormanAspect {
 
         try {
 
-            MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-
-
-            // -- Check bans -------------------------------------------------------------------------------------------
-
+            final MethodSignature signature = (MethodSignature) joinPoint.getSignature();
             final String userId = SecurityUtils.getCurrentLogin();
-            if (banService.isBannedUser(userId)) {
-                throw new DoormanException(ErrorCode.BANNED);
-            }
+            final Method method = signature.getMethod();
 
-            HttpServletRequest request = null;
-            for (Object arg : joinPoint.getArgs()) {
-                if (arg instanceof HttpServletRequest) {
-                    request = (HttpServletRequest) arg;
-                }
-            }
+            checkBans(joinPoint, signature, userId);
 
-            if (request == null) {
-                log.warn(signature.getName() + " lacking the HttpServletRequest argument");
+            checkPrivileges(userId, method);
 
-            } else if (banService.isBannedRequest(request)) {
-                throw new DoormanException(ErrorCode.BANNED);
-            }
-
-            Method method = signature.getMethod();
-
-            // -- Check privileges -------------------------------------------------------------------------------------
-
-            Privileged privileged = method.getAnnotation(Privileged.class);
-            if (privileged != null) {
-                int reputationRequired = -1;
-                for (PrivilegeName privilegeName : privileged.value()) {
-
-                    // find most restrictive
-                    Privilege privilege = privilegeRepository.findByName(privilegeName);
-                    if (reputationRequired < privilege.getReputation()) {
-                        reputationRequired = privilege.getReputation();
-                    }
-                }
-
-                if (reputationRequired > userRepository.findOne(userId).getReputation()) {
-                    throw new DoormanException(ErrorCode.REPUTATION);
-                }
-            }
-
-
-            // -- Check frequency --------------------------------------------------------------------------------------
-
-            LimitFrequency limitFrequency = method.getAnnotation(LimitFrequency.class);
-
-            if (limitFrequency != null) {
-                if (!doormanService.knock(limitFrequency)) {
-                    throw new DoormanException(ErrorCode.FREQUENCY);
-                }
-                doormanService.enter(limitFrequency);
-            }
+            checkCallFrequency(method);
 
             return joinPoint.proceed();
 
         } catch (DoormanException e) {
             return new ResponseEntity<>(new DoormanSummary(e), HttpStatus.OK);
+        }
+    }
+
+    private String checkBans(ProceedingJoinPoint joinPoint, MethodSignature signature, String userId) throws DoormanException {
+
+        if (banService.isBannedUser(userId)) {
+            throw new DoormanException(ErrorCode.BANNED);
+        }
+
+        HttpServletRequest request = null;
+        for (Object arg : joinPoint.getArgs()) {
+            if (arg instanceof HttpServletRequest) {
+                request = (HttpServletRequest) arg;
+            }
+        }
+
+        if (request == null) {
+            log.warn(signature.getName() + " lacking the HttpServletRequest argument");
+
+        } else if (banService.isBannedRequest(request)) {
+            throw new DoormanException(ErrorCode.BANNED);
+        }
+        return userId;
+    }
+
+    private void checkPrivileges(String userId, Method method) throws DoormanException {
+        Privileged privileged = method.getAnnotation(Privileged.class);
+        if (privileged != null) {
+            int reputationRequired = -1;
+            for (PrivilegeName privilegeName : privileged.value()) {
+
+                // find most restrictive
+                Privilege privilege = privilegeRepository.findByName(privilegeName);
+                if (reputationRequired < privilege.getReputation()) {
+                    reputationRequired = privilege.getReputation();
+                }
+            }
+
+            if (reputationRequired > userRepository.findOne(userId).getReputation()) {
+                throw new DoormanException(ErrorCode.REPUTATION);
+            }
+        }
+    }
+
+    private void checkCallFrequency(Method method) throws DoormanException {
+        LimitFrequency limitFrequency = method.getAnnotation(LimitFrequency.class);
+
+        if (limitFrequency != null) {
+            if (!doormanService.knock(limitFrequency)) {
+                throw new DoormanException(ErrorCode.FREQUENCY);
+            }
+            doormanService.enter(limitFrequency);
         }
     }
 }

@@ -1,6 +1,8 @@
 package org.migor.entropy.domain;
 
 /**
+ * Wrapper for DoormanException
+ * <p/>
  * Created by damoeb on 9/5/14.
  */
 public class DoormanSummary {

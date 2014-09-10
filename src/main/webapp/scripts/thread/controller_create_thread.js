@@ -8,23 +8,19 @@ entropyApp.controller('CreateThreadsController', ['$scope', '$location', '$rootS
             uri: $routeParams.uri
         };
 
-//        $rootScope.$apply(function() {
-//            $location.search('');
-//
-//        });
-
         $scope.create = function () {
             Thread.save($scope.thread,
                 function () {
                     $scope.threads = Thread.query();
-                    $('#saveThreadModal').modal('hide');
                     $scope.clear();
                 });
         };
 
-        $scope.update = function (id) {
-            $scope.thread = Thread.get({id: id});
-            $('#saveThreadModal').modal('show');
+        $scope.clear = function () {
+            $scope.thread = {
+                title: null,
+                uri: null
+            };
         };
 
     }]);

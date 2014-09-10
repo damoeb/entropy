@@ -1,5 +1,6 @@
 package org.migor.entropy.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -7,7 +8,6 @@ import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -15,7 +15,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "T_LOCK", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"group_id", "client_id"})
+        @UniqueConstraint(columnNames = {"group_id", "author_id"})
 })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Lock implements Serializable {
@@ -28,14 +28,15 @@ public class Lock implements Serializable {
     @Column(name = "group_id")
     private String groupId;
 
-    /**
-     * browser signature or login
-     */
-    // todo fk to user
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "author_id", insertable = false, updatable = false)
+    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+    private User author;
+
     @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "client_id")
-    private String clientId;
+    @Column(name = "author_id")
+    private String authorId;
 
     @NotNull
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -58,12 +59,16 @@ public class Lock implements Serializable {
         this.groupId = groupId;
     }
 
-    public String getClientId() {
-        return clientId;
+    public User getAuthor() {
+        return author;
     }
 
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
     }
 
     public DateTime getExpiration() {
@@ -101,7 +106,7 @@ public class Lock implements Serializable {
     public String toString() {
         return "Lock{" +
                 "id=" + id +
-                ", clientId='" + clientId + '\'' +
+                ", authorId='" + authorId + '\'' +
                 ", expiration=" + expiration +
                 '}';
     }

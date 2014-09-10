@@ -2,8 +2,10 @@ package org.migor.entropy.service;
 
 import org.joda.time.DateTime;
 import org.migor.entropy.config.ErrorCode;
-import org.migor.entropy.domain.*;
+import org.migor.entropy.domain.Comment;
+import org.migor.entropy.domain.DoormanException;
 import org.migor.entropy.domain.Thread;
+import org.migor.entropy.domain.Vote;
 import org.migor.entropy.repository.CommentRepository;
 import org.migor.entropy.repository.ThreadRepository;
 import org.migor.entropy.repository.VoteRepository;
@@ -36,11 +38,15 @@ public class CommentService {
 
     public Comment create(Comment comment) throws DoormanException {
 
+        if (comment == null) {
+            throw new IllegalArgumentException("comment is null");
+        }
+
         Thread thread = threadRepository.findOne(comment.getThreadId());
         if (thread == null) {
             throw new DoormanException(Thread.class, ErrorCode.RESOURCE_NOT_FOUND);
         }
-        if (ThreadStatus.CLOSED == thread.getStatus()) {
+        if (Thread.Status.CLOSED == thread.getStatus()) {
             throw new DoormanException(Thread.class, ErrorCode.INVALID_STATUS, "Already closed");
         }
 
@@ -67,28 +73,39 @@ public class CommentService {
     }
 
     public Comment get(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("id is null");
+        }
+
         return commentRepository.findOne(id);
     }
 
     public void delete(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("id is null");
+        }
         // todo check permissions
-        commentRepository.delete(id);
+//        commentRepository.delete(id);
     }
 
     public Comment like(Long id) throws DoormanException {
+
+        if (id == null) {
+            throw new IllegalArgumentException("id is null");
+        }
 
         Comment comment = commentRepository.findOne(id);
         if (comment == null) {
             throw new DoormanException(Comment.class, ErrorCode.RESOURCE_NOT_FOUND);
         }
 
-        Vote vote = voteRepository.findByCommentIdAndClientId(id, SecurityUtils.getCurrentLogin());
+        Vote vote = voteRepository.findByCommentIdAndAuthorId(id, SecurityUtils.getCurrentLogin());
         if (vote != null) {
             throw new DoormanException(Vote.class, ErrorCode.ALREADY_EXISTS);
         }
 
         Thread thread = threadRepository.findOne(comment.getThreadId());
-        if (ThreadStatus.CLOSED == thread.getStatus()) {
+        if (Thread.Status.CLOSED == thread.getStatus()) {
             throw new DoormanException(Thread.class, ErrorCode.INVALID_STATUS, "Already closed");
         }
 
@@ -101,7 +118,7 @@ public class CommentService {
         threadRepository.save(thread);
 
         vote = new Vote();
-        vote.setClientId(SecurityUtils.getCurrentLogin());
+        vote.setAuthorId(SecurityUtils.getCurrentLogin());
         vote.setCommentId(comment.getId());
         vote.setCreatedDate(DateTime.now());
 
@@ -111,18 +128,23 @@ public class CommentService {
     }
 
     public Comment dislike(Long id) throws DoormanException {
+
+        if (id == null) {
+            throw new IllegalArgumentException("id is null");
+        }
+
         Comment comment = commentRepository.findOne(id);
         if (comment == null) {
             throw new DoormanException(Comment.class, ErrorCode.RESOURCE_NOT_FOUND);
         }
 
-        Vote vote = voteRepository.findByCommentIdAndClientId(id, SecurityUtils.getCurrentLogin());
+        Vote vote = voteRepository.findByCommentIdAndAuthorId(id, SecurityUtils.getCurrentLogin());
         if (vote != null) {
             throw new DoormanException(Vote.class, ErrorCode.ALREADY_EXISTS);
         }
 
         Thread thread = threadRepository.findOne(comment.getThreadId());
-        if (ThreadStatus.CLOSED == thread.getStatus()) {
+        if (Thread.Status.CLOSED == thread.getStatus()) {
             throw new DoormanException(Thread.class, ErrorCode.INVALID_STATUS, "Already closed");
         }
 
@@ -135,7 +157,7 @@ public class CommentService {
         threadRepository.save(thread);
 
         vote = new Vote();
-        vote.setClientId(SecurityUtils.getCurrentLogin());
+        vote.setAuthorId(SecurityUtils.getCurrentLogin());
         vote.setCommentId(comment.getId());
         vote.setCreatedDate(DateTime.now());
 
