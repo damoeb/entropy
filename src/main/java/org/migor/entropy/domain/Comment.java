@@ -83,6 +83,7 @@ public class Comment implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private User author;
 
+    @JsonIgnore
     @NotNull
     @Column(name = "author_id")
     private String authorId;
@@ -92,6 +93,9 @@ public class Comment implements Serializable {
 
     @Column(name = "dislikes")
     private Integer dislikes = 0;
+
+    @Column(name = "deleted")
+    private boolean deleted;
 
     @JsonIgnore
     @Column(name = "report_stage")
@@ -264,6 +268,14 @@ public class Comment implements Serializable {
         this.reputation = reputation;
     }
 
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -292,11 +304,12 @@ public class Comment implements Serializable {
         return "Comment{" +
                 "id=" + id +
                 ", threadId=" + threadId +
-                ", parentId=" + parentId +
-                ", createdDate=" + createdDate +
-                ", lastModifiedDate=" + lastModifiedDate +
                 ", text='" + text + '\'' +
-                ", authorId='" + authorId + '\'' +
+                ", title='" + title + '\'' +
+                ", dislikes=" + dislikes +
+                ", reportStage=" + reportStage +
+                ", createdDate=" + createdDate +
+                ", likes=" + likes +
                 '}';
     }
 

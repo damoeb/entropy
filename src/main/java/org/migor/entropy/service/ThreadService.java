@@ -45,6 +45,7 @@ public class ThreadService {
         }
 
         thread.setStatus(Thread.Status.OPEN);
+        thread.setAuthorId(SecurityUtils.getCurrentLogin());
 
         thread = threadRepository.save(thread);
 

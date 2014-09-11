@@ -92,7 +92,6 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
 
             Vote.save(vote, function (updated) {
                 $log.log(updated);
-                comment.likes++;
             });
         };
 
@@ -105,7 +104,6 @@ entropyApp.controller('CommentController', ['$scope', '$routeParams', 'Thread', 
 
             Vote.save(vote, function (updated) {
                 $log.log(updated);
-                comment.likes++;
             });
         };
 

@@ -7,7 +7,6 @@ import org.migor.entropy.domain.DoormanException;
 import org.migor.entropy.domain.Thread;
 import org.migor.entropy.repository.CommentRepository;
 import org.migor.entropy.repository.ThreadRepository;
-import org.migor.entropy.repository.VoteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -28,11 +27,7 @@ public class CommentService {
     private ThreadRepository threadRepository;
 
     @Inject
-    private VoteRepository voteRepository;
-
-    @Inject
     private ReputationService reputationService;
-
 
     public Comment create(Comment comment) throws DoormanException {
 
@@ -82,8 +77,20 @@ public class CommentService {
         if (id == null) {
             throw new IllegalArgumentException("id is null");
         }
-        // todo check permissions
-//        commentRepository.delete(id);
+
+        Comment comment = commentRepository.findOne(id);
+
+        log.info(String.format("Delete comment %s", comment));
+
+        comment.setDeleted(true);
+        comment.setReputation(0);
+        comment.setText("Deleted");
+        comment.setDisplayName("Deleted");
+        comment.setLikes(0);
+        comment.setDislikes(0);
+        comment.setDislikes(0);
+//        todo check permissions
+        commentRepository.save(comment);
     }
 
 }

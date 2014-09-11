@@ -52,12 +52,14 @@ public class Thread implements Serializable {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "creator_id", insertable = false, updatable = false)
+    @JoinColumn(name = "author_id", insertable = false, updatable = false)
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-    private User creator;
+    private User author;
 
-    @Column(name = "creator_id")
-    private String creatorId;
+    @JsonIgnore
+    @NotNull
+    @Column(name = "author_id")
+    private String authorId;
 
     /**
      * Sum of all comment likes plus thread likes
@@ -119,20 +121,20 @@ public class Thread implements Serializable {
         this.commentCount = commentCount;
     }
 
-    public String getCreatorId() {
-        return creatorId;
+    public String getAuthorId() {
+        return authorId;
     }
 
-    public void setCreatorId(String creatorId) {
-        this.creatorId = creatorId;
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
     }
 
-    public User getCreator() {
-        return creator;
+    public User getAuthor() {
+        return author;
     }
 
-    public void setCreator(User creator) {
-        this.creator = creator;
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
     public DateTime getLastModifiedDate() {

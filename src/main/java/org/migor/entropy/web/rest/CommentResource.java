@@ -79,6 +79,7 @@ public class CommentResource {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @Privileged(PrivilegeName.DELETE_COMMENT)
     public ResponseEntity<Object> delete(@PathVariable Long id, HttpServletRequest request) {
         log.debug("REST request to delete Comment : {}", id);
         commentService.delete(id);

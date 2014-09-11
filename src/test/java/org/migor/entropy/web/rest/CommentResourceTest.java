@@ -1,18 +1,12 @@
 package org.migor.entropy.web.rest;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import javax.inject.Inject;
-
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.migor.entropy.Application;
+import org.migor.entropy.domain.Comment;
+import org.migor.entropy.repository.CommentRepository;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
@@ -27,9 +21,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import org.migor.entropy.Application;
-import org.migor.entropy.domain.Comment;
-import org.migor.entropy.repository.CommentRepository;
+import javax.inject.Inject;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 /**
@@ -40,12 +35,12 @@ import org.migor.entropy.repository.CommentRepository;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 @WebAppConfiguration
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-    DirtiesContextTestExecutionListener.class,
-    TransactionalTestExecutionListener.class })
+@TestExecutionListeners({DependencyInjectionTestExecutionListener.class,
+        DirtiesContextTestExecutionListener.class,
+        TransactionalTestExecutionListener.class})
 @ActiveProfiles("dev")
 public class CommentResourceTest {
-    
+
     private static final Long DEFAULT_ID = new Long(1L);
 
     private static final LocalDate DEFAULT_SAMPLE_DATE_ATTR = new LocalDate(0L);
@@ -60,14 +55,14 @@ public class CommentResourceTest {
     private CommentRepository commentRepository;
 
     private MockMvc restCommentMockMvc;
-    
+
     private Comment comment;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
         CommentResource commentResource = new CommentResource();
-        ReflectionTestUtils.setField(commentResource, "commentRepository", commentRepository);
+        ReflectionTestUtils.setField(commentResource, "commentService", commentRepository);
 
         this.restCommentMockMvc = MockMvcBuilders.standaloneSetup(commentResource).build();
 
@@ -80,44 +75,44 @@ public class CommentResourceTest {
     @Test
     public void testCRUDComment() throws Exception {
 
-    	// Create Comment
-    	restCommentMockMvc.perform(post("/app/rest/comments")
-    			.contentType(TestUtil.APPLICATION_JSON_UTF8)
+        // Create Comment
+        restCommentMockMvc.perform(post("/app/rest/comments")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(comment)))
                 .andExpect(status().isOk());
 
-    	// Read Comment
-    	restCommentMockMvc.perform(get("/app/rest/comments/{id}", DEFAULT_ID))
+        // Read Comment
+        restCommentMockMvc.perform(get("/app/rest/comments/{id}", DEFAULT_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(DEFAULT_ID.intValue()))
-    			.andExpect(jsonPath("$.sampleDateAttribute").value(DEFAULT_SAMPLE_DATE_ATTR.toString()))
-    			.andExpect(jsonPath("$.sampleTextAttribute").value(DEFAULT_SAMPLE_TEXT_ATTR));
+                .andExpect(jsonPath("$.sampleDateAttribute").value(DEFAULT_SAMPLE_DATE_ATTR.toString()))
+                .andExpect(jsonPath("$.sampleTextAttribute").value(DEFAULT_SAMPLE_TEXT_ATTR));
 
-    	// Update Comment
+        // Update Comment
 //    	comment.setSampleDateAttribute(UPD_SAMPLE_DATE_ATTR);
 //    	comment.setSampleTextAttribute(UPD_SAMPLE_TEXT_ATTR);
-  
-    	restCommentMockMvc.perform(post("/app/rest/comments")
-    			.contentType(TestUtil.APPLICATION_JSON_UTF8)
+
+        restCommentMockMvc.perform(post("/app/rest/comments")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(comment)))
                 .andExpect(status().isOk());
 
-    	// Read updated Comment
-    	restCommentMockMvc.perform(get("/app/rest/comments/{id}", DEFAULT_ID))
+        // Read updated Comment
+        restCommentMockMvc.perform(get("/app/rest/comments/{id}", DEFAULT_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(DEFAULT_ID.intValue()))
-    			.andExpect(jsonPath("$.sampleDateAttribute").value(UPD_SAMPLE_DATE_ATTR.toString()))
-    			.andExpect(jsonPath("$.sampleTextAttribute").value(UPD_SAMPLE_TEXT_ATTR));
+                .andExpect(jsonPath("$.sampleDateAttribute").value(UPD_SAMPLE_DATE_ATTR.toString()))
+                .andExpect(jsonPath("$.sampleTextAttribute").value(UPD_SAMPLE_TEXT_ATTR));
 
-    	// Delete Comment
-    	restCommentMockMvc.perform(delete("/app/rest/comments/{id}", DEFAULT_ID)
+        // Delete Comment
+        restCommentMockMvc.perform(delete("/app/rest/comments/{id}", DEFAULT_ID)
                 .accept(TestUtil.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk());
 
-    	// Read nonexisting Comment
-    	restCommentMockMvc.perform(get("/app/rest/comments/{id}", DEFAULT_ID)
+        // Read nonexisting Comment
+        restCommentMockMvc.perform(get("/app/rest/comments/{id}", DEFAULT_ID)
                 .accept(TestUtil.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNotFound());
 

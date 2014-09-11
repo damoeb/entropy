@@ -35,7 +35,7 @@ public class BanResource {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @Privileged(PrivilegeName.SAVE_BAN)
-    public ResponseEntity<Object> create(@RequestBody Ban ban, HttpServletRequest request) {
+    public ResponseEntity<Object> create(@RequestBody Ban ban) {
         log.debug("REST request to save Ban : {}", ban);
         banRepository.save(ban);
         return new ResponseEntity<>(HttpStatus.OK);

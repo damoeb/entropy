@@ -76,19 +76,19 @@
 
         <addForeignKeyConstraint baseColumnNames="name"
                                  baseTableName="T_USER_AUTHORITY"
-                                 constraintName="fk_authority_name"
+                                 constraintName="FK_authority_name_01"
                                  referencedColumnNames="name"
                                  referencedTableName="T_AUTHORITY"/>
 
         <addForeignKeyConstraint baseColumnNames="login"
                                  baseTableName="T_USER_AUTHORITY"
-                                 constraintName="fk_user_login"
+                                 constraintName="FK_user_login_01"
                                  referencedColumnNames="login"
                                  referencedTableName="T_USER"/>
 
         <addForeignKeyConstraint baseColumnNames="user_login"
                                  baseTableName="T_PERSISTENT_TOKEN"
-                                 constraintName="fk_user_persistent_token"
+                                 constraintName="FK_user_persistent_token_01"
                                  referencedColumnNames="login"
                                  referencedTableName="T_USER"/>
 
@@ -118,6 +118,11 @@
             <column name="event_type" type="varchar(50)"/>
         </createTable>
 
+        <addNotNullConstraint columnDataType="varchar(255)" columnName="principal"
+                              tableName="T_PERSISTENT_AUDIT_EVENT"/>
+
+        <!-- T_PERSISTENT_AUDIT_EVENT_DATA -->
+
         <createTable tableName="T_PERSISTENT_AUDIT_EVENT_DATA">
             <column name="event_id" type="bigint">
                 <constraints nullable="false"/>
@@ -127,6 +132,7 @@
             </column>
             <column name="value" type="varchar(255)"/>
         </createTable>
+
         <addPrimaryKey columnNames="event_id, name" tableName="T_PERSISTENT_AUDIT_EVENT_DATA"/>
 
         <createIndex indexName="idx_persistent_audit_event"
@@ -144,7 +150,7 @@
 
         <addForeignKeyConstraint baseColumnNames="event_id"
                                  baseTableName="T_PERSISTENT_AUDIT_EVENT_DATA"
-                                 constraintName="FK_event_persistent_audit_event_data"
+                                 constraintName="FK_event_persistent_audit_event_data_02"
                                  referencedColumnNames="event_id"
                                  referencedTableName="T_PERSISTENT_AUDIT_EVENT"/>
     </changeSet>
@@ -152,7 +158,7 @@
 
     <!-- changes -->
 
-    <changeSet author="damoeb (generated)" id="1405721119963-1">
+    <changeSet author="damoeb" id="3">
         <createTable tableName="T_THREAD">
             <column name="id" type="BIGINT(19)">
                 <constraints nullable="false"/>
@@ -163,7 +169,7 @@
             </column>
             <column name="last_modified_date" type="timestamp"/>
             <column name="status" type="VARCHAR(20)"/>
-            <column name="creator_id" type="VARCHAR(128)"/>
+            <column name="author_id" type="VARCHAR(128)"/>
             <column name="title" type="VARCHAR(128)">
                 <constraints nullable="false"/>
             </column>
@@ -173,9 +179,11 @@
             <column name="read_only" type="boolean" defaultValueBoolean="false"/>
         </createTable>
 
-        <addForeignKeyConstraint baseColumnNames="creator_id"
+        <addPrimaryKey columnNames="id" constraintName="PRIMARY" tableName="T_THREAD"/>
+
+        <addForeignKeyConstraint baseColumnNames="author_id"
                                  baseTableName="T_THREAD"
-                                 constraintName="fk_creator_id"
+                                 constraintName="FK_author_id_03"
                                  referencedColumnNames="login"
                                  referencedTableName="T_USER"/>
 
@@ -187,7 +195,7 @@
 
     </changeSet>
 
-    <changeSet author="damoeb (generated)" id="1405721119963-2">
+    <changeSet author="damoeb" id="4">
         <createTable tableName="T_COMMENT">
             <column name="id" type="BIGINT(19)">
                 <constraints nullable="false"/>
@@ -209,6 +217,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="parent_id" type="BIGINT(19)"/>
+            <column name="deleted" type="boolean" defaultValueBoolean="false"/>
             <column name="text" type="VARCHAR(2048)">
                 <constraints nullable="false"/>
             </column>
@@ -222,90 +231,37 @@
             </column>
         </createTable>
 
-    </changeSet>
-
-    <changeSet author="damoeb (generated)" id="1405721119963-5">
-        <addPrimaryKey columnNames="id" constraintName="PRIMARY" tableName="T_THREAD"/>
-    </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-6">
         <addPrimaryKey columnNames="id" constraintName="PRIMARY" tableName="T_COMMENT"/>
-    </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-7">
-        <addForeignKeyConstraint baseColumnNames="author_id" baseTableName="T_COMMENT"
-                                 constraintName="FK_l61od2ji8u42cnd9v5br82qxq" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="login" referencedTableName="T_USER"/>
-    </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-8">
-        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="T_COMMENT"
-                                 constraintName="FK_aqunjthcwooq81nb5yku6xp9a" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="T_COMMENT"/>
-    </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-10">
-        <addForeignKeyConstraint baseColumnNames="thread_id" baseTableName="T_COMMENT"
-                                 constraintName="FK_1clsign35ddje4chcxcxymev9" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="T_THREAD"/>
 
-        <!--<loadData encoding="UTF-8"-->
-        <!--file="config/liquibase/comments.csv"-->
-        <!--separator=";"-->
-        <!--tableName="T_COMMENT">-->
-        <!--</loadData>-->
+        <addForeignKeyConstraint baseColumnNames="author_id"
+                                 baseTableName="T_COMMENT"
+                                 constraintName="FK_author_id_04"
+                                 referencedColumnNames="login"
+                                 referencedTableName="T_USER"/>
 
-    </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-11">
-        <dropIndex indexName="idx_persistent_audit_event_data" tableName="T_PERSISTENT_AUDIT_EVENT_DATA"/>
-    </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-12">
-        <dropIndex indexName="idx_persistent_audit_event" tableName="T_PERSISTENT_AUDIT_EVENT"/>
-    </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-13">
-        <addNotNullConstraint columnDataType="varchar(255)" columnName="token_value" tableName="T_PERSISTENT_TOKEN"/>
-    </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-16">
-        <modifyDataType columnName="name" newDataType="varchar(50)" tableName="T_USER_AUTHORITY"/>
-    </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-17">
-        <addNotNullConstraint columnDataType="boolean" columnName="activated" tableName="T_USER"/>
-    </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-18">
-        <dropDefaultValue columnDataType="boolean" columnName="activated" tableName="T_USER"/>
-    </changeSet>
-    <!--<changeSet author="damoeb (generated)" id="1405721119963-19">-->
-    <!--<modifyDataType columnName="last_modified_date" newDataType="datetime(19)" tableName="T_USER"/>-->
-    <!--</changeSet>-->
-    <changeSet author="damoeb (generated)" id="1405721119963-20">
-        <modifyDataType columnName="principal" newDataType="varchar(255)" tableName="T_PERSISTENT_AUDIT_EVENT"/>
-    </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-21">
-        <addNotNullConstraint columnDataType="varchar(255)" columnName="principal"
-                              tableName="T_PERSISTENT_AUDIT_EVENT"/>
-    </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-22">
-        <modifyDataType columnName="event_date" newDataType="datetime(19)" tableName="T_PERSISTENT_AUDIT_EVENT"/>
-    </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-23">
-        <modifyDataType columnName="name" newDataType="varchar(50)" tableName="T_AUTHORITY"/>
-    </changeSet>
-    <changeSet author="damoeb (generated)" id="1405721119963-24">
-        <modifyDataType columnName="name" newDataType="varchar(255)" tableName="T_PERSISTENT_AUDIT_EVENT_DATA"/>
-    </changeSet>
-    <!--<changeSet author="damoeb (generated)" id="1405721119963-25">-->
-    <!--<modifyDataType columnName="last_modified_by" newDataType="varchar(255)" tableName="T_USER"/>-->
-    <!--</changeSet>-->
-    <!--<changeSet author="damoeb (generated)" id="1405721119963-26">-->
-    <!--<modifyDataType columnName="created_date" newDataType="datetime(19)" tableName="T_USER"/>-->
-    <!--</changeSet>-->
-    <!--<changeSet author="damoeb (generated)" id="1405721119963-27">-->
-    <!--<dropDefaultValue columnDataType="datetime(19)" columnName="created_date" tableName="T_USER"/>-->
-    <!--</changeSet>-->
-    <changeSet author="damoeb (generated)" id="1405721119963-28">
-        <modifyDataType columnName="event_type" newDataType="varchar(255)" tableName="T_PERSISTENT_AUDIT_EVENT"/>
+        <addForeignKeyConstraint baseColumnNames="parent_id"
+                                 baseTableName="T_COMMENT"
+                                 constraintName="FK_comment_id_04"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION"
+                                 referencedColumnNames="id"
+                                 referencedTableName="T_COMMENT"/>
+
+        <addForeignKeyConstraint baseColumnNames="thread_id"
+                                 baseTableName="T_COMMENT"
+                                 constraintName="FK_thread_id_04"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION"
+                                 referencedColumnNames="id"
+                                 referencedTableName="T_THREAD"/>
+
     </changeSet>
 
-    <changeSet author="damoeb (generated)" id="1405721119963-29">
+    <changeSet author="damoeb" id="5">
         <createTable tableName="T_REPORT">
             <column name="id" type="BIGINT(19)">
                 <constraints nullable="false"/>
@@ -335,13 +291,32 @@
             </column>
         </createTable>
 
+        <addPrimaryKey columnNames="id" constraintName="PRIMARY" tableName="T_REPORT"/>
+
         <addUniqueConstraint columnNames="comment_id, author_id"
-                             constraintName="unique_report"
+                             constraintName="AK_report_05"
                              tableName="T_REPORT"/>
 
+        <addForeignKeyConstraint baseColumnNames="author_id"
+                                 baseTableName="T_REPORT"
+                                 constraintName="FK_author_id_05"
+                                 referencedColumnNames="login"
+                                 referencedTableName="T_USER"/>
+
+        <addForeignKeyConstraint baseColumnNames="comment_id"
+                                 baseTableName="T_REPORT"
+                                 constraintName="FK_comment_id_05"
+                                 referencedColumnNames="id"
+                                 referencedTableName="T_COMMENT"/>
+
+        <addForeignKeyConstraint baseColumnNames="thread_id"
+                                 baseTableName="T_REPORT"
+                                 constraintName="FK_thread_id_05"
+                                 referencedColumnNames="id"
+                                 referencedTableName="T_THREAD"/>
     </changeSet>
 
-    <changeSet author="damoeb (generated)" id="1405721119963-30">
+    <changeSet author="damoeb" id="6">
         <createTable tableName="T_VOTE">
             <column name="id" type="BIGINT(19)">
                 <constraints nullable="false"/>
@@ -358,13 +333,28 @@
             </column>
         </createTable>
 
+
+        <addPrimaryKey columnNames="id" constraintName="PRIMARY" tableName="T_VOTE"/>
+
         <addUniqueConstraint columnNames="comment_id, author_id"
-                             constraintName="unique_vote"
+                             constraintName="AK_vote_06"
                              tableName="T_VOTE"/>
+
+        <addForeignKeyConstraint baseColumnNames="author_id"
+                                 baseTableName="T_VOTE"
+                                 constraintName="FK_author_id_06"
+                                 referencedColumnNames="login"
+                                 referencedTableName="T_USER"/>
+
+        <addForeignKeyConstraint baseColumnNames="comment_id"
+                                 baseTableName="T_VOTE"
+                                 constraintName="FK_comment_id_06"
+                                 referencedColumnNames="id"
+                                 referencedTableName="T_COMMENT"/>
 
     </changeSet>
 
-    <changeSet author="damoeb (generated)" id="1405721119963-31">
+    <changeSet author="damoeb" id="7">
         <createTable tableName="T_LOCK">
             <column name="id" type="BIGINT(19)">
                 <constraints nullable="false"/>
@@ -380,13 +370,22 @@
             </column>
         </createTable>
 
+
+        <addPrimaryKey columnNames="id" constraintName="PRIMARY" tableName="T_LOCK"/>
+
         <addUniqueConstraint columnNames="group_id, author_id"
-                             constraintName="unique_lock"
+                             constraintName="AK_lock_07"
                              tableName="T_LOCK"/>
+
+        <addForeignKeyConstraint baseColumnNames="author_id"
+                                 baseTableName="T_LOCK"
+                                 constraintName="FK_author_id_07"
+                                 referencedColumnNames="login"
+                                 referencedTableName="T_USER"/>
 
     </changeSet>
 
-    <changeSet author="damoeb (generated)" id="1405721119963-32">
+    <changeSet author="damoeb" id="8">
         <createTable tableName="T_BAN">
             <column name="id" type="BIGINT(19)">
                 <constraints nullable="false"/>
@@ -416,13 +415,16 @@
 
         </createTable>
 
+
+        <addPrimaryKey columnNames="id" constraintName="PRIMARY" tableName="T_BAN"/>
+
         <addUniqueConstraint columnNames="type, expression"
-                             constraintName="unique_ban"
+                             constraintName="AK_ban_08"
                              tableName="T_BAN"/>
 
     </changeSet>
 
-    <changeSet author="damoeb (generated)" id="1405721119963-33">
+    <changeSet author="damoeb" id="9">
         <createTable tableName="T_PRIVILEGE">
             <column name="id" type="BIGINT(19)">
                 <constraints nullable="false"/>
@@ -435,8 +437,11 @@
             </column>
         </createTable>
 
+
+        <addPrimaryKey columnNames="id" constraintName="PRIMARY" tableName="T_PRIVILEGE"/>
+
         <addUniqueConstraint columnNames="name"
-                             constraintName="unique_privilege"
+                             constraintName="AK_privilege_09"
                              tableName="T_PRIVILEGE"/>
 
         <loadData encoding="UTF-8"
@@ -447,7 +452,7 @@
 
     </changeSet>
 
-    <changeSet author="damoeb (generated)" id="1405721119963-34">
+    <changeSet author="damoeb" id="10">
         <createTable tableName="T_PUNISHMENT">
             <column name="id" type="BIGINT(19)">
                 <constraints nullable="false"/>
@@ -455,24 +460,40 @@
             <column name="user_id" type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="comment_id" type="VARCHAR(50)">
+            <column name="comment_id" type="BIGINT(19)">
                 <constraints nullable="false"/>
             </column>
             <column name="report_id" type="BIGINT(19)"/>
         </createTable>
 
-        <addUniqueConstraint columnNames="id"
-                             constraintName="id_punishment"
-                             tableName="T_PUNISHMENT"/>
+
+        <addPrimaryKey columnNames="id" constraintName="PRIMARY" tableName="T_PUNISHMENT"/>
 
         <addUniqueConstraint columnNames="user_id, report_id"
-                             constraintName="unique_punishment"
+                             constraintName="AK_punishment_10"
                              tableName="T_PUNISHMENT"/>
 
+        <addForeignKeyConstraint baseColumnNames="comment_id"
+                                 baseTableName="T_PUNISHMENT"
+                                 constraintName="FK_comment_id_10"
+                                 referencedColumnNames="id"
+                                 referencedTableName="T_COMMENT"/>
+
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="T_PUNISHMENT"
+                                 constraintName="FK_user_id_10"
+                                 referencedColumnNames="login"
+                                 referencedTableName="T_USER"/>
+
+        <addForeignKeyConstraint baseColumnNames="report_id"
+                                 baseTableName="T_PUNISHMENT"
+                                 constraintName="FK_report_id_10"
+                                 referencedColumnNames="id"
+                                 referencedTableName="T_REPORT"/>
     </changeSet>
 
 
-    <changeSet author="damoeb (generated)" id="1405721119963-35">
+    <changeSet author="damoeb" id="11">
         <createTable tableName="T_REWARD">
             <column name="id" type="BIGINT(19)">
                 <constraints nullable="false"/>
@@ -480,19 +501,30 @@
             <column name="user_id" type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="comment_id" type="VARCHAR(50)">
+            <column name="comment_id" type="BIGINT(19)">
                 <constraints nullable="false"/>
             </column>
             <column name="report_id" type="BIGINT(19)"/>
         </createTable>
 
-        <addUniqueConstraint columnNames="id"
-                             constraintName="id_reward"
-                             tableName="T_REWARD"/>
+
+        <addPrimaryKey columnNames="id" constraintName="PRIMARY" tableName="T_REWARD"/>
 
         <addUniqueConstraint columnNames="user_id, report_id"
-                             constraintName="unique_reward"
+                             constraintName="FK_reward_11"
                              tableName="T_REWARD"/>
+
+        <addForeignKeyConstraint baseColumnNames="comment_id"
+                                 baseTableName="T_REWARD"
+                                 constraintName="FK_comment_id_11"
+                                 referencedColumnNames="id"
+                                 referencedTableName="T_COMMENT"/>
+
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="T_REWARD"
+                                 constraintName="FK_user_id_11"
+                                 referencedColumnNames="login"
+                                 referencedTableName="T_USER"/>
 
     </changeSet>
 
